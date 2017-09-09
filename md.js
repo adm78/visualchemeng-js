@@ -7,7 +7,6 @@ function setup() {
     var xmax = min(772+28,windowWidth-2*28);
     var ymax = xmax*0.618;
     var canvas= createCanvas(xmax, ymax);
-    canvas.parent('sketch-holder');
     for (i = 0; i < part_to_init; i++) {
 	particles[i] = new Particle(getRandom(0,xmax),
 				    getRandom(0,ymax),
