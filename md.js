@@ -8,8 +8,8 @@ function setup() {
     var ymax = xmax*0.618;
     var canvas= createCanvas(xmax, ymax);
     for (i = 0; i < part_to_init; i++) {
-	particles[i] = new Particle(getRandom(0,xmax),
-				    getRandom(0,ymax),
+	particles[i] = new Particle(random(xmax),
+				    random(ymax),
 				    xmax,ymax,r);
     }
     var coll_times = getCollisionList(particles);
