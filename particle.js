@@ -3,7 +3,7 @@ function Particle(x,y, xmax, ymax, r) {
     this.xmax = xmax;
     this.ymax = ymax;
     this.radius = r;
-    this.vel = createVector(getRandom(-1,1),getRandom(-1,1));
+    this.vel = createVector(random()*2.0-1.0,random()*2.0-1.0);
     //this.acc = createVector(getRandom(-1,1),getRandom(-1,1));
     this.acc = createVector(0,0);
     // var grav = createVector(0.0,0.3)
@@ -16,11 +16,11 @@ function Particle(x,y, xmax, ymax, r) {
     this.update = function(dt) {
 
 	// compute the new position and velocity vectors using the
-	// Velocity Verlet algorithm with time-step dt. 
+	// Velocity Verlet algorithm with time-step dt.
 	this.update_acc(dt)
 	this.update_pos(dt)
 	this.update_vel(dt)
-	
+
     }
 
     this.show = function(dt) {
@@ -38,7 +38,7 @@ function Particle(x,y, xmax, ymax, r) {
     }
 
     this.update_pos = function(dt) {
-	
+
 	var pos_1 = this.pos
 	pos_1.add(p5.Vector.mult(this.vel, dt));
 	var pos_2 = p5.Vector.mult(this.acc, 0.5*Math.pow(dt,2.0));
@@ -48,7 +48,7 @@ function Particle(x,y, xmax, ymax, r) {
 
 
     this.update_vel = function(dt) {
-	
+
 	var v_1 = this.vel;
 	var a_sum = p5.Vector.add(this.acc, this.acc);
 	var v_2 = p5.Vector.mult(a_sum, 0.5*dt);
@@ -72,4 +72,3 @@ function Particle(x,y, xmax, ymax, r) {
 	}
     }
 }
-    
