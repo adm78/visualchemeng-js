@@ -1,2 +1,2 @@
 # visualchemeng_js
-Javascript modules for visualchemeng.com
+Javascript modules for the [Visual Chemical Engineering Project](https://www.visualchemeng.com)
