@@ -23,14 +23,19 @@ function Particle(x,y, xmax, ymax, r) {
 
     }
 
-    this.show = function(dt) {
+    this.show = function() {
 	stroke(46,138,222);
 	strokeWeight(8);
 	point(this.pos.x,this.pos.y);
-	this.update(dt)
+	//this.update(dt)
     }
 
-
+    this.highlight = function() {
+	stroke(256,1,1);
+	strokeWeight(8);
+	point(this.pos.x,this.pos.y);
+    }
+	
     this.update_acc = function(dt) {
 
 	this.acc_old = this.acc
@@ -57,7 +62,7 @@ function Particle(x,y, xmax, ymax, r) {
 
     this.apply_boundary_cond = function() {
 
-	// simualte periodic boundary conditions
+	// simlate periodic boundary conditions
 	if (this.pos.x >= this.xmax) {
 	    this.pos.x = this.pos.x - this.xmax
 	}
@@ -71,4 +76,13 @@ function Particle(x,y, xmax, ymax, r) {
 	    this.pos.y = this.pos.y + this.ymax
 	}
     }
+
+    this.impulse = function(J) {
+	
+	//compute the impulse on the particle due
+	//to a collision
+	var Jx = J;
+    }
+    
 }
+      

@@ -79,3 +79,7 @@ function P_Antoine(T,coeffs) {
     return Math.pow(10,exponent);   
 }
 
+function sleep (time) {
+  // time delay functionality  
+  return new Promise((resolve) => setTimeout(resolve, time));
+}
