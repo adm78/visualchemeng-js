@@ -4,10 +4,13 @@ var r = 2;
 var iters = 0;
 var max_iters = 1;
 var time = 0.0;
+var clicked_log = false;
+var xmax;
+var ymax;
 
 function setup() {
-    var xmax = min(772+28,windowWidth-2*28);
-    var ymax = xmax*0.618;
+    xmax = min(772+28,windowWidth-2*28);
+    ymax = xmax*0.618;
     var canvas= createCanvas(xmax, ymax);
     part_to_init = Math.round(xmax*ymax/6000.0);
     console.log("xmax, ymax = ", xmax, ymax);
@@ -23,13 +26,13 @@ function draw() {
     for (i = 0; i < particles.length; i++) {
 	particles[i].show();
     }
-    //doStep(1e-09);
+    doStep(0.25);
     console.log("time = ", time);
-    iters = iters + 1;
-    // debug
-    if (iters > max_iters) {
-	noLoop();
-    }
+    // iters = iters + 1;
+    // // debug
+    // if (iters > max_iters) {
+    // 	noLoop();
+    // }
 }
 
 function delta_p(Part1, Part2) {
@@ -57,7 +60,7 @@ function doStep(dt) {
     console.log("dt_col = ", dt_col);
 
     // check for collisions in the current time
-    if (dt > dt_col) {
+    if (dt < dt_col) {
 	// no collision in the time step
 	advanceParticles(dt);
 	time = time + dt
@@ -70,6 +73,7 @@ function doStep(dt) {
 	var p2 = particles[coll_list[0][2]];
 	p1.highlight();
 	p2.highlight();
+	console.log("particles should be highlighted...")
 	time = time + dt_col
     }
     
@@ -163,4 +167,11 @@ function initialSpacing(n, x, y) {
     return dx
 }
 
+function addParticle() {
+    var new_part = new Particle(mouseX,mouseY,xmax,ymax,r);
+    particles.push(new_part);
+}
 
+function mousePressed() {
+    addParticle()
+  }
