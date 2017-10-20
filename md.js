@@ -7,13 +7,15 @@ var time = 0.0;
 var clicked_log = false;
 var xmax;
 var ymax;
+var time = 0.0;
+var paused_log = true;
 
 function setup() {
     xmax = min(772+28,windowWidth-2*28);
     ymax = xmax*0.618;
     var canvas= createCanvas(xmax, ymax);
     //part_to_init = Math.round(xmax*ymax/6000.0);
-    part_to_init = 66;
+    part_to_init = 60;
     console.log("xmax, ymax = ", xmax, ymax);
     console.log("part_to_init = ", part_to_init);
     particles = initParticles(part_to_init,r,xmax,ymax);
@@ -25,15 +27,27 @@ function draw() {
     stroke(255);
     strokeWeight(1);
     for (i = 0; i < particles.length; i++) {
-	particles[i].show();
+	     particles[i].show();
     }
-    doStep(0.25);
-    console.log("time = ", time);
-    // iters = iters + 1;
-    // // debug
-    // if (iters > max_iters) {
-    // 	noLoop();
-    // }
+    // set up stroke for progress box
+    noStroke();
+    fill(0)
+    rect(0.9*xmax,0.9*ymax,0.1*xmax,0.1*ymax)
+    fill(255)
+
+    // step through time unless sim is paused
+    if (!(paused_log)) {
+      text("Running",0.91*xmax,0.9*ymax,0.2*xmax,0.1*ymax);
+      var dt_step = 10.0;
+      doStep(dt_step);
+    }
+    else {
+      text("Paused",0.91*xmax,0.9*ymax,0.2*xmax,0.1*ymax);
+    }
+    // write the time to the screen
+    stroke(255);
+    strokeWeight(1);
+    text(time.toString(),0.91*xmax,0.95*ymax,20,20);
 }
 
 function delta_p(Part1, Part2) {
@@ -53,8 +67,13 @@ function delta_p(Part1, Part2) {
 function doStep(dt) {
 
     // this routine advances the system over the time interval dt
+    var dt_col;
     coll_list = getCollisionList(particles);
-    var dt_col = coll_list[0][0];
+    if (coll_list.length < 1) {
+      dt_col = dt + 1
+    } else {
+        dt_col = coll_list[0][0];
+    }
 
     // debug
     console.log(coll_list);
@@ -62,23 +81,21 @@ function doStep(dt) {
 
     // check for collisions in the current time
     if (dt < dt_col) {
-	// no collision in the time step
-	advanceParticles(dt);
-	time = time + dt
-	return 0
+	     // no collision in the time step
+      advanceParticles(dt);
+     time = time + dt;
+     return 0
     }
     else  {
-	// collision has occured between the step
-	advanceParticles(dt_col);
-	var p1 = particles[coll_list[0][1]];
-	var p2 = particles[coll_list[0][2]];
-	p1.highlight();
-	p2.highlight();
-	console.log("particles should be highlighted...")
-	time = time + dt_col
+	     // collision has occured between the step
+	      advanceParticles(dt_col);
+        var p1 = particles[coll_list[0][1]];
+        var p2 = particles[coll_list[0][2]];
+	      p1.highlight();
+        p2.highlight();
+        console.log("particles should be highlighted...")
+        time = time + dt_col
     }
-    
-	
 }
 
 function getCollisonTime(v1,v2,p1,p2,r1,r2) {
@@ -94,11 +111,12 @@ function getCollisonTime(v1,v2,p1,p2,r1,r2) {
     var discrim = b*b - 4*a*c;
 
     if (discrim > 0 && b < 0) {
-	var t1 = (-b - Math.sqrt(discrim))/(2*a);
-	return t1
-    }
-    console.log("getCollisonTime: discrim = ", discrim);
-    return NaN     
+	     var t1 = (-b - Math.sqrt(discrim))/(2*a);
+       return t1
+    } else {
+      console.log("getCollisonTime: discrim = ", discrim);
+      return NaN
+    };
 }
 
 function getCollisionTimeParticles(Part1, Part2) {
@@ -108,51 +126,52 @@ function getCollisionTimeParticles(Part1, Part2) {
     // the time of the first collision.
     var tmin;
     var tcurr;
-    
+
     // generate the ficticous coordinates of each reflection
-    var preflects = [
-    	createVector(Part2.pos.x, Part2.pos.y - ymax),
-    	createVector(Part2.pos.x, Part2.pos.y + ymax),
-    	createVector(Part2.pos.x - xmax, Part2.pos.y),
-    	createVector(Part2.pos.x + xmax, Part2.pos.y)
-    ];
+    // var preflects = [
+    // 	createVector(Part2.pos.x, Part2.pos.y - ymax),
+    // 	createVector(Part2.pos.x, Part2.pos.y + ymax),
+    // 	createVector(Part2.pos.x - xmax, Part2.pos.y),
+    // 	createVector(Part2.pos.x + xmax, Part2.pos.y)
+    // ];
     console.log("Considering collision between:", Part1, Part2);
     tmin = getCollisonTime(Part1.vel,Part2.vel,Part1.pos,Part2.pos,Part1.radius,Part2.radius);
     console.log("tmin no reflect = ", tmin);
-    var i;
-    for (i = 0; i < preflects.length; i++) {
-	console.log("testing for collision with i = ", i , ", coordinates =");
-	console.log(Part1.vel,Part2.vel,Part1.pos,preflects[i],Part1.radius,Part2.radius);
-    	tcurr = getCollisonTime(Part1.vel,Part2.vel,Part1.pos,preflects[i],Part1.radius,Part2.radius);
-	console.log("tcurr = ", tcurr);
-    	if (tcurr < tmin) {
-    	    tmin = tcurr;
-    	}
-    }
+    // var i;
+    // for (i = 0; i < preflects.length; i++) {
+    //   console.log("testing for collision with i = ", i , ", coordinates =");
+	  //   console.log(Part1.vel,Part2.vel,Part1.pos,preflects[i],Part1.radius,Part2.radius);
+    // 	tcurr = getCollisonTime(Part1.vel,Part2.vel,Part1.pos,preflects[i],Part1.radius,Part2.radius);
+    //   console.log("tcurr = ", tcurr);
+    // 	if (tcurr < tmin) {
+    // 	    tmin = tcurr;
+    // 	}
+    // }
     console.log("tmin = ", tmin);
     return tmin
-    
+
 }
 
 function getCollisionList(particles) {
 
     // compute a sorted list of collision times
     var coll_list = []
+    var col_time;
     var i, j;
     for (i = 0; i < particles.length; i++) {
-	for (j = i+1; j < particles.length; j++) {
-	    if (i != j) {
-		console.log("getCollisionList: i = ",i, " j = ",j);
-		var col_time = getCollisionTimeParticles(particles[i],particles[j]);
-		if (isNaN(col_time) != true) {
-		    var coll = [col_time, i, j];
-		    coll_list.push(coll);
-		}
-	    } else {
-		console.log("getCollisionList: skipping i = ",i, " j = ",j);	
-	    }
-	};
-    };
+	     for (j = i+1; j < particles.length; j++) {
+	        if (i != j) {
+		          console.log("getCollisionList: i = ",i, " j = ",j);
+		          col_time = getCollisionTimeParticles(particles[i],particles[j]);
+	            if (isNaN(col_time) != true) {
+                var coll = [col_time, i, j];
+                coll_list.push(coll);
+              } else {
+		              console.log("getCollisionList: skipping i = ",i, " j = ",j);
+              }
+           }
+         }
+       }
     coll_list.sort(function(a,b){return a[0] - b[0]});
     return coll_list
 }
@@ -161,7 +180,7 @@ function advanceParticles(dt) {
     // advance the ensemble forward in time
     // in a straight line trajectory (no collisions)
     for (i = 0; i < particles.length; i++) {
-	particles[i].update(dt);
+      particles[i].update(dt);
     }
 }
 
@@ -172,26 +191,16 @@ function initParticles(n,r,xmax,ymax) {
     var parts = [];
     var dx = initialSpacing(n, xmax, ymax);
     var n_init = 0 ;
-    // for (i = 0; i < part_to_init; i++) {
-    // 	// particles[i] = new Particle(random(xmax),
-    // 	// 			    random(ymax),
-    // 	// 			    xmax,ymax,r);
-    // 	particles[i] = new Particle(x0+i*dx,
-    // 				    random(ymax),
-    // 				    xmax,ymax,r);
     for (i = 0; i < Math.round(xmax/dx); i++) {
-    	// particles[i] = new Particle(random(xmax),
-    	// 			    random(ymax),
-    	// 			    xmax,ymax,r);
-	for (j = 0; j < Math.round(ymax/dx); j++) {
-	    if (n_init < n) {
-    		parts[n_init] = new Particle(dx*(i+0.5),dx*(j+0.5),xmax,ymax,r);
-		console.log("intialised particle",n_init," with x, y = ", dx*(i+1),dx*(j+1));
-		parts[n_init].show();
-		n_init = n_init + 1;
-    	    }	
-	}
-    }
+	     for (j = 0; j < Math.round(ymax/dx); j++) {
+	        if (n_init < n) {
+    		      parts[n_init] = new Particle(dx*(i+0.5),dx*(j+0.5),xmax,ymax,r);
+	            console.log("intialised particle",n_init," with x, y = ", dx*(i+1),dx*(j+1));
+	            parts[n_init].show();
+              n_init = n_init + 1;
+    	    };
+        };
+    };
     return parts
 }
 
@@ -214,5 +223,5 @@ function addParticle() {
 }
 
 function mousePressed() {
-    addParticle()
+    paused_log = !(paused_log);
   }
