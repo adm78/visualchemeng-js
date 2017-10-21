@@ -119,38 +119,6 @@ function getCollisionTime(Part1, Part2) {
     return NaN
 }
 
-function getCollisionTimeParticles(Part1, Part2) {
-
-    // checks the collision time between Part1
-    // and each reflection of Part2 and returns
-    // the time of the first collision.
-    var tmin;
-    var tcurr;
-
-    // generate the ficticous coordinates of each reflection
-    // var preflects = [
-    // 	createVector(Part2.pos.x, Part2.pos.y - ymax),
-    // 	createVector(Part2.pos.x, Part2.pos.y + ymax),
-    // 	createVector(Part2.pos.x - xmax, Part2.pos.y),
-    // 	createVector(Part2.pos.x + xmax, Part2.pos.y)
-    // ];
-    console.log("Considering collision between:", Part1, Part2);
-    tmin = getCollisonTime(Part1, Part2);
-    console.log("tmin no reflect = ", tmin);
-    // var i;
-    // for (i = 0; i < preflects.length; i++) {
-    //   console.log("testing for collision with i = ", i , ", coordinates =");
-	  //   console.log(Part1.vel,Part2.vel,Part1.pos,preflects[i],Part1.radius,Part2.radius);
-    // 	tcurr = getCollisonTime(Part1.vel,Part2.vel,Part1.pos,preflects[i],Part1.radius,Part2.radius);
-    //   console.log("tcurr = ", tcurr);
-    // 	if (tcurr < tmin) {
-    // 	    tmin = tcurr;
-    // 	}
-    // }
-    console.log("tmin = ", tmin);
-    return tmin
-
-}
 
 function getCollisionList(particles) {
 
