@@ -35,7 +35,7 @@ function Particle(x,y, xmax, ymax, r) {
 	strokeWeight(8);
 	point(this.pos.x,this.pos.y);
     }
-	
+
     this.update_acc = function(dt) {
 
 	this.acc_old = this.acc
@@ -48,7 +48,7 @@ function Particle(x,y, xmax, ymax, r) {
 	pos_1.add(p5.Vector.mult(this.vel, dt));
 	var pos_2 = p5.Vector.mult(this.acc, 0.5*Math.pow(dt,2.0));
 	this.pos = p5.Vector.add(pos_1, pos_2);
-	this.apply_boundary_cond()
+	//this.apply_boundary_cond()
     }
 
 
@@ -78,11 +78,10 @@ function Particle(x,y, xmax, ymax, r) {
     }
 
     this.impulse = function(J) {
-	
+
 	//compute the impulse on the particle due
 	//to a collision
 	var Jx = J;
     }
-    
+
 }
-      

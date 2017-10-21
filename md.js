@@ -38,7 +38,7 @@ function draw() {
     // step through time unless sim is paused
     if (!(paused_log)) {
       text("Running",0.91*xmax,0.9*ymax,0.2*xmax,0.1*ymax);
-      var dt_step = 10.0;
+      var dt_step = 1.0;
       doStep(dt_step);
     }
     else {
@@ -98,25 +98,25 @@ function doStep(dt) {
     }
 }
 
-function getCollisonTime(v1,v2,p1,p2,r1,r2) {
+function getCollisionTime(Part1, Part2) {
 
-    // get the collision time for a collision pair the following
-    // properties
-    var deltaVel = p5.Vector.sub(v1,v2);
-    var deltaPos = p5.Vector.sub(p1,p2);
-    var minDist = r1 + r2;
-    var a = p5.Vector.dot(deltaVel, deltaVel);
-    var b = 2.0*p5.Vector.dot(deltaPos,deltaVel);
-    var c = p5.Vector.dot(deltaPos,deltaPos) - minDist*minDist;
-    var discrim = b*b - 4*a*c;
+    //compute the time to pass for a collsion to take place
+    //currenrtly does not respect periodic boundary conditions!!!
+    //console.log("Considering collision between:", Part1, Part2);
 
-    if (discrim > 0 && b < 0) {
-	     var t1 = (-b - Math.sqrt(discrim))/(2*a);
-       return t1
-    } else {
-      console.log("getCollisonTime: discrim = ", discrim);
-      return NaN
-    };
+    var deltaVel = p5.Vector.sub(Part1.vel,Part2.vel)
+    var deltaPos = p5.Vector.sub(Part1.pos,Part2.pos)
+    var minDist = Part1.radius + Part2.radius
+    var a = p5.Vector.dot(deltaVel, deltaVel)
+    var b = 2.0*p5.Vector.dot(deltaPos,deltaVel)
+    var c = p5.Vector.dot(deltaPos,deltaPos) - minDist*minDist
+    var discrim = b*b - 4*a*c
+
+    if ((discrim > 0) && (b < 0)) {
+	    var t1 = (-b - Math.sqrt(discrim))/(2*a)
+      return t1
+    }
+    return NaN
 }
 
 function getCollisionTimeParticles(Part1, Part2) {
@@ -135,7 +135,7 @@ function getCollisionTimeParticles(Part1, Part2) {
     // 	createVector(Part2.pos.x + xmax, Part2.pos.y)
     // ];
     console.log("Considering collision between:", Part1, Part2);
-    tmin = getCollisonTime(Part1.vel,Part2.vel,Part1.pos,Part2.pos,Part1.radius,Part2.radius);
+    tmin = getCollisonTime(Part1, Part2);
     console.log("tmin no reflect = ", tmin);
     // var i;
     // for (i = 0; i < preflects.length; i++) {
@@ -161,13 +161,14 @@ function getCollisionList(particles) {
     for (i = 0; i < particles.length; i++) {
 	     for (j = i+1; j < particles.length; j++) {
 	        if (i != j) {
-		          console.log("getCollisionList: i = ",i, " j = ",j);
-		          col_time = getCollisionTimeParticles(particles[i],particles[j]);
+		          //console.log("getCollisionList: i = ",i, " j = ",j);
+		          col_time = getCollisionTime(particles[i],particles[j]);
+              //console.log("col_time = ", col_time);
 	            if (isNaN(col_time) != true) {
                 var coll = [col_time, i, j];
                 coll_list.push(coll);
               } else {
-		              console.log("getCollisionList: skipping i = ",i, " j = ",j);
+		              //console.log("getCollisionList: skipping i = ",i, " j = ",j);
               }
            }
          }
