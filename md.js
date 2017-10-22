@@ -70,14 +70,14 @@ function doStep(dt) {
     var dt_col;
     coll_list = getCollisionList(particles);
     if (coll_list.length < 1) {
-      dt_col = dt + 1
+      dt_col = dt + 1; // just needs to exceed dt
     } else {
-        dt_col = coll_list[0][0];
+      dt_col = (coll_list[0]).t;
     }
 
     // debug
-    console.log(coll_list);
-    console.log("dt_col = ", dt_col);
+    //console.log(coll_list);
+    //console.log("dt_col = ", dt_col);
 
     // check for collisions in the current time
     if (dt < dt_col) {
@@ -89,14 +89,30 @@ function doStep(dt) {
     else  {
 	     // collision has occured between the step
 	      advanceParticles(dt_col);
-        var p1 = particles[coll_list[0][1]];
-        var p2 = particles[coll_list[0][2]];
+        var firstEvent = coll_list[0];
+        var p1 = particles[firstEvent.p1_index];
 	      p1.highlight();
-        p2.highlight();
-        console.log("particles should be highlighted...")
+        if (!firstEvent.wc_log) {
+          var p2 = particles[firstEvent.p2_index];
+          p2.highlight();
+        }
+        //console.log("particle(s) should be highlighted...")
+        //paused_log = true //debug only
         time = time + dt_col
     }
 }
+
+function getWallCollisionTime(Part) {
+    // compute the first collision time with a wall.
+    // return the wall object with t and wall (r,l,u,d)
+        // no functionality for now.
+    // check each wall in series
+    return {
+          t: 100000,
+          wall: 'r'
+    };
+}
+
 
 function getCollisionTime(Part1, Part2) {
 
@@ -122,26 +138,36 @@ function getCollisionTime(Part1, Part2) {
 
 function getCollisionList(particles) {
 
-    // compute a sorted list of collision times
+    // compute a sorted list of collision times.
+    // we only want to hold the first collision time for any particle.
     var coll_list = []
     var col_time;
     var i, j;
+    var firstEvent;
+    var wc_time;
+    var wall;
+
     for (i = 0; i < particles.length; i++) {
+
+      var wall_collision = getWallCollisionTime(particles[i]);
+      firstEvent = new Event('w',wall_collision.t,i,null,wall_collision.wall);
+      //console.log("firstEvent = ", firstEvent)
+
 	     for (j = i+1; j < particles.length; j++) {
 	        if (i != j) {
 		          //console.log("getCollisionList: i = ",i, " j = ",j);
 		          col_time = getCollisionTime(particles[i],particles[j]);
               //console.log("col_time = ", col_time);
 	            if (isNaN(col_time) != true) {
-                var coll = [col_time, i, j];
-                coll_list.push(coll);
-              } else {
-		              //console.log("getCollisionList: skipping i = ",i, " j = ",j);
+                if (col_time < firstEvent.t) {
+                  firstEvent = new Event('p',col_time,i,j,null);
+                }
               }
-           }
-         }
-       }
-    coll_list.sort(function(a,b){return a[0] - b[0]});
+            }
+        }
+        coll_list.push(firstEvent);
+    }
+    coll_list.sort(function(a,b){return a.t - b.t});
     return coll_list
 }
 
@@ -164,7 +190,6 @@ function initParticles(n,r,xmax,ymax) {
 	     for (j = 0; j < Math.round(ymax/dx); j++) {
 	        if (n_init < n) {
     		      parts[n_init] = new Particle(dx*(i+0.5),dx*(j+0.5),xmax,ymax,r);
-	            console.log("intialised particle",n_init," with x, y = ", dx*(i+1),dx*(j+1));
 	            parts[n_init].show();
               n_init = n_init + 1;
     	    };
@@ -182,7 +207,6 @@ function initialSpacing(n, x, y) {
     var num2 = Math.pow(num2sqred, 0.5);
     var den = 2.0*(n-1);
     var dx = (num1 + num2) / den;
-    console.log("initialSpacing: dx = ", dx);
     return dx
 }
 
