@@ -86,11 +86,12 @@ function Particle(x,y, xmax, ymax, r) {
 	}
     }
 
-    this.impulse = function(J) {
+    this.apply_impulse = function(Jx,Jy) {
 
 	//compute the impulse on the particle due
 	//to a collision
-	var Jx = J;
+	this.vel.x = this.vel.x + (Jx/this.mass);
+	this.vel.y = this.vel.y + (Jy/this.mass);
     }
 
 }

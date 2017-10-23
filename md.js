@@ -14,8 +14,8 @@ function setup() {
     xmax = min(772+28,windowWidth-2*28);
     ymax = xmax*0.618;
     var canvas= createCanvas(xmax, ymax);
-    //part_to_init = Math.round(xmax*ymax/6000.0);
-    part_to_init = 6;
+    part_to_init = Math.round(xmax*ymax/6000.0);
+    //part_to_init = 60;
     console.log("xmax, ymax = ", xmax, ymax);
     console.log("part_to_init = ", part_to_init);
     particles = initParticles(part_to_init,r,xmax,ymax);
@@ -233,8 +233,32 @@ function performCollision(event) {
 	    console.log(event);
 	}
     } else {
-	// no functionality for now
+	var J = impulse(particles[event.p1_index],
+			particles[event.p2_index]);
+	particles[event.p1_index].apply_impulse(J.x,J.y);
+	particles[event.p2_index].apply_impulse(-J.x,-J.y);
     }
+}
+
+function impulse(Part1,Part2) {
+    // compute the impulse associated with a particle-particle
+    // collision
+    // https://introcs.cs.princeton.edu/java/assignments/collisions.html
+    //
+    // J = 2*m1*m2*(dv*dr)/(sigma*(m1+m2))
+    //
+    var dr = createVector(Part2.pos.x - Part1.pos.x,
+			  Part2.pos.y - Part1.pos.y);
+    var dv = createVector(Part2.vel.x - Part1.vel.x,
+			  Part2.vel.y - Part1.vel.y);
+    var sigma = Part1.radius + Part2.radius;
+    var hmm = 2*Part1.mass*Part2.mass/(Part1.mass + Part2.mass);
+    var J = p5.Vector.dot(dv,dr)*hmm/sigma;
+    return {
+	x: J*dr.x/sigma,
+	y: J*dr.y/sigma
+    };
+    
 }
 
 function advanceParticles(dt) {
