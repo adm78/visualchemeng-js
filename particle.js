@@ -61,6 +61,14 @@ function Particle(x,y, xmax, ymax, r) {
 	this.vel = p5.Vector.add(v_1, v_2);
     }
 
+    this.reflect_side = function() {
+	this.vel.x = - this.vel.x;
+    }
+
+    this.reflect_top = function() {
+	this.vel.y = - this.vel.y;
+    }    
+
     this.apply_boundary_cond = function() {
 
 	// simlate periodic boundary conditions

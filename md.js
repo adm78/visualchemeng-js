@@ -15,7 +15,7 @@ function setup() {
     ymax = xmax*0.618;
     var canvas= createCanvas(xmax, ymax);
     //part_to_init = Math.round(xmax*ymax/6000.0);
-    part_to_init = 60;
+    part_to_init = 6;
     console.log("xmax, ymax = ", xmax, ymax);
     console.log("part_to_init = ", part_to_init);
     particles = initParticles(part_to_init,r,xmax,ymax);
@@ -96,6 +96,7 @@ function doStep(dt) {
             var p2 = particles[firstEvent.p2_index];
             p2.highlight();
         }
+	performCollision(firstEvent);
         //console.log("particle(s) should be highlighted...")
         //paused_log = true //debug only
         time = time + dt_col
@@ -218,6 +219,22 @@ function getCollisionList(particles) {
     }
     coll_list.sort(function(a,b){return a.t - b.t});
     return coll_list
+}
+
+function performCollision(event) {
+    //appliy collision operator
+    if (event.wc_log) {
+	if (event.wall === 'r' || event.wall === 'l') {
+	    particles[event.p1_index].reflect_side();
+	} else if (event.wall === 'u' || event.wall === 'd') {
+	    particles[event.p1_index].reflect_top();	    
+	} else {
+	    console.log("Error: performCollision: invalid event");
+	    console.log(event);
+	}
+    } else {
+	// no functionality for now
+    }
 }
 
 function advanceParticles(dt) {
