@@ -1,6 +1,6 @@
 var particles = [];
 var part_to_init;
-var r = 2;
+var r = 5;
 var iters = 0;
 var max_iters = 1;
 var time = 0.0;
@@ -81,20 +81,20 @@ function doStep(dt) {
 
     // check for collisions in the current time
     if (dt < dt_col) {
-	     // no collision in the time step
-      advanceParticles(dt);
-     time = time + dt;
-     return 0
+	// no collision in the time step
+	advanceParticles(dt);
+	time = time + dt;
+	return 0
     }
     else  {
-	     // collision has occured between the step
-	      advanceParticles(dt_col);
+	// collision has occured between the step
+	advanceParticles(dt_col);
         var firstEvent = coll_list[0];
         var p1 = particles[firstEvent.p1_index];
-	      p1.highlight();
+	p1.highlight();
         if (!firstEvent.wc_log) {
-          var p2 = particles[firstEvent.p2_index];
-          p2.highlight();
+            var p2 = particles[firstEvent.p2_index];
+            p2.highlight();
         }
         //console.log("particle(s) should be highlighted...")
         //paused_log = true //debug only
@@ -104,12 +104,58 @@ function doStep(dt) {
 
 function getWallCollisionTime(Part) {
     // compute the first collision time with a wall.
-    // return the wall object with t and wall (r,l,u,d)
-        // no functionality for now.
-    // check each wall in series
+
+    //returns
+    var t    // first collision time
+    var wall // wall associated with first collision
+
+    //locals
+    var t_side // side wall collision time
+    var t_ud   // top or bottom wall collision time
+    var w_side // which side wall ('r' or 'l')
+    var w_ud   // top or bottom wall first? ('u' ,d') 
+
+    // side walls
+    if (Part.vel.x > 0) {
+	t_side = (xmax - Part.pos.x - Part.radius)/Part.vel.x;
+	w_side = 'r';
+    } else if (Part.vel.x < 0) {
+	t_side = (0 - Part.pos.x + Part.radius)/Part.vel.x;
+	w_side = 'l';
+    } else {
+	// particle not moving in x direction
+	t_side = NaN;
+	w_side = null; 
+    }
+
+    // top and bottom
+    if (Part.vel.y > 0) {
+	t_ud = (ymax - Part.pos.y - Part.radius)/Part.vel.y;
+	w_ud = 'd';
+    } else if (Part.vel.y < 0) {
+	t_ud = (0 - Part.pos.y + Part.radius)/Part.vel.y;
+	w_ud = 'u';
+    } else {
+	// particle not moving in y direction
+	t_ud = NaN;
+	w_ud = null;
+    }
+
+    if (t_side === NaN && t_ud === NaN) {
+	// part is stationary
+	t = NaN;
+	wall= null;
+    } else if (t_side <= t_ud) {
+	t = t_side;
+	wall = w_side;
+    } else {
+	t = t_ud;
+	wall = w_ud;
+    }
+    
     return {
-          t: 100000,
-          wall: 'r'
+        t: t,
+        wall: wall
     };
 }
 
@@ -129,8 +175,8 @@ function getCollisionTime(Part1, Part2) {
     var discrim = b*b - 4*a*c
 
     if ((discrim > 0) && (b < 0)) {
-	    var t1 = (-b - Math.sqrt(discrim))/(2*a)
-      return t1
+	var t1 = (-b - Math.sqrt(discrim))/(2*a)
+	return t1
     }
     return NaN
 }
@@ -149,23 +195,26 @@ function getCollisionList(particles) {
 
     for (i = 0; i < particles.length; i++) {
 
-      var wall_collision = getWallCollisionTime(particles[i]);
-      firstEvent = new Event('w',wall_collision.t,i,null,wall_collision.wall);
-      //console.log("firstEvent = ", firstEvent)
+	var wall_collision = getWallCollisionTime(particles[i]);
+	firstEvent = new Event('w',wall_collision.t,i,null,wall_collision.wall);
+	//console.log("firstEvent = ", firstEvent)
 
-	     for (j = i+1; j < particles.length; j++) {
-	        if (i != j) {
-		          //console.log("getCollisionList: i = ",i, " j = ",j);
-		          col_time = getCollisionTime(particles[i],particles[j]);
-              //console.log("col_time = ", col_time);
-	            if (isNaN(col_time) != true) {
-                if (col_time < firstEvent.t) {
-                  firstEvent = new Event('p',col_time,i,j,null);
-                }
-              }
+	for (j = i+1; j < particles.length; j++) {
+	    if (i != j) {
+		//console.log("getCollisionList: i = ",i, " j = ",j);
+		col_time = getCollisionTime(particles[i],particles[j]);
+		//console.log("col_time = ", col_time);
+	        if (isNaN(col_time) != true) {
+                    if (col_time < firstEvent.t) {
+			firstEvent = new Event('p',col_time,i,j,null);
+                    }
+		}
             }
         }
-        coll_list.push(firstEvent);
+	// add to the collision list is event is valid
+	if (firstEvent.t != NaN) {
+            coll_list.push(firstEvent);
+	}
     }
     coll_list.sort(function(a,b){return a.t - b.t});
     return coll_list
@@ -187,11 +236,11 @@ function initParticles(n,r,xmax,ymax) {
     var dx = initialSpacing(n, xmax, ymax);
     var n_init = 0 ;
     for (i = 0; i < Math.round(xmax/dx); i++) {
-	     for (j = 0; j < Math.round(ymax/dx); j++) {
-	        if (n_init < n) {
-    		      parts[n_init] = new Particle(dx*(i+0.5),dx*(j+0.5),xmax,ymax,r);
-	            parts[n_init].show();
-              n_init = n_init + 1;
+	for (j = 0; j < Math.round(ymax/dx); j++) {
+	    if (n_init < n) {
+    		parts[n_init] = new Particle(dx*(i+0.5),dx*(j+0.5),xmax,ymax,r);
+	        parts[n_init].show();
+		n_init = n_init + 1;
     	    };
         };
     };

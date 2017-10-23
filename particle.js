@@ -24,16 +24,17 @@ function Particle(x,y, xmax, ymax, r) {
     }
 
     this.show = function() {
-	stroke(46,138,222);
-	strokeWeight(8);
-	point(this.pos.x,this.pos.y);
+	fill(46,138,222);
+	noStroke();
+	//strokeWeight(8);
+	ellipse(this.pos.x,this.pos.y,2.0*this.radius);
 	//this.update(dt)
     }
 
     this.highlight = function() {
-	stroke(256,1,1);
-	strokeWeight(8);
-	point(this.pos.x,this.pos.y);
+	fill(256,1,1);
+	noStroke();
+	ellipse(this.pos.x,this.pos.y,2.0*this.radius);
     }
 
     this.update_acc = function(dt) {
