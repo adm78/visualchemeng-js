@@ -14,7 +14,7 @@ function setup() {
     xmax = min(772+28,windowWidth-2*28);
     ymax = xmax*0.618;
     var canvas= createCanvas(xmax, ymax);
-    part_to_init = Math.round(xmax*ymax/6000.0);
+    part_to_init = Math.round(xmax*ymax/5000.0);
     //part_to_init = 60;
     console.log("xmax, ymax = ", xmax, ymax);
     console.log("part_to_init = ", part_to_init);
@@ -114,7 +114,7 @@ function getWallCollisionTime(Part) {
     var t_side // side wall collision time
     var t_ud   // top or bottom wall collision time
     var w_side // which side wall ('r' or 'l')
-    var w_ud   // top or bottom wall first? ('u' ,d') 
+    var w_ud   // top or bottom wall first? ('u' ,d')
 
     // side walls
     if (Part.vel.x > 0) {
@@ -126,7 +126,7 @@ function getWallCollisionTime(Part) {
     } else {
 	// particle not moving in x direction
 	t_side = NaN;
-	w_side = null; 
+	w_side = null;
     }
 
     // top and bottom
@@ -153,7 +153,7 @@ function getWallCollisionTime(Part) {
 	t = t_ud;
 	wall = w_ud;
     }
-    
+
     return {
         t: t,
         wall: wall
@@ -227,7 +227,7 @@ function performCollision(event) {
 	if (event.wall === 'r' || event.wall === 'l') {
 	    particles[event.p1_index].reflect_side();
 	} else if (event.wall === 'u' || event.wall === 'd') {
-	    particles[event.p1_index].reflect_top();	    
+	    particles[event.p1_index].reflect_top();
 	} else {
 	    console.log("Error: performCollision: invalid event");
 	    console.log(event);
@@ -258,7 +258,7 @@ function impulse(Part1,Part2) {
 	x: J*dr.x/sigma,
 	y: J*dr.y/sigma
     };
-    
+
 }
 
 function advanceParticles(dt) {
