@@ -1,4 +1,4 @@
-y// VCE Project - Event class
+// VCE Project - Event class
 //
 // A simple collision event class that can store information about the
 // type, time and particles involved in a collision event.

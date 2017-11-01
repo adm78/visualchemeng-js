@@ -83,3 +83,53 @@ function sleep (time) {
   // time delay functionality  
   return new Promise((resolve) => setTimeout(resolve, time));
 }
+
+
+var isEqual = function (value, other) {
+
+    // Basic function to check if tqi arrays are equal.
+    // Credit Chris Ferdinandi
+    // https://gomakethings.com/check-if-two-arrays-or-objects-are-equal-with-javascript/
+
+    // Get the value type
+    var type = Object.prototype.toString.call(value);
+
+    // If the two objects are not the same type, return false
+    if (type !== Object.prototype.toString.call(other)) return false;
+
+    // If items are not an object or array, return false
+    if (['[object Array]', '[object Object]'].indexOf(type) < 0) return false;
+
+    // Compare the length of the length of the two items
+    var valueLen = type === '[object Array]' ? value.length : Object.keys(value).length;
+    var otherLen = type === '[object Array]' ? other.length : Object.keys(other).length;
+    if (valueLen !== otherLen) return false;
+
+    // Compare two items
+    var compare = function (item1, item2) {
+        if (item1 !== item2) return false;
+    };
+
+    // Compare properties
+    var match;
+    if (type === '[object Array]') {
+        for (var i = 0; i < valueLen; i++) {
+            compare(value[i], other[i]);
+        }
+    } else {
+        for (var key in value) {
+            if (value.hasOwnProperty(key)) {
+                compare(value[key], other[key]);
+            }
+        }
+    }
+
+    // If nothing failed, return true
+    return true;
+
+};
+
+
+Array.prototype.diff = function(a) {
+    return this.filter(function(i) {return a.indexOf(i) < 0;});
+};
