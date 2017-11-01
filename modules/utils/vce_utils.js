@@ -1,19 +1,17 @@
-//=================================================================
-// vce_utils.js
+// VCE Project - vce_utils.js
 //
 // This file serves as a library of useful functions for the
-// visualchemgeng project
+// visualchemeng project
 //
 // Andrew D. McGuire 2017
 // amcguire227@gmail.com
-//
-// ================================================================
+//----------------------------------------------------------
 
 
 function newtonsMethod(f,x0,args) {
 
-    // basic implmentation of newtons root finder method
-    //based on https://en.wikipedia.org/wiki/Newton%27s_method
+    // A basic implmentation of newtons root finder method
+    // based on https://en.wikipedia.org/wiki/Newton%27s_method
     //
     // args:
     // f - function in x, args to be evaluated (2 inputs)
@@ -57,7 +55,7 @@ function newtonsMethod(f,x0,args) {
 
 function derivative(f,x,args) {
 
-    // numerical derivative approximation of a function f
+    // Numerical derivative approximation of a function f
     // evaluated at x
     
     var h = 0.001;
@@ -67,7 +65,7 @@ function derivative(f,x,args) {
 
 function P_Antoine(T,coeffs) {
 
-    // return the pressue in mmHg based on Antoine coefficients where
+    // Return the pressue in mmHg based on Antoine coefficients where
     // T is in [K]
     // http://ddbonline.ddbst.com/AntoineCalculation/
     // AntoineCalculationCGI.exe?component=Ethanol
@@ -87,7 +85,7 @@ function sleep (time) {
 
 var isEqual = function (value, other) {
 
-    // Basic function to check if tqi arrays are equal.
+    // Check if two arrays are equal.
     // Credit Chris Ferdinandi
     // https://gomakethings.com/check-if-two-arrays-or-objects-are-equal-with-javascript/
 
@@ -129,7 +127,3 @@ var isEqual = function (value, other) {
 
 };
 
-
-Array.prototype.diff = function(a) {
-    return this.filter(function(i) {return a.indexOf(i) < 0;});
-};
