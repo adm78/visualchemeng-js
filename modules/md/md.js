@@ -279,7 +279,7 @@ function initParticles(n,r,xmax,ymax) {
     for (i = 0; i < Math.round(xmax/dx); i++) {
 	for (j = 0; j < Math.round(ymax/dx); j++) {
 	    if (n_init < n) {
-    		parts[n_init] = new Particle(dx*(i+0.5),dx*(j+0.5),xmax,ymax,r);
+    		parts[n_init] = new Particle(dx*(i+0.5),dx*(j+0.5),r);
 	        parts[n_init].show();
 		n_init = n_init + 1;
     	    };
@@ -301,7 +301,7 @@ function initialSpacing(n, x, y) {
 }
 
 function addParticle() {
-    var new_part = new Particle(mouseX,mouseY,xmax,ymax,r);
+    var new_part = new Particle(mouseX,mouseY,r);
     particles.push(new_part);
 }
 
