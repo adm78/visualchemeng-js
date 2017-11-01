@@ -3,6 +3,9 @@
 // A simple class to store particle information and apply
 // various transformations to simulate particle movement.
 //
+// Requires:
+// - p5.js or p5.min.js
+//
 // Andrew D. McGuire 2017
 // a.mcguire227@gmail.com
 //----------------------------------------------------------

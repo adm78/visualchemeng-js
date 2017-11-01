@@ -1,41 +1,64 @@
-var particles = [];
-var part_to_init;
-var r = 5;
-var iters = 0;
-var max_iters = 1;
-var time = 0.0;
-var clicked_log = false;
-var xmax;
-var ymax;
-var time = 0.0;
-var paused_log = true;
+// VCE Project - Molecular Dynamics script
+//
+// This script performs a simple, event-drive molecular dynamics
+// simulation on a p5.js canvas.
+//
+// Requires:
+// - p5.js or p5.min.js
+// - particle.js
+// - event.js
+//
+// Andrew D. McGuire 2017
+// a.mcguire227@gmail.com
+//----------------------------------------------------------
 
+// Set-up parameters
+var particles = [];    // particle array (to be filled with instances of the Particle class)
+var r = 5;             // particle radius to use
+var time = 0.0;        // global simulation time
+var xmax;              // canvas x-width
+var ymax;              // canvas y-width
+var paused_log = true; // paused indicator bool
+ 
 function setup() {
-    xmax = min(772+28,windowWidth-2*28);
+
+    /* This function is called upon entry to create the
+       simulation canvas which we draw onto and the particle array. 
+       Canvas size and particle number is dependent on the window 
+       size. */
+    
+    xmax = min(772+28,windowWidth-2*28); 
     ymax = xmax*0.618;
     var canvas= createCanvas(xmax, ymax);
-    part_to_init = Math.round(xmax*ymax/5000.0);
-    //part_to_init = 60;
-    console.log("xmax, ymax = ", xmax, ymax);
-    console.log("part_to_init = ", part_to_init);
+    var part_to_init = Math.round(xmax*ymax/5000.0);
     particles = initParticles(part_to_init,r,xmax,ymax);
-    console.log(particles);
 }
 
 function draw() {
+
+    /* This function drives the simulation forward in time. 
+       It's continuously called for the
+       lifetime of the scripts executions after setup()
+       has completed. */
+
+    // set the background-up
     background(51);
     stroke(255);
     strokeWeight(1);
+
+    // draw the particle to the canvas
     for (i = 0; i < particles.length; i++) {
 	     particles[i].show();
     }
+    
     // set up stroke for progress box
     noStroke();
     fill(0)
     rect(0.9*xmax,0.9*ymax,0.1*xmax,0.1*ymax)
     fill(255)
 
-    // step through time unless sim is paused
+    // Step through time unless sim is paused,
+    // reporting status in progress box.
     if (!(paused_log)) {
       text("Running",0.91*xmax,0.9*ymax,0.2*xmax,0.1*ymax);
       var dt_step = 1.0;
@@ -44,29 +67,31 @@ function draw() {
     else {
       text("Paused",0.91*xmax,0.9*ymax,0.2*xmax,0.1*ymax);
     }
-    // write the time to the screen
-    stroke(255);
-    strokeWeight(1);
-    text(time.toString(),0.91*xmax,0.95*ymax,20,20);
+    writeTime();
 }
 
-function delta_p(Part1, Part2) {
+function writeTime() {
 
-    // compute the collision momentum transfer
-    var hmm = 2*Part1.mass*Part2.mass/(Part1.mass + Part2.mass);
-    var v12 = p5.Vector.sub(Part1.vel,Part1.vel);
-    var r12 = p5.Vector.sub(Part1.pos,Part1.pos);
-    var sigma2 = Math.pow((Part1.radius + Part2.radius), 2);
-    var v12r12 = p5.Vector.dot(v12,r12);
-    var pf = hmm*v12r12/sigma2;
-    var delta_p = p5.Vector.mult(r12,pf);
-
-    return delta_p
+    // Write the current simulation time to the process box
+    stroke(255);
+    strokeWeight(1);
+    fill(255)
+    text(time.toFixed(0),0.91*xmax,0.95*ymax,20,20);
 }
 
 function doStep(dt) {
 
-    // this routine advances the system over the time interval dt
+    /* Advances the particle ensemble over the
+       time interval dt, or to the next collision time,
+       whichever comes first.
+       If a collision is detected within (time,time+dt)
+       then it's carried out and the sim time is updated.
+       
+       args:
+       dt - time to try and advance simulation by
+    */
+
+    // Compute the time to the next collision
     var dt_col;
     coll_list = getCollisionList(particles);
     if (coll_list.length < 1) {
@@ -75,42 +100,52 @@ function doStep(dt) {
       dt_col = (coll_list[0]).t;
     }
 
-    // debug
-    //console.log(coll_list);
-    //console.log("dt_col = ", dt_col);
-
-    // check for collisions in the current time
+    // Check for collisions in the current time
     if (dt < dt_col) {
-	// no collision in the time step
+	// No collision in the time step
 	advanceParticles(dt);
 	time = time + dt;
 	return 0
     }
     else  {
-	// collision has occured between the step
+	// Collision has occured between the step
+	// so, carry it out. Highlighting the particles
+	// involved. 
 	advanceParticles(dt_col);
         var firstEvent = coll_list[0];
-        var p1 = particles[firstEvent.p1_index];
-	p1.highlight();
-        if (!firstEvent.wc_log) {
-            var p2 = particles[firstEvent.p2_index];
-            p2.highlight();
-        }
+	highlightEventParticles(firstEvent)
 	performCollision(firstEvent);
-        //console.log("particle(s) should be highlighted...")
-        //paused_log = true //debug only
         time = time + dt_col
     }
 }
 
-function getWallCollisionTime(Part) {
-    // compute the first collision time with a wall.
+function highlightEventParticles(CurrentEvent) {
 
-    //returns
+    /* Highlight the particle(s) involved in
+       an event 
+
+       args:
+       CurrentEvent - a valid Event object
+    */
+
+    var p1 = particles[CurrentEvent.p1_index];
+    p1.highlight();
+    if (CurrentEvent.p2_index) {
+        var p2 = particles[CurrentEvent.p2_index];
+        p2.highlight();
+    }    
+}
+
+function getWallCollisionTime(Part) {
+    
+    /* Compute the first collision time with between
+       particle Part and any wall */
+
+    // returns object with attributes
     var t    // first collision time
     var wall // wall associated with first collision
 
-    //locals
+    // locals vars
     var t_side // side wall collision time
     var t_ud   // top or bottom wall collision time
     var w_side // which side wall ('r' or 'l')
@@ -163,9 +198,11 @@ function getWallCollisionTime(Part) {
 
 function getCollisionTime(Part1, Part2) {
 
-    //compute the time to pass for a collsion to take place
-    //currenrtly does not respect periodic boundary conditions!!!
-    //console.log("Considering collision between:", Part1, Part2);
+    /* Compute the time until collision 
+       between particle Part1 and Part2.
+
+       return time as NaN if no collision 
+       time solution found */
 
     var deltaVel = p5.Vector.sub(Part1.vel,Part2.vel)
     var deltaPos = p5.Vector.sub(Part1.pos,Part2.pos)
@@ -185,26 +222,35 @@ function getCollisionTime(Part1, Part2) {
 
 function getCollisionList(particles) {
 
-    // compute a sorted list of collision times.
-    // we only want to hold the first collision time for any particle.
+    /* Returns an array of collision Event objects,
+       ordered by their time attribute 
+       (smallest to largest, NaNs at the end)
+
+       args:
+       particles - an array of Particle objects */
+    
+    // return
     var coll_list = []
+
+    // local vars
     var col_time;
     var i, j;
     var firstEvent;
     var wc_time;
     var wall;
 
+    // loop through the particle array
     for (i = 0; i < particles.length; i++) {
 
 	var wall_collision = getWallCollisionTime(particles[i]);
 	firstEvent = new Event('w',wall_collision.t,i,null,wall_collision.wall);
-	//console.log("firstEvent = ", firstEvent)
 
 	for (j = i+1; j < particles.length; j++) {
 	    if (i != j) {
-		//console.log("getCollisionList: i = ",i, " j = ",j);
 		col_time = getCollisionTime(particles[i],particles[j]);
-		//console.log("col_time = ", col_time);
+
+		// Replace firstEvent if coll time is smaller than current
+		// firstEvent.time
 	        if (isNaN(col_time) != true) {
                     if (col_time < firstEvent.t) {
 			firstEvent = new Event('p',col_time,i,j,null);
@@ -212,18 +258,26 @@ function getCollisionList(particles) {
 		}
             }
         }
-	// add to the collision list is event is valid
+	// Add to the collision list if event is valid
 	if (firstEvent.t != NaN) {
             coll_list.push(firstEvent);
 	}
     }
+    // Sort the Event array and return it
     coll_list.sort(function(a,b){return a.t - b.t});
     return coll_list
 }
 
 function performCollision(event) {
-    //appliy collision operator
+    
+    /* Apply collision operator according according to event
+       
+       args:
+       event - a valid Event object
+    */
+
     if (event.wc_log) {
+	// Perform wall collision
 	if (event.wall === 'r' || event.wall === 'l') {
 	    particles[event.p1_index].reflect_side();
 	} else if (event.wall === 'u' || event.wall === 'd') {
@@ -233,6 +287,7 @@ function performCollision(event) {
 	    console.log(event);
 	}
     } else {
+	// Perform binary particle collision
 	var J = impulse(particles[event.p1_index],
 			particles[event.p2_index]);
 	particles[event.p1_index].apply_impulse(J.x,J.y);
@@ -241,12 +296,17 @@ function performCollision(event) {
 }
 
 function impulse(Part1,Part2) {
-    // compute the impulse associated with a particle-particle
-    // collision
-    // https://introcs.cs.princeton.edu/java/assignments/collisions.html
-    //
-    // J = 2*m1*m2*(dv*dr)/(sigma*(m1+m2))
-    //
+    
+    /* Compute the impulse associated with a particle-particle
+       collision
+       https://introcs.cs.princeton.edu/java/assignments/collisions.html
+
+       J = 2*m1*m2*(dv*dr)/(sigma*(m1+m2))
+    
+       args:
+       Part1 - valid Particle object
+       Part2 - valid Particle object
+    */
     var dr = createVector(Part2.pos.x - Part1.pos.x,
 			  Part2.pos.y - Part1.pos.y);
     var dv = createVector(Part2.vel.x - Part1.vel.x,
@@ -262,17 +322,26 @@ function impulse(Part1,Part2) {
 }
 
 function advanceParticles(dt) {
-    // advance the ensemble forward in time
-    // in a straight line trajectory (no collisions)
+
+    /* Advance the ensemble forward in time by dt
+       in a straight line trajectory (no collisions) */
+    
     for (i = 0; i < particles.length; i++) {
       particles[i].update(dt);
     }
 }
 
 
-function initParticles(n,r,xmax,ymax) {
-    // intialise n particles with radius r
-    // such that there are no overlapping particles
+function initParticles(n,r,xmax, ymax) {
+    
+    /* Intialise n particles with radius r in box with
+       dimensions (xmax,ymax)
+       such that there are no overlapping particles 
+
+       return:
+       particle - an array of Particle objects
+    */
+       
     var parts = [];
     var dx = initialSpacing(n, xmax, ymax);
     var n_init = 0 ;
@@ -289,9 +358,11 @@ function initParticles(n,r,xmax,ymax) {
 }
 
 function initialSpacing(n, x, y) {
-    // computes the intialise spacing
-    // between particles to put n particles
-    // on a uniform grid with limits x, y
+    
+    /* Returns the intialise spacing
+       between particles to put n particles
+       on a uniform grid with limits x, y */
+    
     var num1 = -(x+y);
     var num2sqred = Math.pow(x+y,2.0) + 4.0*x*y*(n-1);
     var num2 = Math.pow(num2sqred, 0.5);
@@ -301,10 +372,15 @@ function initialSpacing(n, x, y) {
 }
 
 function addParticle() {
+
+    // Add a new Particle object to the particles array
     var new_part = new Particle(mouseX,mouseY,r);
     particles.push(new_part);
 }
 
 function mousePressed() {
+
+    // Act on left mouse press
     paused_log = !(paused_log);
-  }
+}
+
