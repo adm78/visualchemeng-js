@@ -24,7 +24,7 @@ var NB = 0;
 var NC = 0;
 var time = 0.0;
 
-// final conditions
+// limits
 var tmax = 1000.0;
 var smax = 100000;
 
@@ -41,11 +41,15 @@ var ss_Solution = new Solution(NA,NB,NC,time)
 var rate_consts = {k1:10.0,kb1:5.0,k2:10.0,kb2:5.0};
 
 
-function jumpLoop(solution,rate_consts,tmax,smax,storage) {
+function simulate(solution,rate_consts,tmax,smax,storage) {
 
     // Simulate using kmc to tmax with intial conditions
-    // given by 'solution'. Not exceeding smax steps.
-    // storage is a validate Storage object to collect data. 
+    // given by Solution object 'solution', not exceeding smax steps.
+    // 'storage' is a validate Storage object to be populated
+    // with data.
+    //
+    // Returns the solution object in its final state and the
+    // updated storage object.
     
     var steps = 0;
     while (solution.time < tmax && steps < smax) {
@@ -81,10 +85,7 @@ function getRates(s,rc) {
 function getCumulativeRates(rl) {
 
     // Return the cumulative rates list
-    
-    for (i = 1; i < rl.length; i++) {
-	rl[i] += rl[i-1];
-    }
+    for (i = 1; i < rl.length; i++) {rl[i] += rl[i-1]};
     return rl
 }
 
@@ -118,7 +119,8 @@ function doJump(s,q,cr,dt) {
     return s
 }
 
-result = jumpLoop(kmc_Solution,rate_consts,tmax,smax,kmc_Storage)
+// run the simulation
+result = simulate(kmc_Solution,rate_consts,tmax,smax,kmc_Storage)
 kmc_Solution = result.solution;
 kmc_Storage = result.storage;
 console.log("Time evolution completed!")
@@ -157,7 +159,23 @@ var trace3 = {
 var data = [trace1,trace2,trace3];
 
 var layout = {
-  title: 'Concentration evolution',
+    title: 'KMC test',
+    xaxis: {
+	title: 'time',
+	titlefont: {
+	    family: 'Courier New, monospace',
+	    size: 18,
+	    color: '#7f7f7f'
+	}
+    },
+    yaxis: {
+	title: 'concentration',
+	titlefont: {
+	    family: 'Courier New, monospace',
+	    size: 18,
+	    color: '#7f7f7f'
+	}
+    }
 };
 
 Plotly.newPlot('myDiv', data, layout);

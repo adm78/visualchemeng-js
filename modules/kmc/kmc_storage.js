@@ -1,4 +1,4 @@
-// VCE Project - kmc_storage.js Kinetic Monte Carlo (KMC)
+// VCE Project - Kinetic Monte Carlo (KMC) - kmc_storage.js
 //
 // This file contains the data storage class used within the
 // kmc modules. 
@@ -37,6 +37,7 @@ function Storage(solution) {
 	this.NA = []; 
 	this.NB = [];
 	this.NC = [];
+	this.Ntot = [];
 	this.time = [];	
     }
 
