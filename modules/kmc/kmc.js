@@ -25,8 +25,8 @@ var NC = 0;
 var time = 0.0;
 
 // limits
-var tmax = 1000.0;
-var smax = 100000;
+var tmax = 100.0;
+var smax = 1000;
 
 // storage/solution intialisation
 var kmc_Solution = new Solution(NA,NB,NC,time);
@@ -128,6 +128,15 @@ console.log("Time evolution completed!")
 // --------------------------------------------------
 //             visualisation functionality
 // --------------------------------------------------
+function unpack_data(storage) {
+    // unpacks storage data to extend plotly graph
+    return{
+	x: [storage.time, storage.time, storage.time],
+	y: [storage.NA, storage.NB, storage.NC],
+    };
+}
+
+
 var trace1 = {
   type: "scatter",
   mode: "lines",
@@ -157,6 +166,7 @@ var trace3 = {
 
 
 var data = [trace1,trace2,trace3];
+//var data = [trace1];
 
 var layout = {
     title: 'KMC test',
@@ -178,5 +188,19 @@ var layout = {
     }
 };
 
+$('.hideshow button').click(function(){
+    console.log("You just clicked run!");
+
+    // clear the storage and extend the plot
+    kmc_Storage.clear();
+    result = simulate(kmc_Solution,rate_consts,tmax,smax,kmc_Storage)
+    kmc_Solution = result.solution;
+    kmc_Storage = result.storage;
+    new_data = unpack_data(kmc_Storage);
+    console.log("Next evolution completed!")
+    Plotly.extendTraces('myDiv', new_data, [0, 1, 2]);
+});
+
+// intialise the plot
 Plotly.newPlot('myDiv', data, layout);
     

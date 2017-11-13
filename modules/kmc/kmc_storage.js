@@ -31,7 +31,7 @@ function Storage(solution) {
 
     }
 
-    function clear() {
+    this.clear = function() {
 
 	// purge the container
 	this.NA = []; 
