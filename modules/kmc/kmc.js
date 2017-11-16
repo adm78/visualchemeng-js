@@ -119,15 +119,13 @@ function doJump(s,q,cr,dt) {
     return s
 }
 
-// run the simulation
-// result = simulate(kmc_Solution,rate_consts,tmax,smax,kmc_Storage)
-// kmc_Solution = result.solution;
-// kmc_Storage = result.storage;
-// console.log("Time evolution completed!")
 
 // --------------------------------------------------
 //             visualisation functionality
 // --------------------------------------------------
+var paused_log = false;
+var first_run = true;
+
 function unpack_data(storage) {
     // unpacks storage data to extend plotly graph
     return{
@@ -145,7 +143,8 @@ function get_traces(storage) {
 	name: 'NA kmc',
 	x: storage.time,
 	y: storage.NA,
-	line: {color: '#17BECF'}
+	line: {color: '#17BECF'},
+	maxdisplayed: 100
     }
     
     var trace2 = {
@@ -154,7 +153,7 @@ function get_traces(storage) {
 	name: 'NB kmc',
 	x: storage.time,
 	y: storage.NB,
-	line: {color: '#7F7F7F'}
+	line: {color: '#7F7F7F'},
     }
     
     var trace3 = {
@@ -163,7 +162,7 @@ function get_traces(storage) {
 	name: 'NC kmc',
 	x: storage.time,
 	y: storage.NC,
-	line: {color: '#EE9A00'}
+	line: {color: '#EE9A00'},
     }
 
     return [trace1,trace2,trace3]
@@ -190,17 +189,36 @@ var layout = {
 };
 
 // define the run button  functionality
-$('#run').click(function(){    
+$('#run').click(async function(){    
     console.log("You just clicked run!");
-
-    // clear the storage and extend the plot
-    kmc_Storage.clear();
-    result = simulate(kmc_Solution,rate_consts,tmax,smax,kmc_Storage)
-    kmc_Solution = result.solution;
-    kmc_Storage = result.storage;
-    new_data = unpack_data(kmc_Storage);
-    console.log("Next evolution completed!")
-    Plotly.extendTraces('myDiv', new_data, [0, 1, 2]);
+    var cnt = 0;
+    var max = 10000;
+    if (first_run) {
+	first_run = false;
+    }
+    else {
+	paused_log = !(paused_log);
+    }
+    if (paused_log) {
+	$("#run").text('Run');	
+    }
+    else {
+	$("#run").text('Pause');
+    }
+	
+    while (!(paused_log)) {
+	cnt = cnt + 1;
+	tmax = 0.01;
+	smax = 1000;
+	kmc_Storage.clear();
+	result = simulate(kmc_Solution,rate_consts,cnt*tmax,smax,kmc_Storage)
+	kmc_Solution = result.solution;
+	kmc_Storage = result.storage;
+	new_data = unpack_data(kmc_Storage);
+	console.log("Next evolution completed!");
+	Plotly.extendTraces('myDiv', new_data, [0, 1, 2],max);
+	await sleep(10);
+    }
 });
 
 // define the restart button functionality
@@ -211,8 +229,9 @@ $('#restart').click(function(){
     var initial_data = get_traces(kmc_Storage);
     Plotly.newPlot('myDiv', initial_data, layout);
     console.log("Restart completed!")
+    paused_log = true;
+    $("#run").text('Run');	
 });
-
 
 // intialise the plot
 Plotly.newPlot('myDiv', get_traces(kmc_Storage), layout);

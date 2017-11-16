@@ -78,7 +78,9 @@ function P_Antoine(T,coeffs) {
 }
 
 function sleep (time) {
-  // time delay functionality  
+    // time delay functionality
+    // use as await sleep(sleep_time);
+    // must be called within an async function
   return new Promise((resolve) => setTimeout(resolve, time));
 }
 
