@@ -120,10 +120,10 @@ function doJump(s,q,cr,dt) {
 }
 
 // run the simulation
-result = simulate(kmc_Solution,rate_consts,tmax,smax,kmc_Storage)
-kmc_Solution = result.solution;
-kmc_Storage = result.storage;
-console.log("Time evolution completed!")
+// result = simulate(kmc_Solution,rate_consts,tmax,smax,kmc_Storage)
+// kmc_Solution = result.solution;
+// kmc_Storage = result.storage;
+// console.log("Time evolution completed!")
 
 // --------------------------------------------------
 //             visualisation functionality
@@ -136,37 +136,38 @@ function unpack_data(storage) {
     };
 }
 
+function get_traces(storage) {
+    // generates an array of plotly trace objects
+    // from a kmc storage object
+    var trace1 = {
+	type: "scatter",
+	mode: "lines",
+	name: 'NA kmc',
+	x: storage.time,
+	y: storage.NA,
+	line: {color: '#17BECF'}
+    }
+    
+    var trace2 = {
+	type: "scatter",
+	mode: "lines",
+	name: 'NB kmc',
+	x: storage.time,
+	y: storage.NB,
+	line: {color: '#7F7F7F'}
+    }
+    
+    var trace3 = {
+	type: "scatter",
+	mode: "lines",
+	name: 'NC kmc',
+	x: storage.time,
+	y: storage.NC,
+	line: {color: '#EE9A00'}
+    }
 
-var trace1 = {
-  type: "scatter",
-  mode: "lines",
-  name: 'NA kmc',
-  x: kmc_Storage.time,
-  y: kmc_Storage.NA,
-  line: {color: '#17BECF'}
+    return [trace1,trace2,trace3]
 }
-
-var trace2 = {
-  type: "scatter",
-  mode: "lines",
-  name: 'NB kmc',
-  x: kmc_Storage.time,
-  y: kmc_Storage.NB,
-  line: {color: '#7F7F7F'}
-}
-
-var trace3 = {
-  type: "scatter",
-  mode: "lines",
-  name: 'NC kmc',
-  x: kmc_Storage.time,
-  y: kmc_Storage.NC,
-  line: {color: '#EE9A00'}
-}
-
-
-var data = [trace1,trace2,trace3];
-//var data = [trace1];
 
 var layout = {
     title: 'KMC test',
@@ -188,7 +189,8 @@ var layout = {
     }
 };
 
-$('.hideshow button').click(function(){
+// define the run button  functionality
+$('#run').click(function(){    
     console.log("You just clicked run!");
 
     // clear the storage and extend the plot
@@ -201,6 +203,17 @@ $('.hideshow button').click(function(){
     Plotly.extendTraces('myDiv', new_data, [0, 1, 2]);
 });
 
+// define the restart button functionality
+$('#restart').click(function(){    
+    console.log("You just clicked restart!");
+    kmc_Solution = new Solution(NA,NB,NC,time);
+    kmc_Storage = new Storage(kmc_Solution);
+    var initial_data = get_traces(kmc_Storage);
+    Plotly.newPlot('myDiv', initial_data, layout);
+    console.log("Restart completed!")
+});
+
+
 // intialise the plot
-Plotly.newPlot('myDiv', data, layout);
+Plotly.newPlot('myDiv', get_traces(kmc_Storage), layout);
     
