@@ -276,6 +276,7 @@ $('#run').click(async function(){
     console.log("You just clicked run/pause!");
     var cnt = 0;
     var max = 10000;
+    var exact_start_time;
     if (first_run) {
 	first_run = false;
     }
@@ -294,16 +295,18 @@ $('#run').click(async function(){
 	cnt = cnt + 1;
 	tmax = 0.01;
 	smax = 1000;
+	exact_start_time = kmc_Storage.time[0]
 	kmc_Storage.clear();
 	exact_Storage.clear();
 	result = simulate(kmc_Solution,rate_consts,cnt*tmax,smax,kmc_Storage)
-	//console.log(kmc_Storage);
-	exact_result = exactSolution(exact_Solution,rate_consts,exact_Storage,
-				     kmc_Storage.time[999],smax,kmc_Storage.time[0])
-	
-	//console.log(exact_Storage);
 	kmc_Solution = result.solution;
 	kmc_Storage = result.storage;
+	//console.log(kmc_Storage);
+	exact_result = exactSolution(exact_Solution,rate_consts,exact_Storage,
+				     kmc_Storage.time[kmc_Storage.time.length-1],
+				     smax*0.95,exact_start_time)
+	
+	//console.log(exact_Storage);
 	exact_Solution = exact_result.Solution;
 	exact_Storage = exact_result.Storage;
 	var new_data = unpack_data(kmc_Storage, exact_Storage);
