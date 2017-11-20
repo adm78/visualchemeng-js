@@ -31,9 +31,9 @@ var smax = 1000;
 
 // storage/solution intialisation
 var kmc_Solution = new Solution(NA,NB,NC,time);
-var exact_Solution = new exact_Solution(NA,NB,NC,time);
+var exact_Solution = new Solution(NA,NB,NC,time);
 var kmc_Storage = new Storage(kmc_Solution);
-var exact_Storage = new exact_Storage(exact_Solution);
+var exact_Storage = new Storage(exact_Solution);
 var ss_Solution = new Solution(NA,NB,NC,time)
 
 //console.log(exact_Storage)
@@ -98,35 +98,36 @@ function getCumulativeRates(rl) {
 
 function exactSolution(exact_Solution,rc,exact_Storage,max_time,smax,min_time) {
 
-    // Return the exact solution at time t as defined by Vriens1954: DOI: 10.1021/ie50532a024
+    // Return the exact solution at time t as defined by Vriens1954:
+    // DOI: 10.1021/ie50532a024
 	
-	var alpha = rc.k2/rc.k1;
-	var K1 = rc.k1/rc.kb1;
-	var K2 = rc.k2/rc.kb2;
-	
-	var E1 = 1.0 + 1.0/K1 + alpha + alpha/K2;
-	var E2 = alpha*(1.0+1.0/(K1*K2)+1.0/K2);
-	var D1 = (-E1+Math.sqrt(Math.pow(E1,2)-4*E2))/2.0;
-	var D2 = (-E1-Math.sqrt(Math.pow(E1,2)-4*E2))/2.0;
-	
-	var C1 = (-1-D2 + alpha/(K1*K2*D1))/(D1-D2);
-	var C2 = (1+D1-alpha/(K1*K2*D2))/(D1-D2);
-	var C3 = (alpha/D1)/(D1-D2);
-	var C4 = (-alpha/D2)/(D1-D2);
-	
-	//console.log(Storage.time[999])
-	var steps = 1;
-	var time_step = (max_time-min_time)/smax;
-	var iter_time = min_time;
-	
-	//console.log(max_time)
-	while (steps < smax+1) {
+    var alpha = rc.k2/rc.k1;
+    var K1 = rc.k1/rc.kb1;
+    var K2 = rc.k2/rc.kb2;
+    
+    var E1 = 1.0 + 1.0/K1 + alpha + alpha/K2;
+    var E2 = alpha*(1.0+1.0/(K1*K2)+1.0/K2);
+    var D1 = (-E1+Math.sqrt(Math.pow(E1,2)-4*E2))/2.0;
+    var D2 = (-E1-Math.sqrt(Math.pow(E1,2)-4*E2))/2.0;
+    
+    var C1 = (-1-D2 + alpha/(K1*K2*D1))/(D1-D2);
+    var C2 = (1+D1-alpha/(K1*K2*D2))/(D1-D2);
+    var C3 = (alpha/D1)/(D1-D2);
+    var C4 = (-alpha/D2)/(D1-D2);
+    
+    //console.log(Storage.time[999])
+    var steps = 1;
+    var time_step = (max_time-min_time)/smax;
+    var iter_time = min_time;
+    
+    //console.log(max_time)
+    while (steps < smax+1) {
 	exact_Solution.time = iter_time;
 	var Theta = rc.k1*iter_time;
 	exact_Solution.NA = Ntot*(C1*Math.exp(D1*Theta)+C2*Math.exp(D2*Theta)+alpha/(K1*K2*E2));
 	exact_Solution.NC = Ntot*(C3*Math.exp(D1*Theta)+C4*Math.exp(D2*Theta)+alpha/(E2));
 	exact_Solution.NB = Ntot-exact_Solution.NA-exact_Solution.NC;
-	exact_Storage.exact_update(exact_Solution); 
+	exact_Storage.update(exact_Solution); 
 	steps +=1;
 	iter_time += time_step;
 	}
@@ -135,7 +136,7 @@ function exactSolution(exact_Solution,rc,exact_Storage,max_time,smax,min_time) {
 	//console.log(Theta);
 	//console.log(exact_Storage);
 	
-	return {exact_Solution: exact_Solution,
+    return {exact_Solution: exact_Solution,
 	    exact_Storage: exact_Storage};
 }
 
@@ -314,11 +315,11 @@ $('#restart').click(function(){
     console.log("You just clicked restart!");
     kmc_Solution = new Solution(NA,NB,NC,time);
     kmc_Storage = new Storage(kmc_Solution);
-	exact_Solution = new exact_Solution(NA,NB,NC,time);
-    exact_Storage = new exactStorage(exact_Solution);
-	var initial_data = get_traces(kmc_Storage, exact_Storage);
-	Plotly.newPlot('myDiv', initial_data, layout);
-	console.log("Restart completed!")
+    exact_Solution = new Solution(NA,NB,NC,time);
+    exact_Storage = new Storage(exact_Solution);
+    var initial_data = get_traces(kmc_Storage, exact_Storage);
+    Plotly.newPlot('myDiv', initial_data, layout);
+    console.log("Restart completed!")
     paused_log = true;
     $("#run").text('Run');	
 });
