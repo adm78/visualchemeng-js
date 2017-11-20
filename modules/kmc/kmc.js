@@ -136,8 +136,8 @@ function exactSolution(exact_Solution,rc,exact_Storage,max_time,smax,min_time) {
 	//console.log(Theta);
 	//console.log(exact_Storage);
 	
-    return {exact_Solution: exact_Solution,
-	    exact_Storage: exact_Storage};
+    return {Solution: exact_Solution,
+	    Storage: exact_Storage};
 }
 
 function doJump(s,q,cr,dt) {
@@ -177,11 +177,13 @@ function doJump(s,q,cr,dt) {
 var paused_log = false;
 var first_run = true;
 
-function unpack_data(storage,storage2) {
+function unpack_data(storage, storage2) {
     // unpacks storage data to extend plotly graph
     return{
-	x: [storage.time, storage.time, storage.time, storage2.time, storage2.time, storage2.time],
-	y: [storage.NA, storage.NB, storage.NC,storage2.NA,storage2.NB,storage2.NC]
+	x: [storage.time, storage.time, storage.time,
+	    storage2.time, storage2.time, storage2.time],
+	y: [storage.NA, storage.NB, storage.NC,
+	    storage2.NA, storage2.NB, storage2.NC]
     };
 }
 
@@ -271,7 +273,7 @@ var layout = {
 
 // define the run button  functionality
 $('#run').click(async function(){    
-    console.log("You just clicked run!");
+    console.log("You just clicked run/pause!");
     var cnt = 0;
     var max = 10000;
     if (first_run) {
@@ -288,27 +290,28 @@ $('#run').click(async function(){
     }
 	
     while (!(paused_log)) {
-	console.log("New cycle!");
+	//console.log("New cycle!");
 	cnt = cnt + 1;
 	tmax = 0.01;
 	smax = 1000;
 	kmc_Storage.clear();
 	exact_Storage.clear();
 	result = simulate(kmc_Solution,rate_consts,cnt*tmax,smax,kmc_Storage)
-	console.log(kmc_Storage);
-	exact_result = exactSolution(exact_Solution,rate_consts,exact_Storage,kmc_Storage.time[999],smax,kmc_Storage.time[0])
+	//console.log(kmc_Storage);
+	exact_result = exactSolution(exact_Solution,rate_consts,exact_Storage,
+				     kmc_Storage.time[999],smax,kmc_Storage.time[0])
 	
-	console.log(exact_Storage);
+	//console.log(exact_Storage);
 	kmc_Solution = result.solution;
 	kmc_Storage = result.storage;
-	exact_Solution = exact_result.exact_Solution;
-	exact_Storage = exact_result.exact_Storage;
-	new_data = unpack_data(kmc_Storage,exact_Storage);
+	exact_Solution = exact_result.Solution;
+	exact_Storage = exact_result.Storage;
+	var new_data = unpack_data(kmc_Storage, exact_Storage);
 	//console.log(new_data);
-	console.log("Next evolution completed!");
-	Plotly.extendTraces('myDiv', new_data, [0, 1, 2, 3, 4, 5],max);
-	
-	await sleep(10);
+	//console.log("Next evolution completed!");
+	Plotly.extendTraces('myDiv', new_data, [0, 1, 2, 3 ,4, 5], max);
+	//Plotly.redraw('myDiv');
+	await sleep(1);
     }
 });
 
