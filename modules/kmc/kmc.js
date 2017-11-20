@@ -23,6 +23,7 @@ var NA = 10000;
 var NB = 0;
 var NC = 0;
 var time = 0.0;
+var Ntot = NA+NB+NC;
 
 // limits
 var tmax = 100.0;
@@ -30,8 +31,13 @@ var smax = 1000;
 
 // storage/solution intialisation
 var kmc_Solution = new Solution(NA,NB,NC,time);
+var exact_Solution = new exact_Solution(NA,NB,NC,time);
 var kmc_Storage = new Storage(kmc_Solution);
+var exact_Storage = new exact_Storage(exact_Solution);
 var ss_Solution = new Solution(NA,NB,NC,time)
+
+//console.log(exact_Storage)
+//console.log(kmc_Storage)
 
 // rate constants
 // A --> B, r1 = k1*NA
@@ -39,6 +45,7 @@ var ss_Solution = new Solution(NA,NB,NC,time)
 // B --> C, r2 = k2*NB
 // C --> B, rb2 = kb2*NC
 var rate_consts = {k1:10.0,kb1:5.0,k2:10.0,kb2:5.0};
+
 
 
 function simulate(solution,rate_consts,tmax,smax,storage) {
@@ -89,6 +96,49 @@ function getCumulativeRates(rl) {
     return rl
 }
 
+function exactSolution(exact_Solution,rc,exact_Storage,max_time,smax,min_time) {
+
+    // Return the exact solution at time t as defined by Vriens1954: DOI: 10.1021/ie50532a024
+	
+	var alpha = rc.k2/rc.k1;
+	var K1 = rc.k1/rc.kb1;
+	var K2 = rc.k2/rc.kb2;
+	
+	var E1 = 1.0 + 1.0/K1 + alpha + alpha/K2;
+	var E2 = alpha*(1.0+1.0/(K1*K2)+1.0/K2);
+	var D1 = (-E1+Math.sqrt(Math.pow(E1,2)-4*E2))/2.0;
+	var D2 = (-E1-Math.sqrt(Math.pow(E1,2)-4*E2))/2.0;
+	
+	var C1 = (-1-D2 + alpha/(K1*K2*D1))/(D1-D2);
+	var C2 = (1+D1-alpha/(K1*K2*D2))/(D1-D2);
+	var C3 = (alpha/D1)/(D1-D2);
+	var C4 = (-alpha/D2)/(D1-D2);
+	
+	//console.log(Storage.time[999])
+	var steps = 1;
+	var time_step = (max_time-min_time)/smax;
+	var iter_time = min_time;
+	
+	//console.log(max_time)
+	while (steps < smax+1) {
+	exact_Solution.time = iter_time;
+	var Theta = rc.k1*iter_time;
+	exact_Solution.NA = Ntot*(C1*Math.exp(D1*Theta)+C2*Math.exp(D2*Theta)+alpha/(K1*K2*E2));
+	exact_Solution.NC = Ntot*(C3*Math.exp(D1*Theta)+C4*Math.exp(D2*Theta)+alpha/(E2));
+	exact_Solution.NB = Ntot-exact_Solution.NA-exact_Solution.NC;
+	exact_Storage.exact_update(exact_Solution); 
+	steps +=1;
+	iter_time += time_step;
+	}
+	//console.log(rc.k1)
+	//console.log(exact_Solution)
+	//console.log(Theta);
+	//console.log(exact_Storage);
+	
+	return {exact_Solution: exact_Solution,
+	    exact_Storage: exact_Storage};
+}
+
 function doJump(s,q,cr,dt) {
     
     // Perform one of the jump processes on solution
@@ -126,15 +176,15 @@ function doJump(s,q,cr,dt) {
 var paused_log = false;
 var first_run = true;
 
-function unpack_data(storage) {
+function unpack_data(storage,storage2) {
     // unpacks storage data to extend plotly graph
     return{
-	x: [storage.time, storage.time, storage.time],
-	y: [storage.NA, storage.NB, storage.NC],
+	x: [storage.time, storage.time, storage.time, storage2.time, storage2.time, storage2.time],
+	y: [storage.NA, storage.NB, storage.NC,storage2.NA,storage2.NB,storage2.NC]
     };
 }
 
-function get_traces(storage) {
+function get_traces(storage, storage2) {
     // generates an array of plotly trace objects
     // from a kmc storage object
     var trace1 = {
@@ -143,7 +193,7 @@ function get_traces(storage) {
 	name: 'NA kmc',
 	x: storage.time,
 	y: storage.NA,
-	line: {color: '#17BECF'},
+	line: {color: '#FF0000'},
 	maxdisplayed: 100
     }
     
@@ -153,7 +203,7 @@ function get_traces(storage) {
 	name: 'NB kmc',
 	x: storage.time,
 	y: storage.NB,
-	line: {color: '#7F7F7F'},
+	line: {color: '#0000FF'},
     }
     
     var trace3 = {
@@ -162,10 +212,38 @@ function get_traces(storage) {
 	name: 'NC kmc',
 	x: storage.time,
 	y: storage.NC,
-	line: {color: '#EE9A00'},
+	line: {color: '#00FF00'},
+    }
+	
+	var trace4 = {
+	type: "scatter",
+	mode: "circle",
+	name: 'NA exact',
+	x: storage2.time,
+	y: storage2.NA,
+	line: {color: '#18BECF'},
+	maxdisplayed: 100
+    }
+    
+    var trace5 = {
+	type: "scatter",
+	mode: "circle",
+	name: 'NB exact',
+	x: storage2.time,
+	y: storage2.NB,
+	line: {color: '#8F7F7F'},
+    }
+    
+    var trace6 = {
+	type: "scatter",
+	mode: "circle",
+	name: 'NC exact',
+	x: storage2.time,
+	y: storage2.NC,
+	line: {color: '#EE8A00'},
     }
 
-    return [trace1,trace2,trace3]
+    return [trace1,trace2,trace3,trace4,trace5,trace6]
 }
 
 var layout = {
@@ -207,16 +285,26 @@ $('#run').click(async function(){
     }
 	
     while (!(paused_log)) {
+	console.log("New cycle!");
 	cnt = cnt + 1;
 	tmax = 0.01;
 	smax = 1000;
 	kmc_Storage.clear();
+	exact_Storage.clear();
 	result = simulate(kmc_Solution,rate_consts,cnt*tmax,smax,kmc_Storage)
+	console.log(kmc_Storage);
+	exact_result = exactSolution(exact_Solution,rate_consts,exact_Storage,kmc_Storage.time[999],smax,kmc_Storage.time[0])
+	
+	console.log(exact_Storage);
 	kmc_Solution = result.solution;
 	kmc_Storage = result.storage;
-	new_data = unpack_data(kmc_Storage);
+	exact_Solution = exact_result.exact_Solution;
+	exact_Storage = exact_result.exact_Storage;
+	new_data = unpack_data(kmc_Storage,exact_Storage);
+	//console.log(new_data);
 	console.log("Next evolution completed!");
-	Plotly.extendTraces('myDiv', new_data, [0, 1, 2],max);
+	Plotly.extendTraces('myDiv', new_data, [0, 1, 2, 3, 4, 5],max);
+	
 	await sleep(10);
     }
 });
@@ -226,13 +314,16 @@ $('#restart').click(function(){
     console.log("You just clicked restart!");
     kmc_Solution = new Solution(NA,NB,NC,time);
     kmc_Storage = new Storage(kmc_Solution);
-    var initial_data = get_traces(kmc_Storage);
-    Plotly.newPlot('myDiv', initial_data, layout);
-    console.log("Restart completed!")
+	exact_Solution = new exact_Solution(NA,NB,NC,time);
+    exact_Storage = new exactStorage(exact_Solution);
+	var initial_data = get_traces(kmc_Storage, exact_Storage);
+	Plotly.newPlot('myDiv', initial_data, layout);
+	console.log("Restart completed!")
     paused_log = true;
     $("#run").text('Run');	
 });
 
 // intialise the plot
-Plotly.newPlot('myDiv', get_traces(kmc_Storage), layout);
+Plotly.newPlot('myDiv', get_traces(kmc_Storage, exact_Storage), layout);
+
     
