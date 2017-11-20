@@ -259,6 +259,8 @@ var layout = {
     },
     yaxis: {
 	title: 'concentration',
+	range: [Math.min.apply(Math, [NA,NB,NC]),
+		Math.max.apply(Math, [NA,NB,NC])*1.1],
 	titlefont: {
 	    family: 'Courier New, monospace',
 	    size: 18,

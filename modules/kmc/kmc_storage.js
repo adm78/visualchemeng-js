@@ -14,8 +14,8 @@ function Storage(solution) {
 
     // concentration histories
     this.NA  = [solution.NA];
-    this.NB = [solution.NA];
-    this.NC = [solution.NA];
+    this.NB = [solution.NB];
+    this.NC = [solution.NC];
     this.Ntot = [solution.NA+solution.NB+solution.NC];
     this.time = [solution.time];
 
