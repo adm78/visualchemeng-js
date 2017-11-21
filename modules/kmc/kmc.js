@@ -200,7 +200,9 @@ function ss_simulate(solution,rate_consts,storage,max_time,smax,min_time) {
 //             visualisation functionality
 // --------------------------------------------------
 var paused_log = false;
-var first_run = true;
+var first_run = true; // have we yet to click anything?
+var run_log = false; // was the last button click 'Run'?
+var streaming_log = false; // are we currently streaming data?
 
 function unpack_data(storage, storage2, storage3) {
     // unpacks storage data to extend plotly graph
@@ -212,6 +214,17 @@ function unpack_data(storage, storage2, storage3) {
 	    storage2.NA, storage2.NB, storage2.NC,
 		storage3.NA, storage3.NB, storage3.NC]
     };
+}
+
+function restart_plot() {
+    kmc_Solution = new Solution(NA,NB,NC,time);
+    kmc_Storage = new Storage(kmc_Solution);
+    exact_Solution = new Solution(NA,NB,NC,time);
+    exact_Storage = new Storage(exact_Solution);
+    ss_Solution = new Solution(NA,NB,NC,time);
+    ss_Storage = new Storage(ss_Solution);
+    var initial_data = get_traces(kmc_Storage, exact_Storage, ss_Storage);
+    Plotly.newPlot('myDiv', initial_data, layout);    
 }
 
 function get_traces(storage, storage2, storage3) {
@@ -298,7 +311,7 @@ function get_traces(storage, storage2, storage3) {
 	name: 'NC ss',
 	x: storage3.time,
 	y: storage3.NC,
-	line: {color: '#FFFF00'},
+	line: {color: '#FFFAA00'},
     }
 
     return [trace1,trace2,trace3,trace4,trace5,trace6,trace7,trace8,trace9]
@@ -316,7 +329,7 @@ var layout = {
     },
     yaxis: {
 	title: 'concentration',
-	range: [Math.min.apply(Math, [NA,NB,NC]),
+	range: [-Math.max.apply(Math, [NA,NB,NC])*0.1,
 		Math.max.apply(Math, [NA,NB,NC])*1.1],
 	titlefont: {
 	    family: 'Courier New, monospace',
@@ -332,10 +345,11 @@ $('#run').click(async function(){
     // This function run all solutions to a set time
     // or maximum number of kmc steps
     // and displays the resulting plot
-    
+    streaming_log = false;
+    run_log = true;
     console.log("You just clicked run!");
-    var run_tmax = 100.0;
-    var run_smax = 1000;    
+    var run_tmax = 10.0;
+    var run_smax = 100000;    
 
     kmc_Solution = new Solution(NA,NB,NC,time);
     kmc_Storage = new Storage(kmc_Solution);
@@ -345,18 +359,25 @@ $('#run').click(async function(){
     ss_Storage = new Storage(ss_Solution);
     
     result = simulate(kmc_Solution,rate_consts,run_tmax,
-		      run_smax,kmc_Storage)
+		      run_smax,kmc_Storage);
     kmc_Solution = result.solution;
     kmc_Storage = result.storage;
     
     exact_result = exactSolution(exact_Solution,rate_consts,exact_Storage,
 				 kmc_Storage.time[kmc_Storage.time.length-1],
-				 Math.round(kmc_Storage.time.length*0.01)
-				 ,0.0)
+				 Math.round(kmc_Storage.time.length*0.01), 0.0);
     exact_Solution = exact_result.Solution;
     exact_Storage = exact_result.Storage;
+
+    ss_result = ss_simulate(ss_Solution,rate_consts,ss_Storage,
+			    kmc_Storage.time[kmc_Storage.time.length-1],
+			    Math.round(kmc_Storage.time.length*0.01), 0.0);
+    ss_Solution = ss_result.solution;
+    ss_Storage = ss_result.storage;
     
-    Plotly.newPlot('myDiv', get_traces(kmc_Storage, exact_Storage, ss_Storage), layout);
+    Plotly.newPlot('myDiv',
+		   get_traces(kmc_Storage, exact_Storage, ss_Storage),
+		   layout);
 });
     
 
@@ -371,7 +392,10 @@ $('#stream').click(async function(){
     var stream_tmax = 0.01;
     var stream_smax = 1000;
     var new_data
-    
+    var initial_data
+
+    // updates the buttons/pause state
+    streaming_log = true;
     if (first_run) {
 	first_run = false;
     }
@@ -384,13 +408,19 @@ $('#stream').click(async function(){
     else {
 	$("#stream").text('Pause');
     }
+    if (run_log) {
+	// the plot needs to be cleared
+	restart_plot();
+	run_log = false;
+    }
 	
-    while (!(paused_log)) {
+    while (!(paused_log) && (streaming_log)) {
 
 	cnt = cnt + 1;
+	streaming_log = true;
 
 	// grab the start time and clear the data
-	exact_start_time = kmc_Storage.time[0]
+	exact_start_time = kmc_Storage.time[0];
 	kmc_Storage.clear();
 	exact_Storage.clear();
 
@@ -402,7 +432,7 @@ $('#stream').click(async function(){
 	// get exact solution data
 	exact_result = exactSolution(exact_Solution,rate_consts,exact_Storage,
 				     kmc_Storage.time[kmc_Storage.time.length-1],
-				     smax*0.95,exact_start_time)
+				     smax*0.95,exact_start_time);
 	exact_Solution = exact_result.Solution;
 	exact_Storage = exact_result.Storage;
 
@@ -423,14 +453,7 @@ $('#stream').click(async function(){
 // define the restart button functionality
 $('#restart').click(function(){    
     console.log("You just clicked restart!");
-    kmc_Solution = new Solution(NA,NB,NC,time);
-    kmc_Storage = new Storage(kmc_Solution);
-    exact_Solution = new Solution(NA,NB,NC,time);
-    exact_Storage = new Storage(exact_Solution);
-    ss_Solution = new Solution(NA,NB,NC,time);
-    ss_Storage = new Storage(ss_Solution);
-    var initial_data = get_traces(kmc_Storage, exact_Storage, ss_Storage);
-    Plotly.newPlot('myDiv', initial_data, layout);
+    restart_plot();
     console.log("Restart completed!")
     paused_log = true;
     $("#stream").text('Stream');	
