@@ -34,7 +34,8 @@ var kmc_Solution = new Solution(NA,NB,NC,time);
 var exact_Solution = new Solution(NA,NB,NC,time);
 var kmc_Storage = new Storage(kmc_Solution);
 var exact_Storage = new Storage(exact_Solution);
-var ss_Solution = new Solution(NA,NB,NC,time)
+var ss_Solution = new Solution(NA,NB,NC,time);
+var ss_Storage = new Storage(ss_Solution);
 
 //console.log(exact_Storage)
 //console.log(kmc_Storage)
@@ -44,7 +45,7 @@ var ss_Solution = new Solution(NA,NB,NC,time)
 // B --> A, rb1 = kb1*NB
 // B --> C, r2 = k2*NB
 // C --> B, rb2 = kb2*NC
-var rate_consts = {k1:10.0,kb1:5.0,k2:10.0,kb2:5.0};
+var rate_consts = {k1:10.0,kb1:15.0,k2:100.0,kb2:5.0};
 
 
 
@@ -170,6 +171,31 @@ function doJump(s,q,cr,dt) {
     return s
 }
 
+function ss_simulate(solution,rate_consts,storage,max_time,smax,min_time) {
+	
+	var steps = 1;
+    var time_step = (max_time-min_time)/smax;
+    var iter_time = min_time;
+	
+	while (steps < smax+1) {
+	solution.time = iter_time;
+	exp_part = Math.exp((-rate_consts.k1*rate_consts.k2-rate_consts.kb1*rate_consts.kb2)*iter_time/(rate_consts.k2+rate_consts.kb1));
+	solution.NA = (exp_part*rate_consts.k1*rate_consts.k2+rate_consts.kb1*rate_consts.kb2)*Ntot/(rate_consts.k1*rate_consts.k2+rate_consts.kb1*rate_consts.kb2);
+	solution.NC = -((-1+exp_part)*rate_consts.k1*rate_consts.k2*Ntot)/(rate_consts.k1*rate_consts.k2+rate_consts.kb1*rate_consts.kb2);
+	solution.NB = Ntot-solution.NA-solution.NC;
+	storage.update(solution); 
+	steps +=1;
+	iter_time += time_step;
+	}
+	//console.log(rc.k1)
+	//console.log(exact_Solution)
+	//console.log(Theta);
+	//console.log(exact_Storage);
+	
+    return {solution: solution,
+	    storage: storage};
+	
+}
 
 // --------------------------------------------------
 //             visualisation functionality
@@ -177,17 +203,19 @@ function doJump(s,q,cr,dt) {
 var paused_log = false;
 var first_run = true;
 
-function unpack_data(storage, storage2) {
+function unpack_data(storage, storage2, storage3) {
     // unpacks storage data to extend plotly graph
     return{
 	x: [storage.time, storage.time, storage.time,
-	    storage2.time, storage2.time, storage2.time],
+	    storage2.time, storage2.time, storage2.time,
+		storage3.time, storage3.time, storage3.time],
 	y: [storage.NA, storage.NB, storage.NC,
-	    storage2.NA, storage2.NB, storage2.NC]
+	    storage2.NA, storage2.NB, storage2.NC,
+		storage3.NA, storage3.NB, storage3.NC]
     };
 }
 
-function get_traces(storage, storage2) {
+function get_traces(storage, storage2, storage3) {
     // generates an array of plotly trace objects
     // from a kmc storage object
     var trace1 = {
@@ -245,8 +273,36 @@ function get_traces(storage, storage2) {
 	y: storage2.NC,
 	line: {color: '#EE8A00'},
     }
+	
+	var trace7 = {
+	type: "scatter",
+	mode: "circle",
+	name: 'NA ss',
+	x: storage3.time,
+	y: storage3.NA,
+	line: {color: '#FF00FF'},
+	maxdisplayed: 100
+    }
+    
+    var trace8 = {
+	type: "scatter",
+	mode: "circle",
+	name: 'NB ss',
+	x: storage3.time,
+	y: storage3.NB,
+	line: {color: '#00FFFF'},
+    }
+    
+    var trace9 = {
+	type: "scatter",
+	mode: "circle",
+	name: 'NC ss',
+	x: storage3.time,
+	y: storage3.NC,
+	line: {color: '#FFFF00'},
+    }
 
-    return [trace1,trace2,trace3,trace4,trace5,trace6]
+    return [trace1,trace2,trace3,trace4,trace5,trace6,trace7,trace8,trace9]
 }
 
 var layout = {
@@ -309,10 +365,12 @@ $('#run').click(async function(){
 	//console.log(exact_Storage);
 	exact_Solution = exact_result.Solution;
 	exact_Storage = exact_result.Storage;
-	var new_data = unpack_data(kmc_Storage, exact_Storage);
+	
+	ss_result = ss_simulate(ss_Solution,rate_consts,ss_Storage,kmc_Storage.time[kmc_Storage.time.length-1],smax*0.95,exact_start_time)
+	var new_data = unpack_data(kmc_Storage, exact_Storage,ss_Storage);
 	//console.log(new_data);
 	//console.log("Next evolution completed!");
-	Plotly.extendTraces('myDiv', new_data, [0, 1, 2, 3 ,4, 5], max);
+	Plotly.extendTraces('myDiv', new_data, [0, 1, 2, 3 ,4, 5, 6, 7, 8], max);
 	//Plotly.redraw('myDiv');
 	await sleep(1);
     }
@@ -325,7 +383,9 @@ $('#restart').click(function(){
     kmc_Storage = new Storage(kmc_Solution);
     exact_Solution = new Solution(NA,NB,NC,time);
     exact_Storage = new Storage(exact_Solution);
-    var initial_data = get_traces(kmc_Storage, exact_Storage);
+	ss_Solution = new Solution(NA,NB,NC,time);
+    ss_Storage = new Storage(ss_Solution);
+    var initial_data = get_traces(kmc_Storage, exact_Storage, ss_Storage);
     Plotly.newPlot('myDiv', initial_data, layout);
     console.log("Restart completed!")
     paused_log = true;
@@ -333,6 +393,6 @@ $('#restart').click(function(){
 });
 
 // intialise the plot
-Plotly.newPlot('myDiv', get_traces(kmc_Storage, exact_Storage), layout);
+Plotly.newPlot('myDiv', get_traces(kmc_Storage, exact_Storage, ss_Storage), layout);
 
     
