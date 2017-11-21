@@ -173,28 +173,27 @@ function doJump(s,q,cr,dt) {
 
 function ss_simulate(solution,rate_consts,storage,max_time,smax,min_time) {
 	
-	var steps = 1;
+    var steps = 1;
     var time_step = (max_time-min_time)/smax;
     var iter_time = min_time;
 	
-	while (steps < smax+1) {
+    while (steps < smax+1) {
 	solution.time = iter_time;
-	exp_part = Math.exp((-rate_consts.k1*rate_consts.k2-rate_consts.kb1*rate_consts.kb2)*iter_time/(rate_consts.k2+rate_consts.kb1));
-	solution.NA = (exp_part*rate_consts.k1*rate_consts.k2+rate_consts.kb1*rate_consts.kb2)*Ntot/(rate_consts.k1*rate_consts.k2+rate_consts.kb1*rate_consts.kb2);
-	solution.NC = -((-1+exp_part)*rate_consts.k1*rate_consts.k2*Ntot)/(rate_consts.k1*rate_consts.k2+rate_consts.kb1*rate_consts.kb2);
+	exp_part = Math.exp((-rate_consts.k1*rate_consts.k2-rate_consts.kb1*rate_consts.kb2)*iter_time
+			    /(rate_consts.k2+rate_consts.kb1));
+	solution.NA = (exp_part*rate_consts.k1*rate_consts.k2+rate_consts.kb1*rate_consts.kb2)*Ntot
+	    /(rate_consts.k1*rate_consts.k2+rate_consts.kb1*rate_consts.kb2);
+	solution.NC = -((-1+exp_part)*rate_consts.k1*rate_consts.k2*Ntot)
+	    /(rate_consts.k1*rate_consts.k2+rate_consts.kb1*rate_consts.kb2);
 	solution.NB = Ntot-solution.NA-solution.NC;
 	storage.update(solution); 
 	steps +=1;
 	iter_time += time_step;
-	}
-	//console.log(rc.k1)
-	//console.log(exact_Solution)
-	//console.log(Theta);
-	//console.log(exact_Storage);
+    }
 	
     return {solution: solution,
 	    storage: storage};
-	
+
 }
 
 // --------------------------------------------------
@@ -328,17 +327,51 @@ var layout = {
 };
 
 // define the run button  functionality
-$('#stream').click(async function(){    
+$('#run').click(async function(){
+    
+    // This function run all solutions to a set time
+    // or maximum number of kmc steps
+    // and displays the resulting plot
+    
     console.log("You just clicked run!");
-}
+    var run_tmax = 100.0;
+    var run_smax = 1000;    
+
+    kmc_Solution = new Solution(NA,NB,NC,time);
+    kmc_Storage = new Storage(kmc_Solution);
+    exact_Solution = new Solution(NA,NB,NC,time);
+    exact_Storage = new Storage(exact_Solution);
+    ss_Solution = new Solution(NA,NB,NC,time);
+    ss_Storage = new Storage(ss_Solution);
+    
+    result = simulate(kmc_Solution,rate_consts,run_tmax,
+		      run_smax,kmc_Storage)
+    kmc_Solution = result.solution;
+    kmc_Storage = result.storage;
+    
+    exact_result = exactSolution(exact_Solution,rate_consts,exact_Storage,
+				 kmc_Storage.time[kmc_Storage.time.length-1],
+				 Math.round(kmc_Storage.time.length*0.01)
+				 ,0.0)
+    exact_Solution = exact_result.Solution;
+    exact_Storage = exact_result.Storage;
+    
+    Plotly.newPlot('myDiv', get_traces(kmc_Storage, exact_Storage, ss_Storage), layout);
+});
     
 
 // define the stream button  functionality
 $('#stream').click(async function(){    
     console.log("You just clicked stream/pause!");
+
+    // run length controls
     var cnt = 0;
     var max = 10000;
     var exact_start_time;
+    var stream_tmax = 0.01;
+    var stream_smax = 1000;
+    var new_data
+    
     if (first_run) {
 	first_run = false;
     }
@@ -353,32 +386,37 @@ $('#stream').click(async function(){
     }
 	
     while (!(paused_log)) {
-	//console.log("New cycle!");
+
 	cnt = cnt + 1;
-	tmax = 0.01;
-	smax = 1000;
+
+	// grab the start time and clear the data
 	exact_start_time = kmc_Storage.time[0]
 	kmc_Storage.clear();
 	exact_Storage.clear();
+
+	// get kmc data
 	result = simulate(kmc_Solution,rate_consts,cnt*tmax,smax,kmc_Storage)
 	kmc_Solution = result.solution;
 	kmc_Storage = result.storage;
-	//console.log(kmc_Storage);
+
+	// get exact solution data
 	exact_result = exactSolution(exact_Solution,rate_consts,exact_Storage,
 				     kmc_Storage.time[kmc_Storage.time.length-1],
 				     smax*0.95,exact_start_time)
-	
-	//console.log(exact_Storage);
 	exact_Solution = exact_result.Solution;
 	exact_Storage = exact_result.Storage;
-	
-	ss_result = ss_simulate(ss_Solution,rate_consts,ss_Storage,kmc_Storage.time[kmc_Storage.time.length-1],smax*0.95,exact_start_time)
-	var new_data = unpack_data(kmc_Storage, exact_Storage,ss_Storage);
-	//console.log(new_data);
-	//console.log("Next evolution completed!");
+
+	// get steady state approximation data
+	ss_result = ss_simulate(ss_Solution,rate_consts,ss_Storage,
+				kmc_Storage.time[kmc_Storage.time.length-1],
+				smax*0.95,exact_start_time);
+	ss_Solution = ss_result.solution;
+	ss_Storage = ss_result.storage;
+
+	// extend the plots based on the new data
+	new_data = unpack_data(kmc_Storage, exact_Storage,ss_Storage);
 	Plotly.extendTraces('myDiv', new_data, [0, 1, 2, 3 ,4, 5, 6, 7, 8], max);
-	//Plotly.redraw('myDiv');
-	await sleep(1);
+	await sleep(10);
     }
 });
 
@@ -389,7 +427,7 @@ $('#restart').click(function(){
     kmc_Storage = new Storage(kmc_Solution);
     exact_Solution = new Solution(NA,NB,NC,time);
     exact_Storage = new Storage(exact_Solution);
-	ss_Solution = new Solution(NA,NB,NC,time);
+    ss_Solution = new Solution(NA,NB,NC,time);
     ss_Storage = new Storage(ss_Solution);
     var initial_data = get_traces(kmc_Storage, exact_Storage, ss_Storage);
     Plotly.newPlot('myDiv', initial_data, layout);
