@@ -328,8 +328,14 @@ var layout = {
 };
 
 // define the run button  functionality
-$('#run').click(async function(){    
-    console.log("You just clicked run/pause!");
+$('#stream').click(async function(){    
+    console.log("You just clicked run!");
+}
+    
+
+// define the stream button  functionality
+$('#stream').click(async function(){    
+    console.log("You just clicked stream/pause!");
     var cnt = 0;
     var max = 10000;
     var exact_start_time;
@@ -340,10 +346,10 @@ $('#run').click(async function(){
 	paused_log = !(paused_log);
     }
     if (paused_log) {
-	$("#run").text('Run');	
+	$("#stream").text('Stream');	
     }
     else {
-	$("#run").text('Pause');
+	$("#stream").text('Pause');
     }
 	
     while (!(paused_log)) {
@@ -389,7 +395,7 @@ $('#restart').click(function(){
     Plotly.newPlot('myDiv', initial_data, layout);
     console.log("Restart completed!")
     paused_log = true;
-    $("#run").text('Run');	
+    $("#stream").text('Stream');	
 });
 
 // intialise the plot
