@@ -10,7 +10,7 @@
 // - kmc_storage.js
 // - kmc_solution.js
 //
-// Andrew D. McGuire, Gustavo Leon 2017
+// Andrew D. McGuire, Gustavo León 2017
 // (a.mcguire227@gmail.com)
 //----------------------------------------------------------
 
@@ -36,9 +36,6 @@ var kmc_Storage = new Storage(kmc_Solution);
 var exact_Storage = new Storage(exact_Solution);
 var ss_Solution = new Solution(NA,NB,NC,time);
 var ss_Storage = new Storage(ss_Solution);
-
-//console.log(exact_Storage)
-//console.log(kmc_Storage)
 
 // rate constants
 // A --> B, r1 = k1*NA
@@ -97,50 +94,6 @@ function getCumulativeRates(rl) {
     return rl
 }
 
-function exactSolution(exact_Solution,rc,exact_Storage,max_time,smax,min_time) {
-
-    // Return the exact solution at time t as defined by Vriens1954:
-    // DOI: 10.1021/ie50532a024
-	
-    var alpha = rc.k2/rc.k1;
-    var K1 = rc.k1/rc.kb1;
-    var K2 = rc.k2/rc.kb2;
-    
-    var E1 = 1.0 + 1.0/K1 + alpha + alpha/K2;
-    var E2 = alpha*(1.0+1.0/(K1*K2)+1.0/K2);
-    var D1 = (-E1+Math.sqrt(Math.pow(E1,2)-4*E2))/2.0;
-    var D2 = (-E1-Math.sqrt(Math.pow(E1,2)-4*E2))/2.0;
-    
-    var C1 = (-1-D2 + alpha/(K1*K2*D1))/(D1-D2);
-    var C2 = (1+D1-alpha/(K1*K2*D2))/(D1-D2);
-    var C3 = (alpha/D1)/(D1-D2);
-    var C4 = (-alpha/D2)/(D1-D2);
-    
-    //console.log(Storage.time[999])
-    var steps = 1;
-    var time_step = (max_time-min_time)/smax;
-    var iter_time = min_time;
-    
-    //console.log(max_time)
-    while (steps < smax+1) {
-	exact_Solution.time = iter_time;
-	var Theta = rc.k1*iter_time;
-	exact_Solution.NA = Ntot*(C1*Math.exp(D1*Theta)+C2*Math.exp(D2*Theta)+alpha/(K1*K2*E2));
-	exact_Solution.NC = Ntot*(C3*Math.exp(D1*Theta)+C4*Math.exp(D2*Theta)+alpha/(E2));
-	exact_Solution.NB = Ntot-exact_Solution.NA-exact_Solution.NC;
-	exact_Storage.update(exact_Solution); 
-	steps +=1;
-	iter_time += time_step;
-	}
-	//console.log(rc.k1)
-	//console.log(exact_Solution)
-	//console.log(Theta);
-	//console.log(exact_Storage);
-	
-    return {Solution: exact_Solution,
-	    Storage: exact_Storage};
-}
-
 function doJump(s,q,cr,dt) {
     
     // Perform one of the jump processes on solution
@@ -171,6 +124,45 @@ function doJump(s,q,cr,dt) {
     return s
 }
 
+function exactSolution(exact_Solution,rc,exact_Storage,
+		       max_time,smax,min_time) {
+
+    // Return the exact solution at time t as defined by Vriens1954:
+    // DOI: 10.1021/ie50532a024
+	
+    var alpha = rc.k2/rc.k1;
+    var K1 = rc.k1/rc.kb1;
+    var K2 = rc.k2/rc.kb2;
+    
+    var E1 = 1.0 + 1.0/K1 + alpha + alpha/K2;
+    var E2 = alpha*(1.0+1.0/(K1*K2)+1.0/K2);
+    var D1 = (-E1+Math.sqrt(Math.pow(E1,2)-4*E2))/2.0;
+    var D2 = (-E1-Math.sqrt(Math.pow(E1,2)-4*E2))/2.0;
+    
+    var C1 = (-1-D2 + alpha/(K1*K2*D1))/(D1-D2);
+    var C2 = (1+D1-alpha/(K1*K2*D2))/(D1-D2);
+    var C3 = (alpha/D1)/(D1-D2);
+    var C4 = (-alpha/D2)/(D1-D2);
+    
+    var steps = 1;
+    var time_step = (max_time-min_time)/smax;
+    var iter_time = min_time;
+    
+    while (steps < smax+1) {
+	exact_Solution.time = iter_time;
+	var Theta = rc.k1*iter_time;
+	exact_Solution.NA = Ntot*(C1*Math.exp(D1*Theta)+C2*Math.exp(D2*Theta)+alpha/(K1*K2*E2));
+	exact_Solution.NC = Ntot*(C3*Math.exp(D1*Theta)+C4*Math.exp(D2*Theta)+alpha/(E2));
+	exact_Solution.NB = Ntot-exact_Solution.NA-exact_Solution.NC;
+	exact_Storage.update(exact_Solution); 
+	steps +=1;
+	iter_time += time_step;
+	}
+	
+    return {Solution: exact_Solution,
+	    Storage: exact_Storage};
+}
+
 function ss_simulate(solution,rate_consts,storage,max_time,smax,min_time) {
 	
     var steps = 1;
@@ -182,9 +174,9 @@ function ss_simulate(solution,rate_consts,storage,max_time,smax,min_time) {
 	exp_part = Math.exp((-rate_consts.k1*rate_consts.k2-rate_consts.kb1*rate_consts.kb2)*iter_time
 			    /(rate_consts.k2+rate_consts.kb1));
 	solution.NA = (exp_part*rate_consts.k1*rate_consts.k2+rate_consts.kb1*rate_consts.kb2)*Ntot
-	    /(rate_consts.k1*rate_consts.k2+rate_consts.kb1*rate_consts.kb2);
+	              /(rate_consts.k1*rate_consts.k2+rate_consts.kb1*rate_consts.kb2);
 	solution.NC = -((-1+exp_part)*rate_consts.k1*rate_consts.k2*Ntot)
-	    /(rate_consts.k1*rate_consts.k2+rate_consts.kb1*rate_consts.kb2);
+	               /(rate_consts.k1*rate_consts.k2+rate_consts.kb1*rate_consts.kb2);
 	solution.NB = Ntot-solution.NA-solution.NC;
 	storage.update(solution); 
 	steps +=1;
@@ -195,6 +187,7 @@ function ss_simulate(solution,rate_consts,storage,max_time,smax,min_time) {
 	    storage: storage};
 
 }
+
 
 // --------------------------------------------------
 //             visualisation functionality
@@ -209,14 +202,18 @@ function unpack_data(storage, storage2, storage3) {
     return{
 	x: [storage.time, storage.time, storage.time,
 	    storage2.time, storage2.time, storage2.time,
-		storage3.time, storage3.time, storage3.time],
+	    storage3.time, storage3.time, storage3.time],
 	y: [storage.NA, storage.NB, storage.NC,
 	    storage2.NA, storage2.NB, storage2.NC,
-		storage3.NA, storage3.NB, storage3.NC]
+	    storage3.NA, storage3.NB, storage3.NC]
     };
 }
 
 function restart_plot() {
+
+    // clear the plot data and re-intialise the plot
+    // based on the initial conditions
+    
     kmc_Solution = new Solution(NA,NB,NC,time);
     kmc_Storage = new Storage(kmc_Solution);
     exact_Solution = new Solution(NA,NB,NC,time);
@@ -228,8 +225,11 @@ function restart_plot() {
 }
 
 function get_traces(storage, storage2, storage3) {
+    
     // generates an array of plotly trace objects
-    // from a kmc storage object
+    // from a kmc, exact and ss storage object,
+    // respectively
+    
     var trace1 = {
 	type: "scatter",
 	mode: "lines",
@@ -345,6 +345,7 @@ $('#run').click(async function(){
     // This function run all solutions to a set time
     // or maximum number of kmc steps
     // and displays the resulting plot
+    
     streaming_log = false;
     run_log = true;
     console.log("You just clicked run!");
@@ -382,7 +383,12 @@ $('#run').click(async function(){
     
 
 // define the stream button  functionality
-$('#stream').click(async function(){    
+$('#stream').click(async function(){
+
+    // Continuously generate new data for each trace
+    // and stream it to the plotly graph. Can support
+    // pausing and interrups.
+    
     console.log("You just clicked stream/pause!");
 
     // run length controls
@@ -394,7 +400,7 @@ $('#stream').click(async function(){
     var new_data
     var initial_data
 
-    // updates the buttons/pause state
+    // update the html buttons/operational logicals
     streaming_log = true;
     if (first_run) {
 	first_run = false;
@@ -451,15 +457,18 @@ $('#stream').click(async function(){
 });
 
 // define the restart button functionality
-$('#restart').click(function(){    
+$('#restart').click(function(){
+
+    // clear the plot and update operating bools
     console.log("You just clicked restart!");
     restart_plot();
-    console.log("Restart completed!")
     paused_log = true;
+    streaming_log = false;
+    run_log = false;
     $("#stream").text('Stream');	
 });
 
-// intialise the plot
+// intialise the plot when the page loads
 Plotly.newPlot('myDiv', get_traces(kmc_Storage, exact_Storage, ss_Storage), layout);
 
     
