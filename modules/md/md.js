@@ -376,9 +376,30 @@ function addParticle() {
     particles.push(new_part);
 }
 
+function mouseinSimBox() {
+
+    if (0 < mouseX && mouseX < xmax && 0 < mouseY && mouseY < ymax) {
+	return true;
+    };
+    return false;
+}
+
 function mousePressed() {
 
     // Act on left mouse press
-    paused_log = !(paused_log);
+    if (mouseinSimBox()) {addParticle()};
 }
+
+$('#run').click(async function(){
+
+    // run/pause button functionality    
+    console.log("You just clicked stream/pause!");
+    paused_log = !(paused_log);
+    if (paused_log) {
+	$("#run").text('Run');	
+    }
+    else {
+	$("#run").text('Pause');
+    }
+});
 
