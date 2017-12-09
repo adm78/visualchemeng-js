@@ -54,18 +54,14 @@ function draw() {
     // set up stroke for progress box
     noStroke();
     fill(0)
-    rect(0.9*xmax,0.9*ymax,0.1*xmax,0.1*ymax)
+    rect(0.85*xmax,0.94*ymax,0.14*xmax,0.05*ymax)
     fill(255)
 
     // Step through time unless sim is paused,
     // reporting status in progress box.
     if (!(paused_log)) {
-      text("Running",0.91*xmax,0.9*ymax,0.2*xmax,0.1*ymax);
       var dt_step = 1.0;
       doStep(dt_step);
-    }
-    else {
-      text("Paused",0.91*xmax,0.9*ymax,0.2*xmax,0.1*ymax);
     }
     writeTime();
 }
@@ -76,7 +72,9 @@ function writeTime() {
     stroke(255);
     strokeWeight(1);
     fill(255)
-    text(time.toFixed(0),0.91*xmax,0.95*ymax,20,20);
+    textSize(Math.round(xmax/45.0))
+    text("t = "+time.toFixed(0),0.86*xmax,0.95*ymax,0.12*xmax,0.04*ymax);
+    //text("t = "+xmax,0.91*xmax,0.95*ymax,0.1*xmax,0.1*ymax);
 }
 
 function doStep(dt) {
