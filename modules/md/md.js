@@ -30,6 +30,7 @@ function setup() {
     xmax = min(772+28,windowWidth-2*28); 
     ymax = xmax*0.618;
     var canvas= createCanvas(xmax, ymax);
+    canvas.parent("sketch-holder")
     var part_to_init = Math.round(xmax*ymax/5000.0);
     particles = initParticles(part_to_init,r,xmax,ymax);
 }
