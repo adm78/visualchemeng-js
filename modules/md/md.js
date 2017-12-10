@@ -60,7 +60,7 @@ function draw() {
     // Step through time unless sim is paused,
     // reporting status in progress box.
     if (!(paused_log)) {
-      var dt_step = 1.0;
+      var dt_step = 1000.0;
       doStep(dt_step);
     }
     writeTime();
