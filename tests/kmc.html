@@ -1,6 +1,8 @@
 <html>
   <head>
     <link rel="stylesheet" type="text/css" href="../css/buttons.css">
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
+    <style>#slider { margin: 10px; }	</style>
   </head>
   <body>
     <div id="myDiv" style="width:600px;height:400px;"></div>
@@ -8,16 +10,15 @@
       <button class="button" id="run">Run</button>
       <button class="button" id="stream">Stream</button>
       <button class="button" id="restart">Restart</button>
+      <div id="slider"></div>
     </div>
-    <!-- <div class="hideshow" id="top" style="margin-left:80px;"> -->
-    <!--   <button style=";background:#7F7F7F;">Run</button> -->
-    <!-- </div> -->
     <script src="../libraries/vce_utils.js"></script>
     <script src="../libraries/plotly-latest.min.js"></script>
     <script
        src="https://code.jquery.com/jquery-3.2.1.min.js"
-   integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+       integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
        crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="../modules/kmc/kmc_storage.js"></script>
     <script src="../modules/kmc/kmc_solution.js"></script>
 	<!-- <script src="../modules/kmc/kmc_exact_storage.js"></script> -->

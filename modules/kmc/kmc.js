@@ -468,6 +468,11 @@ $('#restart').click(function(){
     $("#stream").text('Stream');	
 });
 
+// adding the rate constant slider
+$(function() {
+    $( "#slider" ).slider();
+});
+
 // intialise the plot when the page loads
 Plotly.newPlot('myDiv', get_traces(kmc_Storage, exact_Storage, ss_Storage), layout);
 
