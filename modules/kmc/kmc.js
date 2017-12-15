@@ -469,9 +469,26 @@ $('#restart').click(function(){
 });
 
 // adding the rate constant slider
-$(function() {
-    $( "#slider" ).slider();
-});
+// $(function() {
+//     $( "#slider" ).slider();
+// });
+function slider_test() {
+    console.log("hello slider");
+}
+
+$( function() {
+    $( "#red, #green, #blue" ).slider({
+	orientation: "horizontal",
+	range: "min",
+	max: 255,
+	value: 127,
+	slide: slider_test,
+	change: slider_test
+    });
+    $( "#red" ).slider( "value", 255 );
+    $( "#green" ).slider( "value", 140 );
+    $( "#blue" ).slider( "value", 60 );
+} );
 
 // intialise the plot when the page loads
 Plotly.newPlot('myDiv', get_traces(kmc_Storage, exact_Storage, ss_Storage), layout);

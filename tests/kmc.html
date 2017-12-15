@@ -1,28 +1,29 @@
 <html>
   <head>
     <link rel="stylesheet" type="text/css" href="../css/buttons.css">
-    <link rel="stylesheet" href="http://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
-    <style>#slider { margin: 10px; }	</style>
-  </head>
-  <body>
-    <div id="myDiv" style="width:600px;height:400px;"></div>
-    <div class="hideshow" id="top" style="margin-left:80px;">
-      <button class="button" id="run">Run</button>
-      <button class="button" id="stream">Stream</button>
-      <button class="button" id="restart">Restart</button>
-      <div id="slider"></div>
-    </div>
-    <script src="../libraries/vce_utils.js"></script>
-    <script src="../libraries/plotly-latest.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/slider.css">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <script
        src="https://code.jquery.com/jquery-3.2.1.min.js"
        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
        crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <style>#slider { margin: 10px; }	</style>
+  </head>
+  <body>
+    <div id="myDiv" style="width:1000px;height:600px;"></div>
+    <div class="hideshow" id="top" style="margin-left:80px;">
+      <div id="red"></div>
+      <div id="green"></div>
+      <div id="blue"></div>
+      <button class="button" id="run">Run</button>
+      <button class="button" id="stream">Stream</button>
+      <button class="button" id="restart">Restart</button>
+    </div>
+    <script src="../libraries/vce_utils.js"></script>
+    <script src="../libraries/plotly-latest.min.js"></script>
     <script src="../modules/kmc/kmc_storage.js"></script>
     <script src="../modules/kmc/kmc_solution.js"></script>
-	<!-- <script src="../modules/kmc/kmc_exact_storage.js"></script> -->
-	<!-- <script src="../modules/kmc/kmc_exact_solution.js"></script> -->
     <script src="../modules/kmc/kmc.js"></script>
   </body>
 </html>
