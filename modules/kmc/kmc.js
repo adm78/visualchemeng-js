@@ -13,8 +13,12 @@
 // Andrew D. McGuire, Gustavo León 2017
 // (a.mcguire227@gmail.com)
 //----------------------------------------------------------
-
-
+// To do:
+// - fix the intial plot layout so that it matches standard run
+//   conditions
+// - link the sliders to the rate constants
+//
+//
 // --------------------------------------------------
 //             kmc functionality
 //---------------------------------------------------
@@ -318,7 +322,7 @@ function get_traces(storage, storage2, storage3) {
 }
 
 var layout = {
-    title: 'KMC test',
+    title: 'VCE Kintic Monte Carlo Module',
     xaxis: {
 	title: 'time',
 	titlefont: {
