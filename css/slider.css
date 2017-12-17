@@ -1,15 +1,14 @@
   #red, #green, #blue {
+    /* float: left; */
+    /* clear: left; */
+    width: 80%;
+    margin: 15px;
+}
+
+  #red2, #green2, #blue2 {
     float: left;
     clear: left;
-    width: 300px;
     margin: 15px;
-  }
-  #swatch {
-    width: 120px;
-    height: 100px;
-    margin-top: 18px;
-    margin-left: 350px;
-    background-image: none;
   }
   #red .ui-slider-range { background: #ef2929; }
   #red .ui-slider-handle { border-color: #ef2929; }

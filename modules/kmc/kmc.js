@@ -322,7 +322,7 @@ function get_traces(storage, storage2, storage3) {
 }
 
 var layout = {
-    title: 'VCE Kintic Monte Carlo Module',
+    title: 'VCE Kinetic Monte Carlo Module',
     xaxis: {
 	title: 'time',
 	titlefont: {
