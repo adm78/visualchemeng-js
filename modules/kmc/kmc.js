@@ -321,9 +321,12 @@ function get_traces(storage, storage2, storage3) {
     return [trace1,trace2,trace3,trace4,trace5,trace6,trace7,trace8,trace9]
 }
 
-var layout = {
+var initial_layout = {
     title: 'VCE Kinetic Monte Carlo Module',
     xaxis: {
+	showgrid: true,
+	tickmode: 'auto',
+	range: [0,1.0],
 	title: 'time',
 	titlefont: {
 	    family: 'Courier New, monospace',
@@ -333,6 +336,7 @@ var layout = {
     },
     yaxis: {
 	title: 'concentration',
+	showgrid: true,
 	range: [-Math.max.apply(Math, [NA,NB,NC])*0.1,
 		Math.max.apply(Math, [NA,NB,NC])*1.1],
 	titlefont: {
@@ -342,6 +346,32 @@ var layout = {
 	}
     }
 };
+var layout = initial_layout;
+initial_layout.yaxis.range = [-Math.max.apply(Math, [NA,NB,NC])*0.1,
+			      Math.max.apply(Math, [NA,NB,NC])*1.1];
+
+
+// var layout = {
+//     title: 'VCE Kinetic Monte Carlo Module',
+//     xaxis: {
+// 	title: 'time',
+// 	titlefont: {
+// 	    family: 'Courier New, monospace',
+// 	    size: 18,
+// 	    color: '#7f7f7f'
+// 	}
+//     },
+//     yaxis: {
+// 	title: 'concentration',
+// 	range: [-Math.max.apply(Math, [NA,NB,NC])*0.1,
+// 		Math.max.apply(Math, [NA,NB,NC])*1.1],
+// 	titlefont: {
+// 	    family: 'Courier New, monospace',
+// 	    size: 18,
+// 	    color: '#7f7f7f'
+// 	}
+//     }
+// };
 
 // define the run button  functionality
 $('#run').click(async function(){
@@ -495,6 +525,6 @@ $( function() {
 } );
 
 // intialise the plot when the page loads
-Plotly.newPlot('myDiv', get_traces(kmc_Storage, exact_Storage, ss_Storage), layout);
+Plotly.newPlot('myDiv', get_traces(kmc_Storage, exact_Storage, ss_Storage), initial_layout);
 
     
