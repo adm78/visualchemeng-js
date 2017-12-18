@@ -200,7 +200,7 @@ var paused_log = false;
 var first_run = true; // have we yet to click anything?
 var run_log = false; // was the last button click 'Run'?
 var streaming_log = false; // are we currently streaming data?
-var was_restarted = true;
+var was_restarted = true; // was the last button click 'Restart'?
 
 function unpack_data(storage, storage2, storage3) {
     // unpacks storage data to extend plotly graph
