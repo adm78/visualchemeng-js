@@ -200,6 +200,7 @@ var paused_log = false;
 var first_run = true; // have we yet to click anything?
 var run_log = false; // was the last button click 'Run'?
 var streaming_log = false; // are we currently streaming data?
+var was_restarted = true;
 
 function unpack_data(storage, storage2, storage3) {
     // unpacks storage data to extend plotly graph
@@ -225,7 +226,8 @@ function restart_plot() {
     ss_Solution = new Solution(NA,NB,NC,time);
     ss_Storage = new Storage(ss_Solution);
     var initial_data = get_traces(kmc_Storage, exact_Storage, ss_Storage);
-    Plotly.newPlot('myDiv', initial_data, layout);    
+    Plotly.newPlot('myDiv', initial_data, initial_layout);
+    was_restarted = true;
 }
 
 function get_traces(storage, storage2, storage3) {
@@ -321,6 +323,7 @@ function get_traces(storage, storage2, storage3) {
     return [trace1,trace2,trace3,trace4,trace5,trace6,trace7,trace8,trace9]
 }
 
+// This the layout that is used when the pages loads
 var initial_layout = {
     title: 'VCE Kinetic Monte Carlo Module',
     xaxis: {
@@ -346,32 +349,13 @@ var initial_layout = {
 	}
     }
 };
-var layout = initial_layout;
-initial_layout.yaxis.range = [-Math.max.apply(Math, [NA,NB,NC])*0.1,
-			      Math.max.apply(Math, [NA,NB,NC])*1.1];
 
+// layout used throughout simulation
+var layout = JSON.parse(JSON.stringify(initial_layout));
+layout.yaxis.range = [-Math.max.apply(Math, [NA,NB,NC])*0.1,
+		      Math.max.apply(Math, [NA,NB,NC])*1.1];
+layout.xaxis.autorange = true;
 
-// var layout = {
-//     title: 'VCE Kinetic Monte Carlo Module',
-//     xaxis: {
-// 	title: 'time',
-// 	titlefont: {
-// 	    family: 'Courier New, monospace',
-// 	    size: 18,
-// 	    color: '#7f7f7f'
-// 	}
-//     },
-//     yaxis: {
-// 	title: 'concentration',
-// 	range: [-Math.max.apply(Math, [NA,NB,NC])*0.1,
-// 		Math.max.apply(Math, [NA,NB,NC])*1.1],
-// 	titlefont: {
-// 	    family: 'Courier New, monospace',
-// 	    size: 18,
-// 	    color: '#7f7f7f'
-// 	}
-//     }
-// };
 
 // define the run button  functionality
 $('#run').click(async function(){
@@ -438,6 +422,7 @@ $('#stream').click(async function(){
     streaming_log = true;
     if (first_run) {
 	first_run = false;
+	restart_plot();
     }
     else {
 	paused_log = !(paused_log);
@@ -483,9 +468,15 @@ $('#stream').click(async function(){
 	ss_Solution = ss_result.solution;
 	ss_Storage = ss_result.storage;
 
+	// make the x-range variable if is not already the case
+	if (was_restarted) {
+	    Plotly.newPlot('myDiv', get_traces(kmc_Storage, exact_Storage, ss_Storage), layout);
+	    was_restarted = false;
+	}
+	    
 	// extend the plots based on the new data
 	new_data = unpack_data(kmc_Storage, exact_Storage,ss_Storage);
-	Plotly.extendTraces('myDiv', new_data, [0, 1, 2, 3 ,4, 5, 6, 7, 8], max);
+	Plotly.extendTraces('myDiv', new_data, [0, 1, 2, 3 ,4, 5, 6, 7, 8], max, layout);
 	await sleep(10);
     }
 });
