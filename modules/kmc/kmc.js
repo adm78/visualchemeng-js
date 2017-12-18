@@ -326,6 +326,8 @@ function get_traces(storage, storage2, storage3) {
 // This the layout that is used when the pages loads
 var initial_layout = {
     title: 'VCE Kinetic Monte Carlo Module',
+    plot_bgcolor: 'gray',
+    paper_bgcolor: 'black',
     xaxis: {
 	showgrid: true,
 	tickmode: 'auto',
