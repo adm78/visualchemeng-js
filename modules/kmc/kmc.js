@@ -325,8 +325,20 @@ function get_traces(storage, storage2, storage3) {
 
 // This the layout that is used when the pages loads
 var initial_layout = {
-    title: 'VCE Kinetic Monte Carlo Module',
-    plot_bgcolor: 'gray',
+    //title: 'VCE Kinetic Monte Carlo Module',
+    margin: {
+	l: 50,
+	r: 50,
+	b: 50,
+	t: 20,
+	pad: 5
+    },
+    titlefont: {
+	family: "Railway",
+	color: 'white',
+	size: 24,
+    },    
+    plot_bgcolor: '#333438',//'#44474c',
     paper_bgcolor: 'black',
     xaxis: {
 	showgrid: true,
@@ -334,9 +346,9 @@ var initial_layout = {
 	range: [0,1.0],
 	title: 'time',
 	titlefont: {
-	    family: 'Courier New, monospace',
+	    family: 'Roboto, serif',
 	    size: 18,
-	    color: '#7f7f7f'
+	    color: 'white'
 	}
     },
     yaxis: {
@@ -345,9 +357,9 @@ var initial_layout = {
 	range: [-Math.max.apply(Math, [NA,NB,NC])*0.1,
 		Math.max.apply(Math, [NA,NB,NC])*1.1],
 	titlefont: {
-	    family: 'Courier New, monospace',
+	    family: 'Roboto, serif',
 	    size: 18,
-	    color: '#7f7f7f'
+	    color: 'white'
 	}
     }
 };
