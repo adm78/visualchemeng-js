@@ -1,22 +1,51 @@
 <html>
   <head>
-    <link rel="stylesheet" type="text/css" href="../css/buttons.css">.
-  </head>
-  <body>
-    <div id="myDiv" style="width:1000px;height:800px;"></div>
-    <div class="hideshow" id="top" style="margin-left:80px;">
-      <button class="button" id="run">Run</button>
-      <button class="button" id="stream">Stream</button>
-      <button class="button" id="restart">Restart</button>
-    </div>
-    <script src="https://rawgit.com/adm78/visualchemeng_js/master/libraries/vce_utils.js"></script>
-    <script src="https://rawgit.com/adm78/visualchemeng_js/master/libraries/plotly-latest.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://rawgit.com/adm78/visualchemeng_js/master/css/buttons.css">
+    <link rel="stylesheet" type="text/css" href="https://rawgit.com/adm78/visualchemeng_js/master/css/slider.css">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Roboto">
     <script
        src="https://code.jquery.com/jquery-3.2.1.min.js"
        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
        crossorigin="anonymous"></script>
-    <script src="https://rawgit.com/adm78/visualchemeng_js/master/modules/kmc/kmc_storage.js"></script>
-    <script src="https://rawgit.com/adm78/visualchemeng_js/master/modules/kmc/kmc_solution.js"></script>
-    <script src="https://rawgit.com/adm78/visualchemeng_js/master/modules/kmc/kmc.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <style>#slider { margin: 10px; }	</style>
+  </head>
+  <body style="background-color:white;">
+      <div class="parent">
+	<div class="row">
+	  <!-- the plotly cavas -->
+	  <div id="myDiv" style="float:left; width:85%; height:50vw; background-color:black; margin-top:0px"></div>
+	  <!-- control panel container -->
+	  <div class="hideshow" id="top" style="float:right; width:14.5%; height:50vw; margin-top:0vw;">
+	    <!-- logo container -->
+	    <div style="background-color:black; padding-top:4%; padding-bottom:2%; margin-bottom:2%; ">
+	      <img src="https://user-images.githubusercontent.com/17439476/31101095-20e39cb4-a7c4-11e7-95b4-1cccde15a8c0.png" style="display: block; margin-left: auto; margin-right: auto; width:20%" />
+	      <p style="display: block; margin-left: auto; margin-right: auto; color:white; text-align: center; font-family:Roboto">Kinetic Monte Carlo</p>
+	    </div>	      
+	    <!-- button container -->
+	    <div style="background-color:black;">
+	      <button class="button" id="run">Run</button><br/>
+	      <button class="button" id="stream">Stream</button><br/>
+	      <button class="button" id="restart">Restart</button>
+	    </div>
+	    <!-- slider container -->
+	    <div style="background-color:black; padding-top:2%; margin-top:2%; margin-bottom:5px; padding-bottom:5px;">
+	      <div id="red" ></div>
+	      <div id="green"></div>
+	      <div id="blue"></div>
+	      <div id="red" ></div>
+	      <div id="green"></div>
+	      <div id="blue"></div>
+	    </div>
+	   </div>
+	</div> <br/>
+      </div>
+      <!-- scripts required for simulations -->
+      <script src="https://rawgit.com/adm78/visualchemeng_js/master/libraries/vce_utils.js"></script>
+      <script src="https://rawgit.com/adm78/visualchemeng_js/master/libraries/plotly-latest.min.js"></script>
+      <script src="https://rawgit.com/adm78/visualchemeng_js/master/modules/kmc/kmc_storage.js"></script>
+      <script src="https://rawgit.com/adm78/visualchemeng_js/master/modules/kmc/kmc_solution.js"></script>
+      <script src="https://rawgit.com/adm78/visualchemeng_js/master/modules/kmc/kmc.js"></script>
   </body>
 </html>
