@@ -337,7 +337,11 @@ var initial_layout = {
 	family: "Railway",
 	color: 'white',
 	size: 24,
-    },    
+    },
+    legend: {
+	font: {color: 'white'}	    
+    },
+    hoverlabel: {bordercolor:'#333438'},
     plot_bgcolor: '#333438',//'#44474c',
     paper_bgcolor: 'black',
     xaxis: {
@@ -349,7 +353,8 @@ var initial_layout = {
 	    family: 'Roboto, serif',
 	    size: 18,
 	    color: 'white'
-	}
+	},
+	tickfont: {color:'white'}
     },
     yaxis: {
 	title: 'concentration',
@@ -360,7 +365,8 @@ var initial_layout = {
 	    family: 'Roboto, serif',
 	    size: 18,
 	    color: 'white'
-	}
+	},
+	tickfont: {color:'white'}
     }
 };
 
