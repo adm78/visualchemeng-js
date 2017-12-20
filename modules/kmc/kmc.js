@@ -327,7 +327,7 @@ function get_traces(storage, storage2, storage3) {
 var initial_layout = {
     //title: 'VCE Kinetic Monte Carlo Module',
     margin: {
-	l: 50,
+	l: 80,
 	r: 50,
 	b: 50,
 	t: 20,
@@ -346,6 +346,7 @@ var initial_layout = {
     paper_bgcolor: 'black',
     xaxis: {
 	showgrid: true,
+	gridcolor: '#44474c',
 	tickmode: 'auto',
 	range: [0,1.0],
 	title: 'time',
@@ -359,6 +360,7 @@ var initial_layout = {
     yaxis: {
 	title: 'concentration',
 	showgrid: true,
+	gridcolor: '#44474c',//'#666a72',
 	range: [-Math.max.apply(Math, [NA,NB,NC])*0.1,
 		Math.max.apply(Math, [NA,NB,NC])*1.1],
 	titlefont: {

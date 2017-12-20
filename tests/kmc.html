@@ -12,16 +12,19 @@
     <style>#slider { margin: 10px; }	</style>
   </head>
   <body style="background-color:white;">
-    <!-- <div class="hideshow" id="top" style="margin-left:80px;"> -->
       <div class="parent">
 	<div class="row">
+	  <!-- the plotly cavas -->
 	  <div id="myDiv" style="float:left; width:85%; height:50vw; background-color:black; margin-top:0px"></div>
+	  <!-- control panel container -->
 	  <div class="hideshow" id="top" style="float:right; width:14.5%; height:50vw; margin-top:0vw;">
+	    <!-- button container -->
 	    <div style="background-color:black;">
 	      <button class="button" id="run">Run</button><br/>
 	      <button class="button" id="stream">Stream</button><br/>
 	      <button class="button" id="restart">Restart</button>
 	    </div>
+	    <!-- slider container -->
 	    <div style="background-color:black; padding-top:2%; margin-top:2%; margin-bottom:5px; padding-bottom:5px;">
 	      <div id="red" ></div>
 	      <div id="green"></div>
@@ -33,10 +36,11 @@
 	   </div>
 	</div> <br/>
       </div>
-    <script src="../libraries/vce_utils.js"></script>
-    <script src="../libraries/plotly-latest.min.js"></script>
-    <script src="../modules/kmc/kmc_storage.js"></script>
-    <script src="../modules/kmc/kmc_solution.js"></script>
-    <script src="../modules/kmc/kmc.js"></script>
+      <!-- scripts required for simulations -->
+      <script src="../libraries/vce_utils.js"></script>
+      <script src="../libraries/plotly-latest.min.js"></script>
+      <script src="../modules/kmc/kmc_storage.js"></script>
+      <script src="../modules/kmc/kmc_solution.js"></script>
+      <script src="../modules/kmc/kmc.js"></script>
   </body>
 </html>
