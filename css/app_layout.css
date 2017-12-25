@@ -1,0 +1,54 @@
+body {
+  margin: 5px;
+}
+
+.wrapper {
+    display: grid;
+    grid-gap: 10px;
+        grid-template-columns: 2fr 2fr 1fr;
+        background-color: #fff;
+        color: #444;
+    }
+
+    .box {
+        background-color: #444;
+        color: #fff;
+        border-radius: 5px;
+        padding: 10px;
+        font-size: 100%;
+
+    }
+
+    .sim_container {
+        grid-column: 1 / 3;
+        grid-row: 1 / 4;
+    }
+    .vce_info {
+        grid-column: 3 ;
+        grid-row: 1 ;
+    }
+    .button_container {
+        grid-column: 3 ;
+        grid-row: 2 ;
+    }
+    .slider_container {
+        grid-column: 3 ;
+        grid-row: 3 ;
+    }
+    .c {
+        grid-column: 1 ;
+        grid-row: 4 ;
+    }
+    .d {
+        grid-column: 2;
+        grid-row: 4;
+    }
+
+    .vce_logo {
+        width: 20%;
+        margin: auto;
+        display:block;
+    }
+    .ploty_graph {
+            height:50vw;
+    }

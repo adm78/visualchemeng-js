@@ -1,0 +1,46 @@
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="../css/buttons.css">
+    <link rel="stylesheet" type="text/css" href="../css/slider.css">
+    <link rel="stylesheet" type="text/css" href="../css/app_layout.css">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto">
+    <script
+       src="https://code.jquery.com/jquery-3.2.1.min.js"
+       integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+       crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  </head>
+  <body style="background-color:white;">
+          <div class="wrapper">
+            <div class="box sim_container">
+                  <div class="plotly_graph";" id="myDiv"></div>
+            </div>
+            <div class="box vce_info">
+                    <img class="vce_logo" src="https://user-images.githubusercontent.com/17439476/31101095-20e39cb4-a7c4-11e7-95b4-1cccde15a8c0.png" />
+      	            <p style="display: block; margin-left: auto; margin-right: auto; color:white; text-align: center; font-family:Roboto">Kinetic Monte Carlo</p>
+            </div>
+            <div class="box button_container">
+                    <button class="button" id="run" style="width:96%">Run</button><br/>
+                    <button class="button" id="stream" style="width:96%">Stream</button><br/>
+                    <button class="button" id="restart" style="width:96%">Restart</button>
+            </div>
+            <div class="box slider_container">
+                    <div id="red" ></div>
+                    <div id="green"></div>
+                    <div id="blue"></div>
+                    <div id="red" ></div>
+                    <div id="green"></div>
+                    <div id="blue"></div>
+            </div>
+            <div class="box c">C</div>
+            <div class="box d">D</div>
+          </div>
+      <!-- scripts required for simulations -->
+      <script src="../libraries/vce_utils.js"></script>
+      <script src="../libraries/plotly-latest.min.js"></script>
+      <script src="../modules/kmc/kmc_storage.js"></script>
+      <script src="../modules/kmc/kmc_solution.js"></script>
+      <script src="../modules/kmc/kmc.js"></script>
+  </body>
+</html>
