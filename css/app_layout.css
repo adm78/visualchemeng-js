@@ -2,6 +2,10 @@ body {
   margin: 5px;
 }
 
+.ploty_graph {
+         height: 100%;
+}
+
 .wrapper {
     display: grid;
     grid-gap: 10px;
@@ -48,7 +52,4 @@ body {
         width: 20%;
         margin: auto;
         display:block;
-    }
-    .ploty_graph {
-            height:50vw;
     }

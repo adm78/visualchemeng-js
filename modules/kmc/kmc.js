@@ -322,7 +322,8 @@ function get_traces(storage, storage2, storage3) {
 
     return [trace1,trace2,trace3,trace4,trace5,trace6,trace7,trace8,trace9]
 }
-
+var clientHeight = document.getElementById('sim_container').clientHeight;
+console.log("clientHeight =",clientHeight)
 // This the layout that is used when the pages loads
 var initial_layout = {
     //title: 'VCE Kinetic Monte Carlo Module',
@@ -334,6 +335,7 @@ var initial_layout = {
 	pad: 5
     },
     autosize: true,
+    height: '100%',
     titlefont: {
 	family: "Railway",
 	color: 'white',
