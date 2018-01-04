@@ -336,7 +336,7 @@ var initial_layout = {
 	pad: 5
     },
     autosize: true,
-    height: '100%',
+    //height: '100%',
     titlefont: {
 	family: "Railway",
 	color: 'white',
@@ -550,24 +550,20 @@ var d3 = Plotly.d3;
 var gd3 = d3.select("div[id='myDiv']");
 var gd = gd3.node();
 
-window.onresize = function() {
-    Plotly.Plots.resize(gd);
+function resizeWindow() {
     var window_height = document.getElementById('sim_container').offsetHeight;
-    var content_div_height = document.getElementById('sim_container').offsetHeight;
-    console.log("window_height before plot resize = ", window_height);
-    console.log("content_div_height = ",content_div_height);
-    // workaround for bug in Plotly: when flexbox container gets smaller, graph does not shrink
-    //if (content_div_height > (window_height - 40)) {
     var svg_container = document.getElementsByClassName('sim_container')[0].getElementsByClassName('svg-container')[0];
-    svg_container.style.height = (window_height - 40) + 'px';
+    svg_container.style.height = (window_height - 25) + 'px';
     Plotly.Plots.resize(gd);
-    //}
 };
-
-// window.load(function () {
-    
-// }
+// resize on window resize
+window.onresize = function() {
+    resizeWindow()
+};
+// resize on full page load (jquery)
+$(document).ready(function () {
+    resizeWindow()
+});
 
 // intialise the plot when the page loads
 Plotly.newPlot('myDiv', get_traces(kmc_Storage, exact_Storage, ss_Storage), initial_layout);
-Plotly.Plots.resize(gd);
