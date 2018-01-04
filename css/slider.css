@@ -1,0 +1,18 @@
+  #red, #green, #blue {
+    /* float: left; */
+    /* clear: left; */
+    width: 80%;
+    margin: 15px;
+}
+
+  #red2, #green2, #blue2 {
+    float: left;
+    clear: left;
+    margin: 15px;
+  }
+  #red .ui-slider-range { background: #ef2929; }
+  #red .ui-slider-handle { border-color: #ef2929; }
+  #green .ui-slider-range { background: #8ae234; }
+  #green .ui-slider-handle { border-color: #8ae234; }
+  #blue .ui-slider-range { background: #729fcf; }
+  #blue .ui-slider-handle { border-color: #729fcf; }

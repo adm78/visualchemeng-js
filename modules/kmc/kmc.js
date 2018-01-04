@@ -13,8 +13,12 @@
 // Andrew D. McGuire, Gustavo León 2017
 // (a.mcguire227@gmail.com)
 //----------------------------------------------------------
-
-
+// To do:
+// - fix the intial plot layout so that it matches standard run
+//   conditions
+// - link the sliders to the rate constants
+//
+//
 // --------------------------------------------------
 //             kmc functionality
 //---------------------------------------------------
@@ -196,6 +200,7 @@ var paused_log = false;
 var first_run = true; // have we yet to click anything?
 var run_log = false; // was the last button click 'Run'?
 var streaming_log = false; // are we currently streaming data?
+var was_restarted = true; // was the last button click 'Restart'?
 
 function unpack_data(storage, storage2, storage3) {
     // unpacks storage data to extend plotly graph
@@ -221,7 +226,8 @@ function restart_plot() {
     ss_Solution = new Solution(NA,NB,NC,time);
     ss_Storage = new Storage(ss_Solution);
     var initial_data = get_traces(kmc_Storage, exact_Storage, ss_Storage);
-    Plotly.newPlot('myDiv', initial_data, layout);    
+    Plotly.newPlot('myDiv', initial_data, initial_layout);
+    was_restarted = true;
 }
 
 function get_traces(storage, storage2, storage3) {
@@ -317,27 +323,61 @@ function get_traces(storage, storage2, storage3) {
     return [trace1,trace2,trace3,trace4,trace5,trace6,trace7,trace8,trace9]
 }
 
-var layout = {
-    title: 'KMC test',
+// This the layout that is used when the pages loads
+var initial_layout = {
+    //title: 'VCE Kinetic Monte Carlo Module',
+    margin: {
+	l: 80,
+	r: 50,
+	b: 50,
+	t: 20,
+	pad: 5
+    },
+    titlefont: {
+	family: "Railway",
+	color: 'white',
+	size: 24,
+    },
+    legend: {
+	font: {color: 'white'}	    
+    },
+    hoverlabel: {bordercolor:'#333438'},
+    plot_bgcolor: '#333438',//'#44474c',
+    paper_bgcolor: 'black',
     xaxis: {
+	showgrid: true,
+	gridcolor: '#44474c',
+	tickmode: 'auto',
+	range: [0,1.0],
 	title: 'time',
 	titlefont: {
-	    family: 'Courier New, monospace',
+	    family: 'Roboto, serif',
 	    size: 18,
-	    color: '#7f7f7f'
-	}
+	    color: 'white'
+	},
+	tickfont: {color:'white'}
     },
     yaxis: {
 	title: 'concentration',
+	showgrid: true,
+	gridcolor: '#44474c',//'#666a72',
 	range: [-Math.max.apply(Math, [NA,NB,NC])*0.1,
 		Math.max.apply(Math, [NA,NB,NC])*1.1],
 	titlefont: {
-	    family: 'Courier New, monospace',
+	    family: 'Roboto, serif',
 	    size: 18,
-	    color: '#7f7f7f'
-	}
+	    color: 'white'
+	},
+	tickfont: {color:'white'}
     }
 };
+
+// layout used throughout simulation
+var layout = JSON.parse(JSON.stringify(initial_layout));
+layout.yaxis.range = [-Math.max.apply(Math, [NA,NB,NC])*0.1,
+		      Math.max.apply(Math, [NA,NB,NC])*1.1];
+layout.xaxis.autorange = true;
+
 
 // define the run button  functionality
 $('#run').click(async function(){
@@ -404,6 +444,7 @@ $('#stream').click(async function(){
     streaming_log = true;
     if (first_run) {
 	first_run = false;
+	restart_plot();
     }
     else {
 	paused_log = !(paused_log);
@@ -449,9 +490,15 @@ $('#stream').click(async function(){
 	ss_Solution = ss_result.solution;
 	ss_Storage = ss_result.storage;
 
+	// make the x-range variable if is not already the case
+	if (was_restarted) {
+	    Plotly.newPlot('myDiv', get_traces(kmc_Storage, exact_Storage, ss_Storage), layout);
+	    was_restarted = false;
+	}
+	    
 	// extend the plots based on the new data
 	new_data = unpack_data(kmc_Storage, exact_Storage,ss_Storage);
-	Plotly.extendTraces('myDiv', new_data, [0, 1, 2, 3 ,4, 5, 6, 7, 8], max);
+	Plotly.extendTraces('myDiv', new_data, [0, 1, 2, 3 ,4, 5, 6, 7, 8], max, layout);
 	await sleep(10);
     }
 });
@@ -468,7 +515,29 @@ $('#restart').click(function(){
     $("#stream").text('Stream');	
 });
 
+// adding the rate constant slider
+// $(function() {
+//     $( "#slider" ).slider();
+// });
+function slider_test() {
+    console.log("hello slider");
+}
+
+$( function() {
+    $( "#red, #green, #blue" ).slider({
+	orientation: "horizontal",
+	range: "min",
+	max: 255,
+	value: 127,
+	slide: slider_test,
+	change: slider_test
+    });
+    $( "#red" ).slider( "value", 255 );
+    $( "#green" ).slider( "value", 140 );
+    $( "#blue" ).slider( "value", 60 );
+} );
+
 // intialise the plot when the page loads
-Plotly.newPlot('myDiv', get_traces(kmc_Storage, exact_Storage, ss_Storage), layout);
+Plotly.newPlot('myDiv', get_traces(kmc_Storage, exact_Storage, ss_Storage), initial_layout);
 
     
