@@ -6,6 +6,7 @@
 //                   A <==> B <==> C
 //
 // Requires:
+// - jquery
 // - plotly-latest.min.js
 // - kmc_storage.js
 // - kmc_solution.js
@@ -543,6 +544,27 @@ $( function() {
     $( "#green" ).slider( "value", 140 );
     $( "#blue" ).slider( "value", 60 );
 } );
+
+// resize with the window
+var d3 = Plotly.d3;
+var gd3 = d3.select("div[id='myDiv']");
+var gd = gd3.node();
+
+window.onresize = function() {
+    Plotly.Plots.resize(gd);
+    var window_height = document.getElementsByClassName('sim_container')[0].innerHeight;
+    var content_div_height = document.getElementById('sim_container').offsetHeight;
+    console.log("window_height before plot resize = ", window_height);
+    console.log("content_div_height = ",content_div_height);
+    // workaround for bug in Plotly: when flexbox container gets smaller, graph does not shrink
+    if (content_div_height > (window_height - 40)) {
+      var svg_container = document.getElementsByClassName('sim_container')[0].getElementsByClassName('svg-container')[0];
+      svg_container.style.height = (window_height - 40) + 'px';
+	Plotly.Plots.resize(gd);
+    }
+};
+
+
 
 // intialise the plot when the page loads
 Plotly.newPlot('myDiv', get_traces(kmc_Storage, exact_Storage, ss_Storage), initial_layout);
