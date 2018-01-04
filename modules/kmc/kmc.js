@@ -6,6 +6,7 @@
 //                   A <==> B <==> C
 //
 // Requires:
+// - jquery
 // - plotly-latest.min.js
 // - kmc_storage.js
 // - kmc_solution.js
@@ -59,19 +60,19 @@ function simulate(solution,rate_consts,tmax,smax,storage) {
     //
     // Returns the solution object in its final state and the
     // updated storage object.
-    
+
     var steps = 0;
     while (solution.time < tmax && steps < smax) {
-	
+
 	var rates = getRates(solution,rate_consts);
 	var cum_rates = getCumulativeRates(rates);
 	var total_rate = cum_rates[cum_rates.length-1];
 	var q = Math.random()*total_rate;
 	var dt = - Math.log(Math.random())/total_rate;
 	var solution = doJump(solution,q,cum_rates,dt); // update the solution
-	storage.update(solution); 
+	storage.update(solution);
 	steps += 1;
-	
+
     }
     return {solution: solution,
 	    storage: storage};
@@ -82,7 +83,7 @@ function getRates(s,rc) {
 
     // Compute the rates given solution state s
     // and rate contants array rc.
-    
+
     var r1 = rc.k1*s.NA;
     var rb1 = rc.kb1*s.NB;
     var r2 = rc.k2*s.NB;
@@ -99,12 +100,12 @@ function getCumulativeRates(rl) {
 }
 
 function doJump(s,q,cr,dt) {
-    
+
     // Perform one of the jump processes on solution
     // s according random deviate q, cumualtive
     // rate array cr and time step dt.
     // Returns new solution.
-    
+
     if (q <= cr[0]) {
 	s.NA -= 1;
 	s.NB += 1;
@@ -123,8 +124,8 @@ function doJump(s,q,cr,dt) {
     }
 
     // update the time
-    s.time = s.time + dt    
-    
+    s.time = s.time + dt
+
     return s
 }
 
@@ -133,46 +134,46 @@ function exactSolution(exact_Solution,rc,exact_Storage,
 
     // Return the exact solution at time t as defined by Vriens1954:
     // DOI: 10.1021/ie50532a024
-	
+
     var alpha = rc.k2/rc.k1;
     var K1 = rc.k1/rc.kb1;
     var K2 = rc.k2/rc.kb2;
-    
+
     var E1 = 1.0 + 1.0/K1 + alpha + alpha/K2;
     var E2 = alpha*(1.0+1.0/(K1*K2)+1.0/K2);
     var D1 = (-E1+Math.sqrt(Math.pow(E1,2)-4*E2))/2.0;
     var D2 = (-E1-Math.sqrt(Math.pow(E1,2)-4*E2))/2.0;
-    
+
     var C1 = (-1-D2 + alpha/(K1*K2*D1))/(D1-D2);
     var C2 = (1+D1-alpha/(K1*K2*D2))/(D1-D2);
     var C3 = (alpha/D1)/(D1-D2);
     var C4 = (-alpha/D2)/(D1-D2);
-    
+
     var steps = 1;
     var time_step = (max_time-min_time)/smax;
     var iter_time = min_time;
-    
+
     while (steps < smax+1) {
 	exact_Solution.time = iter_time;
 	var Theta = rc.k1*iter_time;
 	exact_Solution.NA = Ntot*(C1*Math.exp(D1*Theta)+C2*Math.exp(D2*Theta)+alpha/(K1*K2*E2));
 	exact_Solution.NC = Ntot*(C3*Math.exp(D1*Theta)+C4*Math.exp(D2*Theta)+alpha/(E2));
 	exact_Solution.NB = Ntot-exact_Solution.NA-exact_Solution.NC;
-	exact_Storage.update(exact_Solution); 
+	exact_Storage.update(exact_Solution);
 	steps +=1;
 	iter_time += time_step;
 	}
-	
+
     return {Solution: exact_Solution,
 	    Storage: exact_Storage};
 }
 
 function ss_simulate(solution,rate_consts,storage,max_time,smax,min_time) {
-	
+
     var steps = 1;
     var time_step = (max_time-min_time)/smax;
     var iter_time = min_time;
-	
+
     while (steps < smax+1) {
 	solution.time = iter_time;
 	exp_part = Math.exp((-rate_consts.k1*rate_consts.k2-rate_consts.kb1*rate_consts.kb2)*iter_time
@@ -182,11 +183,11 @@ function ss_simulate(solution,rate_consts,storage,max_time,smax,min_time) {
 	solution.NC = -((-1+exp_part)*rate_consts.k1*rate_consts.k2*Ntot)
 	               /(rate_consts.k1*rate_consts.k2+rate_consts.kb1*rate_consts.kb2);
 	solution.NB = Ntot-solution.NA-solution.NC;
-	storage.update(solution); 
+	storage.update(solution);
 	steps +=1;
 	iter_time += time_step;
     }
-	
+
     return {solution: solution,
 	    storage: storage};
 
@@ -218,7 +219,7 @@ function restart_plot() {
 
     // clear the plot data and re-intialise the plot
     // based on the initial conditions
-    
+
     kmc_Solution = new Solution(NA,NB,NC,time);
     kmc_Storage = new Storage(kmc_Solution);
     exact_Solution = new Solution(NA,NB,NC,time);
@@ -231,11 +232,11 @@ function restart_plot() {
 }
 
 function get_traces(storage, storage2, storage3) {
-    
+
     // generates an array of plotly trace objects
     // from a kmc, exact and ss storage object,
     // respectively
-    
+
     var trace1 = {
 	type: "scatter",
 	mode: "lines",
@@ -245,7 +246,7 @@ function get_traces(storage, storage2, storage3) {
 	line: {color: '#FF0000'},
 	maxdisplayed: 100
     }
-    
+
     var trace2 = {
 	type: "scatter",
 	mode: "lines",
@@ -254,7 +255,7 @@ function get_traces(storage, storage2, storage3) {
 	y: storage.NB,
 	line: {color: '#0000FF'},
     }
-    
+
     var trace3 = {
 	type: "scatter",
 	mode: "lines",
@@ -263,7 +264,7 @@ function get_traces(storage, storage2, storage3) {
 	y: storage.NC,
 	line: {color: '#00FF00'},
     }
-	
+
 	var trace4 = {
 	type: "scatter",
 	mode: "circle",
@@ -273,7 +274,7 @@ function get_traces(storage, storage2, storage3) {
 	line: {color: '#18BECF'},
 	maxdisplayed: 100
     }
-    
+
     var trace5 = {
 	type: "scatter",
 	mode: "circle",
@@ -282,7 +283,7 @@ function get_traces(storage, storage2, storage3) {
 	y: storage2.NB,
 	line: {color: '#8F7F7F'},
     }
-    
+
     var trace6 = {
 	type: "scatter",
 	mode: "circle",
@@ -291,7 +292,7 @@ function get_traces(storage, storage2, storage3) {
 	y: storage2.NC,
 	line: {color: '#EE8A00'},
     }
-	
+
 	var trace7 = {
 	type: "scatter",
 	mode: "circle",
@@ -301,7 +302,7 @@ function get_traces(storage, storage2, storage3) {
 	line: {color: '#FF00FF'},
 	maxdisplayed: 100
     }
-    
+
     var trace8 = {
 	type: "scatter",
 	mode: "circle",
@@ -310,7 +311,7 @@ function get_traces(storage, storage2, storage3) {
 	y: storage3.NB,
 	line: {color: '#00FFFF'},
     }
-    
+
     var trace9 = {
 	type: "scatter",
 	mode: "circle",
@@ -322,24 +323,27 @@ function get_traces(storage, storage2, storage3) {
 
     return [trace1,trace2,trace3,trace4,trace5,trace6,trace7,trace8,trace9]
 }
-
+var clientHeight = document.getElementById('sim_container').clientHeight;
+console.log("clientHeight =",clientHeight)
 // This the layout that is used when the pages loads
 var initial_layout = {
     //title: 'VCE Kinetic Monte Carlo Module',
-    margin: {
+   margin : {
 	l: 80,
 	r: 50,
 	b: 50,
 	t: 20,
 	pad: 5
     },
+    autosize: true,
+    //height: '100%',
     titlefont: {
 	family: "Railway",
 	color: 'white',
 	size: 24,
     },
     legend: {
-	font: {color: 'white'}	    
+	font: {color: 'white'}
     },
     hoverlabel: {bordercolor:'#333438'},
     plot_bgcolor: '#333438',//'#44474c',
@@ -371,6 +375,7 @@ var initial_layout = {
 	tickfont: {color:'white'}
     }
 };
+;
 
 // layout used throughout simulation
 var layout = JSON.parse(JSON.stringify(initial_layout));
@@ -381,16 +386,19 @@ layout.xaxis.autorange = true;
 
 // define the run button  functionality
 $('#run').click(async function(){
-    
+
     // This function run all solutions to a set time
     // or maximum number of kmc steps
     // and displays the resulting plot
-    
+
+    if (streaming_log) {
+        $("#stream").text('Stream');
+    };
     streaming_log = false;
     run_log = true;
     console.log("You just clicked run!");
     var run_tmax = 10.0;
-    var run_smax = 100000;    
+    var run_smax = 100000;
 
     kmc_Solution = new Solution(NA,NB,NC,time);
     kmc_Storage = new Storage(kmc_Solution);
@@ -398,12 +406,12 @@ $('#run').click(async function(){
     exact_Storage = new Storage(exact_Solution);
     ss_Solution = new Solution(NA,NB,NC,time);
     ss_Storage = new Storage(ss_Solution);
-    
+
     result = simulate(kmc_Solution,rate_consts,run_tmax,
 		      run_smax,kmc_Storage);
     kmc_Solution = result.solution;
     kmc_Storage = result.storage;
-    
+
     exact_result = exactSolution(exact_Solution,rate_consts,exact_Storage,
 				 kmc_Storage.time[kmc_Storage.time.length-1],
 				 Math.round(kmc_Storage.time.length*0.01), 0.0);
@@ -415,12 +423,12 @@ $('#run').click(async function(){
 			    Math.round(kmc_Storage.time.length*0.01), 0.0);
     ss_Solution = ss_result.solution;
     ss_Storage = ss_result.storage;
-    
+
     Plotly.newPlot('myDiv',
 		   get_traces(kmc_Storage, exact_Storage, ss_Storage),
 		   layout);
 });
-    
+
 
 // define the stream button  functionality
 $('#stream').click(async function(){
@@ -428,7 +436,7 @@ $('#stream').click(async function(){
     // Continuously generate new data for each trace
     // and stream it to the plotly graph. Can support
     // pausing and interrups.
-    
+
     console.log("You just clicked stream/pause!");
 
     // run length controls
@@ -450,7 +458,7 @@ $('#stream').click(async function(){
 	paused_log = !(paused_log);
     }
     if (paused_log) {
-	$("#stream").text('Stream');	
+	$("#stream").text('Stream');
     }
     else {
 	$("#stream").text('Pause');
@@ -460,7 +468,7 @@ $('#stream').click(async function(){
 	restart_plot();
 	run_log = false;
     }
-	
+
     while (!(paused_log) && (streaming_log)) {
 
 	cnt = cnt + 1;
@@ -495,7 +503,7 @@ $('#stream').click(async function(){
 	    Plotly.newPlot('myDiv', get_traces(kmc_Storage, exact_Storage, ss_Storage), layout);
 	    was_restarted = false;
 	}
-	    
+
 	// extend the plots based on the new data
 	new_data = unpack_data(kmc_Storage, exact_Storage,ss_Storage);
 	Plotly.extendTraces('myDiv', new_data, [0, 1, 2, 3 ,4, 5, 6, 7, 8], max, layout);
@@ -512,7 +520,7 @@ $('#restart').click(function(){
     paused_log = true;
     streaming_log = false;
     run_log = false;
-    $("#stream").text('Stream');	
+    $("#stream").text('Stream');
 });
 
 // adding the rate constant slider
@@ -537,7 +545,25 @@ $( function() {
     $( "#blue" ).slider( "value", 60 );
 } );
 
+// resize with the window
+var d3 = Plotly.d3;
+var gd3 = d3.select("div[id='myDiv']");
+var gd = gd3.node();
+
+function resizeWindow() {
+    var window_height = document.getElementById('sim_container').offsetHeight;
+    var svg_container = document.getElementsByClassName('sim_container')[0].getElementsByClassName('svg-container')[0];
+    svg_container.style.height = (window_height - 25) + 'px';
+    Plotly.Plots.resize(gd);
+};
+// resize on window resize
+window.onresize = function() {
+    resizeWindow()
+};
+// resize on full page load (jquery)
+$(document).ready(function () {
+    resizeWindow()
+});
+
 // intialise the plot when the page loads
 Plotly.newPlot('myDiv', get_traces(kmc_Storage, exact_Storage, ss_Storage), initial_layout);
-
-    
