@@ -565,5 +565,14 @@ $(document).ready(function () {
     resizeWindow()
 });
 
+// full screem the app
+const target = $('#target')[0]; // Get DOM element from jQuery collection
+$('#fullscreen').on('click', () => {
+    console.log("fullscreen requested");
+    if (screenfull.enabled) {
+	screenfull.request(target);
+    }
+});
+
 // intialise the plot when the page loads
 Plotly.newPlot('myDiv', get_traces(kmc_Storage, exact_Storage, ss_Storage), initial_layout);
