@@ -528,11 +528,11 @@ $('#restart').click(function(){
 //     $( "#slider" ).slider();
 // });
 function slider_test() {
-    console.log("hello slider");
+    //console.log("hello slider");
 }
 
 $( function() {
-    $( "#red, #green, #blue" ).slider({
+    $( "#k1_slider, #k2_slider, #k3_slider, #k4_slider" ).slider({
 	orientation: "horizontal",
 	range: "min",
 	max: 255,
@@ -540,9 +540,10 @@ $( function() {
 	slide: slider_test,
 	change: slider_test
     });
-    $( "#red" ).slider( "value", 255 );
-    $( "#green" ).slider( "value", 140 );
-    $( "#blue" ).slider( "value", 60 );
+    $( "#k1_slider" ).slider( "value", 255 );
+    $( "#k2_slider" ).slider( "value", 140 );
+    $( "#k3_slider" ).slider( "value", 60 );
+    $( "#k4_slider" ).slider( "value", 140 );
 } );
 
 // resize with the window
