@@ -227,6 +227,7 @@ function restart_plot() {
     ss_Solution = new Solution(NA,NB,NC,time);
     ss_Storage = new Storage(ss_Solution);
     var initial_data = get_traces(kmc_Storage, exact_Storage, ss_Storage);
+    //Plotly.relayout('myDiv', intial_layout);
     Plotly.newPlot('myDiv', initial_data, initial_layout);
     was_restarted = true;
 }
@@ -423,10 +424,12 @@ $('#run').click(async function(){
 			    Math.round(kmc_Storage.time.length*0.01), 0.0);
     ss_Solution = ss_result.solution;
     ss_Storage = ss_result.storage;
-
+    
+    //Plotly.relayout('myDiv', layout);
     Plotly.newPlot('myDiv',
 		   get_traces(kmc_Storage, exact_Storage, ss_Storage),
 		   layout);
+
 });
 
 
@@ -468,11 +471,16 @@ $('#stream').click(async function(){
 	restart_plot();
 	run_log = false;
     }
-
+       
     while (!(paused_log) && (streaming_log)) {
 
 	cnt = cnt + 1;
 	streaming_log = true;
+
+	// relayout
+	if (cnt === 1) {
+	    Plotly.relayout('myDiv', layout);
+	};
 
 	// grab the start time and clear the data
 	exact_start_time = kmc_Storage.time[0];
