@@ -229,6 +229,7 @@ function restart_plot() {
     var initial_data = get_traces(kmc_Storage, exact_Storage, ss_Storage);
     //Plotly.relayout('myDiv', intial_layout);
     Plotly.newPlot('myDiv', initial_data, initial_layout);
+    console.log("intiial_layout = ",initial_layout);
     was_restarted = true;
 }
 
@@ -326,8 +327,8 @@ function get_traces(storage, storage2, storage3) {
 }
 var clientHeight = document.getElementById('sim_container').clientHeight;
 console.log("clientHeight =",clientHeight)
-// This the layout that is used when the pages loads
-var initial_layout = {
+// This the layout that is used when the pages loads/graph resets
+const initial_layout = {
     //title: 'VCE Kinetic Monte Carlo Module',
    margin : {
 	l: 80,
@@ -336,7 +337,7 @@ var initial_layout = {
 	t: 20,
 	pad: 5
     },
-    autosize: true,
+    //autosize: true,
     //height: '100%',
     titlefont: {
 	family: "Railway",
@@ -350,6 +351,8 @@ var initial_layout = {
     plot_bgcolor: '#333438',//'#44474c',
     paper_bgcolor: 'black',
     xaxis: {
+	autorange: false,
+	autoscale: false,
 	showgrid: true,
 	gridcolor: '#44474c',
 	tickmode: 'auto',
@@ -366,6 +369,8 @@ var initial_layout = {
 	title: 'concentration',
 	showgrid: true,
 	gridcolor: '#44474c',//'#666a72',
+	autorange: false,
+	autoscale: false,
 	range: [-Math.max.apply(Math, [NA,NB,NC])*0.1,
 		Math.max.apply(Math, [NA,NB,NC])*1.1],
 	titlefont: {
@@ -452,10 +457,12 @@ $('#stream').click(async function(){
     var initial_data
 
     // update the html buttons/operational logicals
-    streaming_log = true;
     if (first_run) {
 	first_run = false;
 	restart_plot();
+    }
+    else if (was_restarted) {
+	paused_log = false;	
     }
     else {
 	paused_log = !(paused_log);
@@ -470,17 +477,19 @@ $('#stream').click(async function(){
 	// the plot needs to be cleared
 	restart_plot();
 	run_log = false;
+	paused_log = false;
     }
+    streaming_log = true;
+    console.log("first run =", first_run);
+    console.log("paused_log = ", paused_log);
+    console.log("was_restarted = ", was_restarted);
+    console.log("streaming_log =", streaming_log);
+    
        
     while (!(paused_log) && (streaming_log)) {
 
 	cnt = cnt + 1;
 	streaming_log = true;
-
-	// relayout
-	if (cnt === 1) {
-	    Plotly.relayout('myDiv', layout);
-	};
 
 	// grab the start time and clear the data
 	exact_start_time = kmc_Storage.time[0];
@@ -525,7 +534,7 @@ $('#restart').click(function(){
     // clear the plot and update operating bools
     console.log("You just clicked restart!");
     restart_plot();
-    paused_log = true;
+    paused_log = false;
     streaming_log = false;
     run_log = false;
     $("#stream").text('Stream');
