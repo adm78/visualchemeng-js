@@ -230,6 +230,11 @@ function restart_plot() {
     //Plotly.relayout('myDiv', intial_layout);
     Plotly.newPlot('myDiv', initial_data, initial_layout);
     console.log("intiial_layout = ",initial_layout);
+    //reset the run time layout
+    layout = JSON.parse(JSON.stringify(initial_layout));
+    layout.yaxis.range = [-Math.max.apply(Math, [NA,NB,NC])*0.1,
+			  Math.max.apply(Math, [NA,NB,NC])*1.1];
+    layout.xaxis.autorange = true;
     was_restarted = true;
 }
 
