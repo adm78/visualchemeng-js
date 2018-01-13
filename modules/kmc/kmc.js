@@ -434,7 +434,7 @@ $('#run').click(async function(){
 			    Math.round(kmc_Storage.time.length*0.01), 0.0);
     ss_Solution = ss_result.solution;
     ss_Storage = ss_result.storage;
-    
+
     //Plotly.relayout('myDiv', layout);
     Plotly.newPlot('myDiv',
 		   get_traces(kmc_Storage, exact_Storage, ss_Storage),
@@ -467,7 +467,7 @@ $('#stream').click(async function(){
 	restart_plot();
     }
     else if (was_restarted) {
-	paused_log = false;	
+	paused_log = false;
     }
     else {
 	paused_log = !(paused_log);
@@ -489,8 +489,8 @@ $('#stream').click(async function(){
     console.log("paused_log = ", paused_log);
     console.log("was_restarted = ", was_restarted);
     console.log("streaming_log =", streaming_log);
-    
-       
+
+
     while (!(paused_log) && (streaming_log)) {
 
 	cnt = cnt + 1;
@@ -549,23 +549,28 @@ $('#restart').click(function(){
 // $(function() {
 //     $( "#slider" ).slider();
 // });
-function slider_test() {
-    //console.log("hello slider");
+function update_rate_constants() {
+    // called when the any slider is moved
+    rate_consts.k1 = $('#k1_slider').slider("option", "value");
+    rate_consts.kb1 = $('#k2_slider').slider("option", "value");
+    rate_consts.k2 = $('#k3_slider').slider("option", "value");
+    rate_consts.kb2 = $('#k4_slider').slider("option", "value");
 }
 
 $( function() {
+    // set-up the sliders and link to the function
     $( "#k1_slider, #k2_slider, #k3_slider, #k4_slider" ).slider({
 	orientation: "horizontal",
 	range: "min",
-	max: 255,
-	value: 127,
-	slide: slider_test,
-	change: slider_test
+	max: 200,
+	value: 100,
+	slide: update_rate_constants,
+	change: update_rate_constants
     });
-    $( "#k1_slider" ).slider( "value", 255 );
-    $( "#k2_slider" ).slider( "value", 140 );
-    $( "#k3_slider" ).slider( "value", 60 );
-    $( "#k4_slider" ).slider( "value", 140 );
+    $( "#k1_slider" ).slider( "value", rate_consts.k1 );
+    $( "#k2_slider" ).slider( "value", rate_consts.kb1 );
+    $( "#k3_slider" ).slider( "value", rate_consts.k2 );
+    $( "#k4_slider" ).slider( "value", rate_consts.kb2 );
 } );
 
 // resize with the window
