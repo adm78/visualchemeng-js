@@ -1,0 +1,33 @@
+.slider_container {
+    grid-column: 3 ;
+    grid-row: 3 ;
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    
+}
+
+.k1_slider_text {
+    grid-column: 1;
+    grid-row: 1;
+    margin: 0 auto;
+     margin-top: 5px;
+}
+  
+.k2_slider_text {
+    grid-column: 1;
+    grid-row: 2;
+    margin: 0 auto;
+    margin-top: 5px;
+}
+.k3_slider_text {
+    grid-column: 1;
+    grid-row: 3;
+    margin: 0 auto;
+    margin-top: 5px;
+}
+.k4_slider_text {
+    grid-column: 1;
+    grid-row: 4;
+    margin: auto;
+    margin-top: 5px;
+}

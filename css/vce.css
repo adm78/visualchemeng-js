@@ -1,0 +1,88 @@
+/* VCE - vce.css */
+/*
+/* This is the main css file that control the appearnce and set-up of the */
+/* generic module grid. This grid should be re-used across modules, */
+/* overriding classes as neccessary */
+/*
+/* Andrew D. McGuire 2017 */
+/* ---------------------------------------------------------------------- */	   
+body {
+  margin: 5px;
+}
+
+.ploty_graph {
+         height: 100%;
+}
+
+.wrapper {
+    display: grid;
+    grid-gap: 10px;
+        grid-template-columns: 2fr 2fr 1fr;
+        background-color: #fff;
+        color: #444;
+    }
+
+.box {
+    background-color: #444;
+    color: #fff;
+    border-radius: 5px;
+    padding: 10px;
+    font-size: 100%;
+    
+}
+
+.sim_container {
+    grid-column: 1 / 3;
+    grid-row: 1 / 5;
+}
+.vce_info {
+    grid-column: 3 ;
+    grid-row: 1 ;
+}
+.button_container {
+    grid-column: 3 ;
+    grid-row: 2 ;
+}
+.slider_container {
+    grid-column: 3 ;
+    grid-row: 3 ;
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    
+}
+.fs_container {
+    grid-column:  3 ;
+    grid-row: 4 ;
+}
+
+.vce_logo {
+    width: 20%;
+    margin: auto;
+    display:block;
+}
+
+.k1_slider_text {
+    grid-column: 1;
+    grid-row: 1;
+    margin: 0 auto;
+     margin-top: 5px;
+}
+  
+.k2_slider_text {
+    grid-column: 1;
+    grid-row: 2;
+    margin: 0 auto;
+    margin-top: 5px;
+}
+.k3_slider_text {
+    grid-column: 1;
+    grid-row: 3;
+    margin: 0 auto;
+    margin-top: 5px;
+}
+.k4_slider_text {
+    grid-column: 1;
+    grid-row: 4;
+    margin: auto;
+    margin-top: 5px;
+}
