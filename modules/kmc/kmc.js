@@ -551,11 +551,12 @@ $('#restart').click(function(){
 //     $( "#slider" ).slider();
 // });
 function update_rate_constants() {
-    // called when the any slider is moved
-    rate_consts.k1 = $('#k1_slider').slider("option", "value");
-    rate_consts.kb1 = $('#k2_slider').slider("option", "value");
-    rate_consts.k2 = $('#k3_slider').slider("option", "value");
-    rate_consts.kb2 = $('#k4_slider').slider("option", "value");
+    // called when the any slider is moved.
+    // we add 1.0 so the rates are never 0.
+    rate_consts.k1 = $('#k1_slider').slider("option", "value")+1.0;
+    rate_consts.kb1 = $('#k2_slider').slider("option", "value")+1.0;
+    rate_consts.k2 = $('#k3_slider').slider("option", "value")+1.0;
+    rate_consts.kb2 = $('#k4_slider').slider("option", "value")+1.0;
 }
 
 $( function() {
