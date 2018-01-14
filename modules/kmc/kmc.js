@@ -175,21 +175,21 @@ function ss_simulate(solution,rate_consts,storage,max_time,smax,min_time) {
     var iter_time = min_time;
 
     while (steps < smax+1) {
-	solution.time = iter_time;
+	ss_Solution.time = iter_time;
 	exp_part = Math.exp((-rate_consts.k1*rate_consts.k2-rate_consts.kb1*rate_consts.kb2)*iter_time
 			    /(rate_consts.k2+rate_consts.kb1));
-	solution.NA = (exp_part*rate_consts.k1*rate_consts.k2+rate_consts.kb1*rate_consts.kb2)*Ntot
+	ss_Solution.NA = (exp_part*rate_consts.k1*rate_consts.k2+rate_consts.kb1*rate_consts.kb2)*Ntot
 	              /(rate_consts.k1*rate_consts.k2+rate_consts.kb1*rate_consts.kb2);
-	solution.NC = -((-1+exp_part)*rate_consts.k1*rate_consts.k2*Ntot)
+	ss_Solution.NC = -((-1+exp_part)*rate_consts.k1*rate_consts.k2*Ntot)
 	               /(rate_consts.k1*rate_consts.k2+rate_consts.kb1*rate_consts.kb2);
-	solution.NB = Ntot-solution.NA-solution.NC;
-	storage.update(solution);
+	ss_Solution.NB = Ntot-ss_Solution.NA-ss_Solution.NC;
+	ss_Storage.update(ss_Solution);
 	steps +=1;
 	iter_time += time_step;
     }
 
-    return {solution: solution,
-	    storage: storage};
+    return {Solution: ss_Solution,
+	    Storage: ss_Storage};
 
 }
 
@@ -229,13 +229,13 @@ function restart_plot() {
     var initial_data = get_traces(kmc_Storage, exact_Storage, ss_Storage);
     //Plotly.relayout('myDiv', intial_layout);
     Plotly.newPlot('myDiv', initial_data, initial_layout);
-    console.log("intiial_layout = ",initial_layout);
     //reset the run time layout
     layout = JSON.parse(JSON.stringify(initial_layout));
     layout.yaxis.range = [-Math.max.apply(Math, [NA,NB,NC])*0.1,
 			  Math.max.apply(Math, [NA,NB,NC])*1.1];
     layout.xaxis.autorange = true;
     was_restarted = true;
+    enable_sliders();
 }
 
 function get_traces(storage, storage2, storage3) {
@@ -334,7 +334,6 @@ var clientHeight = document.getElementById('sim_container').clientHeight;
 console.log("clientHeight =",clientHeight)
 // This the layout that is used when the pages loads/graph resets
 const initial_layout = {
-    //title: 'VCE Kinetic Monte Carlo Module',
    margin : {
 	l: 80,
 	r: 50,
@@ -404,6 +403,7 @@ $('#run').click(async function(){
 
     if (streaming_log) {
         $("#stream").text('Stream');
+	enable_sliders();
     };
     streaming_log = false;
     run_log = true;
@@ -432,8 +432,8 @@ $('#run').click(async function(){
     ss_result = ss_simulate(ss_Solution,rate_consts,ss_Storage,
 			    kmc_Storage.time[kmc_Storage.time.length-1],
 			    Math.round(kmc_Storage.time.length*0.01), 0.0);
-    ss_Solution = ss_result.solution;
-    ss_Storage = ss_result.storage;
+    ss_Solution = ss_result.Solution;
+    ss_Storage = ss_result.Storage;
 
     //Plotly.relayout('myDiv', layout);
     Plotly.newPlot('myDiv',
@@ -485,6 +485,7 @@ $('#stream').click(async function(){
 	paused_log = false;
     }
     streaming_log = true;
+    disable_sliders(); 
     console.log("first run =", first_run);
     console.log("paused_log = ", paused_log);
     console.log("was_restarted = ", was_restarted);
@@ -517,8 +518,8 @@ $('#stream').click(async function(){
 	ss_result = ss_simulate(ss_Solution,rate_consts,ss_Storage,
 				kmc_Storage.time[kmc_Storage.time.length-1],
 				smax*0.95,exact_start_time);
-	ss_Solution = ss_result.solution;
-	ss_Storage = ss_result.storage;
+	ss_Solution = ss_result.Solution;
+	ss_Storage = ss_result.Storage;
 
 	// make the x-range variable if is not already the case
 	if (was_restarted) {
@@ -529,7 +530,7 @@ $('#stream').click(async function(){
 	// extend the plots based on the new data
 	new_data = unpack_data(kmc_Storage, exact_Storage,ss_Storage);
 	Plotly.extendTraces('myDiv', new_data, [0, 1, 2, 3 ,4, 5, 6, 7, 8], max, layout);
-	await sleep(10);
+	await sleep(1);
     }
 });
 
@@ -573,6 +574,23 @@ $( function() {
     $( "#k4_slider" ).slider( "value", rate_consts.kb2 );
 } );
 
+function disable_sliders() {
+    // disables all sliders. Useful when streaming
+    $( "#k1_slider" ).slider( "disable" );
+    $( "#k2_slider" ).slider( "disable" );
+    $( "#k3_slider" ).slider( "disable" );
+    $( "#k4_slider" ).slider( "disable" );
+};
+
+function enable_sliders() {
+    // disables all sliders. Useful when streaming
+    $( "#k1_slider" ).slider( "enable" );
+    $( "#k2_slider" ).slider( "enable" );
+    $( "#k3_slider" ).slider( "enable" );
+    $( "#k4_slider" ).slider( "enable" );
+};
+    
+
 // resize with the window
 var d3 = Plotly.d3;
 var gd3 = d3.select("div[id='myDiv']");
@@ -601,6 +619,7 @@ $('#fullscreen').on('click', () => {
 	screenfull.request(target);
     }
 });
+
 
 // intialise the plot when the page loads
 Plotly.newPlot('myDiv', get_traces(kmc_Storage, exact_Storage, ss_Storage), initial_layout);
