@@ -19,16 +19,19 @@ var time = 0.0;        // global simulation time
 var xmax;              // canvas x-width
 var ymax;              // canvas y-width
 var paused_log = true; // paused indicator bool
- 
+
 function setup() {
 
     /* This function is called upon entry to create the
-       simulation canvas which we draw onto and the particle array. 
-       Canvas size and particle number is dependent on the window 
+       simulation canvas which we draw onto and the particle array.
+       Canvas size and particle number is dependent on the window
        size. */
-    
-    xmax = min(772+28,windowWidth-2*28); 
-    ymax = xmax*0.618;
+
+    var dimensions = getSimBoxDimensions();
+    xmax = dimensions.xmax;
+    ymax = dimensions.ymax;
+    console.log("xmax=",xmax);
+    console.log("ymax=",ymax);
     var canvas= createCanvas(xmax, ymax);
     canvas.parent("sim_container")
     var part_to_init = Math.round(xmax*ymax/5000.0);
@@ -37,7 +40,7 @@ function setup() {
 
 function draw() {
 
-    /* This function drives the simulation forward in time. 
+    /* This function drives the simulation forward in time.
        It's continuously called for the
        lifetime of the scripts executions after setup()
        has completed. */
@@ -51,7 +54,7 @@ function draw() {
     for (i = 0; i < particles.length; i++) {
 	     particles[i].show();
     }
-    
+
     // set up stroke for progress box
     noStroke();
     fill(0)
@@ -85,7 +88,7 @@ function doStep(dt) {
        whichever comes first.
        If a collision is detected within (time,time+dt)
        then it's carried out and the sim time is updated.
-       
+
        args:
        dt - time to try and advance simulation by
     */
@@ -109,7 +112,7 @@ function doStep(dt) {
     else  {
 	// Collision has occured between the step
 	// so, carry it out. Highlighting the particles
-	// involved. 
+	// involved.
 	advanceParticles(dt_col);
         var firstEvent = coll_list[0];
 	highlightEventParticles(firstEvent)
@@ -121,7 +124,7 @@ function doStep(dt) {
 function highlightEventParticles(CurrentEvent) {
 
     /* Highlight the particle(s) involved in
-       an event 
+       an event
 
        args:
        CurrentEvent - a valid Event object
@@ -132,11 +135,11 @@ function highlightEventParticles(CurrentEvent) {
     if (CurrentEvent.p2_index) {
         var p2 = particles[CurrentEvent.p2_index];
         p2.highlight();
-    }    
+    }
 }
 
 function getWallCollisionTime(Part) {
-    
+
     /* Compute the first collision time with between
        particle Part and any wall */
 
@@ -197,10 +200,10 @@ function getWallCollisionTime(Part) {
 
 function getCollisionTime(Part1, Part2) {
 
-    /* Compute the time until collision 
+    /* Compute the time until collision
        between particle Part1 and Part2.
 
-       return time as NaN if no collision 
+       return time as NaN if no collision
        time solution found */
 
     var deltaVel = p5.Vector.sub(Part1.vel,Part2.vel)
@@ -222,12 +225,12 @@ function getCollisionTime(Part1, Part2) {
 function getCollisionList(particles) {
 
     /* Returns an array of collision Event objects,
-       ordered by their time attribute 
+       ordered by their time attribute
        (smallest to largest, NaNs at the end)
 
        args:
        particles - an array of Particle objects */
-    
+
     // return
     var coll_list = []
 
@@ -268,9 +271,9 @@ function getCollisionList(particles) {
 }
 
 function performCollision(event) {
-    
+
     /* Apply collision operator according according to event
-       
+
        args:
        event - a valid Event object
     */
@@ -295,13 +298,13 @@ function performCollision(event) {
 }
 
 function impulse(Part1,Part2) {
-    
+
     /* Compute the impulse associated with a particle-particle
        collision
        https://introcs.cs.princeton.edu/java/assignments/collisions.html
 
        J = 2*m1*m2*(dv*dr)/(sigma*(m1+m2))
-    
+
        args:
        Part1 - valid Particle object
        Part2 - valid Particle object
@@ -324,7 +327,7 @@ function advanceParticles(dt) {
 
     /* Advance the ensemble forward in time by dt
        in a straight line trajectory (no collisions) */
-    
+
     for (i = 0; i < particles.length; i++) {
       particles[i].update(dt);
     }
@@ -332,15 +335,15 @@ function advanceParticles(dt) {
 
 
 function initParticles(n,r,xmax, ymax) {
-    
+
     /* Intialise n particles with radius r in box with
        dimensions (xmax,ymax)
-       such that there are no overlapping particles 
+       such that there are no overlapping particles
 
        return:
        particle - an array of Particle objects
     */
-       
+
     var parts = [];
     var dx = initialSpacing(n, xmax, ymax);
     var n_init = 0 ;
@@ -357,11 +360,11 @@ function initParticles(n,r,xmax, ymax) {
 }
 
 function initialSpacing(n, x, y) {
-    
+
     /* Returns the intialise spacing
        between particles to put n particles
        on a uniform grid with limits x, y */
-    
+
     var num1 = -(x+y);
     var num2sqred = Math.pow(x+y,2.0) + 4.0*x*y*(n-1);
     var num2 = Math.pow(num2sqred, 0.5);
@@ -377,6 +380,9 @@ function addParticle() {
     particles.push(new_part);
 }
 
+//--------------------------------------------------------------------
+//                  Visualisation functionality
+//--------------------------------------------------------------------
 function mouseinSimBox() {
 
     if (0 < mouseX && mouseX < xmax && 0 < mouseY && mouseY < ymax) {
@@ -393,14 +399,21 @@ function mousePressed() {
 
 $('#run').click(async function(){
 
-    // run/pause button functionality    
+    // run/pause button functionality
     console.log("You just clicked stream/pause!");
     paused_log = !(paused_log);
     if (paused_log) {
-	$("#run").text('Run');	
+	$("#run").text('Run');
     }
     else {
 	$("#run").text('Pause');
     }
 });
 
+function getSimBoxDimensions() {
+        //get the dimension of the simbox
+        var sb_ymax = document.getElementById('sim_container').offsetHeight;
+        var sb_xmax = $('#sim_container').outerWidth()*0.97;
+        return {ymax: sb_ymax,
+                xmax: sb_xmax};
+};
