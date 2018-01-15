@@ -60,7 +60,7 @@ function draw() {
     // set up stroke for progress box
     noStroke();
     fill(0)
-    rect(0.85*xmax,0.94*ymax,0.14*xmax,0.05*ymax)
+    rect(0.85*xmax,0.92*ymax,0.14*xmax,0.07*ymax)
     fill(255)
 
     // Step through time unless sim is paused,
@@ -79,7 +79,7 @@ function writeTime() {
     strokeWeight(1);
     fill(255)
     textSize(Math.round(xmax/45.0))
-    text("t = "+time.toFixed(0),0.86*xmax,0.95*ymax,0.12*xmax,0.04*ymax);
+    text("t = "+time.toFixed(0),0.87*xmax,0.93*ymax,0.12*xmax,0.05*ymax);
     //text("t = "+xmax,0.91*xmax,0.95*ymax,0.1*xmax,0.1*ymax);
 }
 
@@ -412,11 +412,13 @@ function mousePressed() {
 
 
 function getSimBoxDimensions() {
-        //get the dimension of the simbox
-        var sb_ymax = document.getElementById('sim_container').offsetHeight;
-        var sb_xmax = $('#sim_container').outerWidth()*0.97;
-        return {ymax: sb_ymax,
-                xmax: sb_xmax};
+    //get the dimension of the simbox
+    var sb_ymax = $('#sim_container').outerHeight()*0.95;
+    var sb_xmax = $('#sim_container').outerWidth()*0.97;
+    return {
+	ymax: sb_ymax,
+        xmax: sb_xmax
+    };
 };
 
 function getRadius() {
