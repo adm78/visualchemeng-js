@@ -381,7 +381,7 @@ function addParticle() {
     // at the position of the mouse. If this overlaps with
     // another particle, then try another position until we
     // find a overlap free position.
-    
+
     var new_part = new Particle(mouseX,mouseY,getRadius());
     var attempts = 1;
     while (overlapExists(new_part)) {
@@ -412,7 +412,7 @@ function overlapExists(part) {
 	    console.log("warning: overlap detected!");
 	};
     };
-    return answer;	
+    return answer;
 }
 
 function overlapExistsParticle(p1, p2) {
@@ -420,7 +420,6 @@ function overlapExistsParticle(p1, p2) {
     if (distParticles(p1,p2) < p1.radius + p2.radius) {
 	return true;
     }
-    console.log("particle distance = ", distParticles(p1,p2));
     return false;
 };
 
@@ -428,19 +427,25 @@ function distParticles(p1, p2) {
     // return the distance between two particles
     var dx2 = Math.pow(p1.pos.x - p2.pos.x,2.0);
     var dy2 = Math.pow(p1.pos.y - p2.pos.y,2.0);
-    console.log("dx2 =", dx2, "dy2 = ", dy2);
     return Math.pow(dx2 + dy2, 0.5);
 };
 
 function randomMove(part) {
-    // translate a particle by a small random amount
-    while (0 < part.pos.x - part.radius && part.pos.x + part.radius < xmax && 0 < part.pos.y - part.radius && part.pos.y + part.radius < ymax) {
-	part.pos.x = part.pos.x + part.radius*Math.random();
-	part.pos.y = part.pos.y + part.radius*Math.random();
-    };
+    // translate a particle by a small random amount, ensuring the
+    // resulting position lies within the sim box.
+
+    while (true) {
+        new_x = part.pos.x + part.radius*Math.random();
+        new_y = part.pos.y + part.radius*Math.random();
+        // accept if we're still in the sim box
+        if (0 < new_x - part.radius && new_x + part.radius < xmax && 0 < new_y - part.radius && new_y + part.radius < ymax) {
+	    part.pos.x = new_x;
+	    part.pos.y = new_y;
+            break;
+        };
+    }
     return part;
 }
-    
 
 //--------------------------------------------------------------------
 //                  Visualisation functionality
