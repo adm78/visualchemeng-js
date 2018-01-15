@@ -380,9 +380,21 @@ function addParticle() {
     particles.push(new_part);
 }
 
+function restartParticles() {
+    // re-intialises the particle ensemble
+    paused_log = true;
+    var dimensions = getSimBoxDimensions();
+    xmax = dimensions.xmax;
+    ymax = dimensions.ymax;
+    particles = initParticles(part_to_init,r,xmax,ymax);
+    var part_to_init = Math.round(xmax*ymax/5000.0);
+    particles = initParticles(part_to_init,r,xmax,ymax);
+};
+
 //--------------------------------------------------------------------
 //                  Visualisation functionality
 //--------------------------------------------------------------------
+
 function mouseinSimBox() {
 
     if (0 < mouseX && mouseX < xmax && 0 < mouseY && mouseY < ymax) {
@@ -397,6 +409,19 @@ function mousePressed() {
     if (mouseinSimBox()) {addParticle()};
 }
 
+
+function getSimBoxDimensions() {
+        //get the dimension of the simbox
+        var sb_ymax = document.getElementById('sim_container').offsetHeight;
+        var sb_xmax = $('#sim_container').outerWidth()*0.97;
+        return {ymax: sb_ymax,
+                xmax: sb_xmax};
+};
+
+//--------------------------------------------------------------------
+//                  UI event listners
+//--------------------------------------------------------------------
+
 $('#run').click(async function(){
 
     // run/pause button functionality
@@ -410,10 +435,11 @@ $('#run').click(async function(){
     }
 });
 
-function getSimBoxDimensions() {
-        //get the dimension of the simbox
-        var sb_ymax = document.getElementById('sim_container').offsetHeight;
-        var sb_xmax = $('#sim_container').outerWidth()*0.97;
-        return {ymax: sb_ymax,
-                xmax: sb_xmax};
-};
+$('#restart').click(async function(){
+
+    // restart button functionality
+    console.log("You just clicked restart!");
+    restartParticles();
+})
+
+
