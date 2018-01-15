@@ -27,10 +27,6 @@ function Particle(x,y,r) {
 	var v1 = Math.random()*4.0-2.0;
 	var k1 = Math.pow(125.0/Math.pow(this.radius,3),0.5);
 	var vel = createVector(k1*v1,k1*v1);
-	console.log("particle velocity = ", vel);
-	if (vel < 0.0) {
-	    alert("Particle velocity < 0.0 !!!");
-	}
 	return vel
 	
     }    
