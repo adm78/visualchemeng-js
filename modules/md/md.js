@@ -378,7 +378,17 @@ function initialSpacing(n, x, y) {
 function addParticle() {
 
     // Add a new Particle object to the particles array
+    // at the position of the mouse. If this overlaps with
+    // another particle, then try another position until we
+    // find a overlap free position.
+    
     var new_part = new Particle(mouseX,mouseY,getRadius());
+    var attempts = 1;
+    while (overlapExists(new_part)) {
+	new_part = randomMove(new_part);
+	attempts = attempts + 1;
+    };
+    console.log("Inception attempts: ", attempts);
     particles.push(new_part);
 }
 
@@ -391,6 +401,46 @@ function restartParticles() {
     var part_to_init = Math.round(xmax*ymax/5000.0);
     particles = initParticles(part_to_init,getRadius(),xmax,ymax);
 };
+
+function overlapExists(part) {
+    // checks the ensemble for particle overlaps
+    // returns a bool
+    var answer = false;
+    for (i=0; i < particles.length; i++) {
+	if (overlapExistsParticle(part, particles[i])) {
+	    answer = true;
+	    console.log("warning: overlap detected!");
+	};
+    };
+    return answer;	
+}
+
+function overlapExistsParticle(p1, p2) {
+    // check if particles p1 and p2 overlap
+    if (distParticles(p1,p2) < p1.radius + p2.radius) {
+	return true;
+    }
+    console.log("particle distance = ", distParticles(p1,p2));
+    return false;
+};
+
+function distParticles(p1, p2) {
+    // return the distance between two particles
+    var dx2 = Math.pow(p1.pos.x - p2.pos.x,2.0);
+    var dy2 = Math.pow(p1.pos.y - p2.pos.y,2.0);
+    console.log("dx2 =", dx2, "dy2 = ", dy2);
+    return Math.pow(dx2 + dy2, 0.5);
+};
+
+function randomMove(part) {
+    // translate a particle by a small random amount
+    while (0 < part.pos.x - part.radius && part.pos.x + part.radius < xmax && 0 < part.pos.y - part.radius && part.pos.y + part.radius < ymax) {
+	part.pos.x = part.pos.x + part.radius*Math.random();
+	part.pos.y = part.pos.y + part.radius*Math.random();
+    };
+    return part;
+}
+    
 
 //--------------------------------------------------------------------
 //                  Visualisation functionality
