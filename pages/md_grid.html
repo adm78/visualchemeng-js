@@ -1,0 +1,37 @@
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="https://rawgit.com/adm78/visualchemeng_js/master/css/buttons.css">
+    <link rel="stylesheet" type="text/css" href="https://rawgit.com/adm78/visualchemeng_js/master/css/slider.css">
+    <link rel="stylesheet" type="text/css" href="https://rawgit.com/adm78/visualchemeng_js/master/css/vce.css"
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto">
+  </head>
+  <body style="background-color:white;">
+    <div class="wrapper" id="target">
+      <div class="box sim_container" id="sim_container">
+      </div>
+      <div class="box vce_info">
+	<a href="http://visualchemeng.com">
+          <img class="vce_logo" src="https://user-images.githubusercontent.com/17439476/31101095-20e39cb4-a7c4-11e7-95b4-1cccde15a8c0.png" />
+	</a>
+        <p style="display: block; margin-left: auto; margin-right: auto; color:white; text-align: center; font-family:Roboto" >Event Driven Molecular Dynamics</p>
+      </div>
+      <div class="box button_container">
+        <button class="button" id="run" style="width:96%">Run</button><br/>
+        <button class="button" id="restart" style="width:96%">Restart</button>
+      </div>
+      <div class="box slider_container"></div>
+    </div>
+    <!-- scripts required for simulations -->
+    <script
+       src="https://code.jquery.com/jquery-3.2.1.min.js"
+       integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+       crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://rawgit.com/adm78/visualchemeng_js/master/libraries/screenfull.js"></script>
+    <script src="https://rawgit.com/adm78/visualchemeng_js/master/libraries/p5.min.js"></script>
+    <script src="https://rawgit.com/adm78/visualchemeng_js/master/modules/md/particle.js"></script>
+    <script src="https://rawgit.com/adm78/visualchemeng_js/master/modules/md/event.js"></script>
+    <script src="https://rawgit.com/adm78/visualchemeng_js/master/modules/md/md.js"></script>
+  </body>
+</html>
