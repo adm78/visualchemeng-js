@@ -19,12 +19,26 @@ function Particle(x,y,r) {
        x - particle initial x position
        y - particle in ital y position
        r - particle radius                  
-   */
+    */
+    this.initVelocity = function() {
+
+	// intialise a random velocity based on the size
+	// of the particles (all particles have equal energy)
+	var v1 = Math.random()*2.0-1.0;
+	var k1 = Math.pow(125.0/Math.pow(this.radius,3),0.5);
+	var vel = createVector(k1*v1,k1*v1);
+	console.log("particle velocity = ", vel);
+	if (vel < 0.0) {
+	    alert("Particle velocity < 0.0 !!!");
+	}
+	return vel
+	
+    }    
 
     // Particle attributes
     this.pos = createVector(x,y); // position vector
     this.radius = r;              // radius
-    this.vel = createVector(random()*2.0-1.0,random()*2.0-1.0); // velocity vector
+    this.vel = this.initVelocity();     // velocity vector
     this.acc = createVector(0,0); // current acceleration vector
     this.acc_old = this.acc;      // previous acceleration vector
     this.mass = 1;                // mass (fixed for now)
@@ -140,5 +154,6 @@ function Particle(x,y,r) {
 	this.vel.x = this.vel.x + (Jx/this.mass);
 	this.vel.y = this.vel.y + (Jy/this.mass);
     }
+
 
 } // end of Particle class

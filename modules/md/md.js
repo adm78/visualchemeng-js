@@ -14,11 +14,14 @@
 
 // Set-up parameters
 var particles = [];    // particle array (to be filled with instances of the Particle class)
-var r = 5;             // particle radius to use
+var r = null;          // particle radius to use (null = random in range)
+var r_upper = 20;      // maximum radius
+var r_lower = 5;       // minimum radius
 var time = 0.0;        // global simulation time
 var xmax;              // canvas x-width
 var ymax;              // canvas y-width
 var paused_log = true; // paused indicator bool
+
 
 function setup() {
 
@@ -34,8 +37,7 @@ function setup() {
     console.log("ymax=",ymax);
     var canvas= createCanvas(xmax, ymax);
     canvas.parent("sim_container")
-    var part_to_init = Math.round(xmax*ymax/5000.0);
-    particles = initParticles(part_to_init,r,xmax,ymax);
+    restartParticles();
 }
 
 function draw() {
@@ -350,7 +352,7 @@ function initParticles(n,r,xmax, ymax) {
     for (i = 0; i < Math.round(xmax/dx); i++) {
 	for (j = 0; j < Math.round(ymax/dx); j++) {
 	    if (n_init < n) {
-    		parts[n_init] = new Particle(dx*(i+0.5),dx*(j+0.5),r);
+    		parts[n_init] = new Particle(dx*(i+0.5),dx*(j+0.5),getRadius());
 	        parts[n_init].show();
 		n_init = n_init + 1;
     	    };
@@ -376,7 +378,7 @@ function initialSpacing(n, x, y) {
 function addParticle() {
 
     // Add a new Particle object to the particles array
-    var new_part = new Particle(mouseX,mouseY,r);
+    var new_part = new Particle(mouseX,mouseY,getRadius());
     particles.push(new_part);
 }
 
@@ -386,9 +388,8 @@ function restartParticles() {
     var dimensions = getSimBoxDimensions();
     xmax = dimensions.xmax;
     ymax = dimensions.ymax;
-    particles = initParticles(part_to_init,r,xmax,ymax);
     var part_to_init = Math.round(xmax*ymax/5000.0);
-    particles = initParticles(part_to_init,r,xmax,ymax);
+    particles = initParticles(part_to_init,getRadius(),xmax,ymax);
 };
 
 //--------------------------------------------------------------------
@@ -418,10 +419,13 @@ function getSimBoxDimensions() {
                 xmax: sb_xmax};
 };
 
+function getRadius() {
+    return Math.random()*(r_upper-r_lower) + r_lower;
+}
 //--------------------------------------------------------------------
 //                  UI event listners
 //--------------------------------------------------------------------
-
+// run button
 $('#run').click(async function(){
 
     // run/pause button functionality
@@ -435,11 +439,25 @@ $('#run').click(async function(){
     }
 });
 
+// restart button
 $('#restart').click(async function(){
 
     // restart button functionality
     console.log("You just clicked restart!");
     restartParticles();
+    if (paused_log) {
+	$("#run").text('Run');
+    }
+    else {
+	$("#run").text('Pause');
+    }
 })
 
-
+// full screen button
+const target = $('#target')[0]; // Get DOM element from jQuery collection
+$('#fullscreen').on('click', () => {
+    console.log("fullscreen requested");
+    if (screenfull.enabled) {
+	screenfull.request(target);
+    }
+});
