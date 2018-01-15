@@ -24,7 +24,7 @@ function Particle(x,y,r) {
 
 	// intialise a random velocity based on the size
 	// of the particles (all particles have equal energy)
-	var v1 = Math.random()*2.0-1.0;
+	var v1 = Math.random()*4.0-2.0;
 	var k1 = Math.pow(125.0/Math.pow(this.radius,3),0.5);
 	var vel = createVector(k1*v1,k1*v1);
 	console.log("particle velocity = ", vel);
