@@ -352,8 +352,12 @@ function initParticles(n,r,xmax, ymax) {
     for (i = 0; i < Math.round(xmax/dx); i++) {
 	for (j = 0; j < Math.round(ymax/dx); j++) {
 	    if (n_init < n) {
-    		parts[n_init] = new Particle(dx*(i+0.5),dx*(j+0.5),getRadius());
-	        parts[n_init].show();
+		potential_part = new Particle(dx*(i+0.5),dx*(j+0.5),getRadius());
+		// On small screens, there may be some overlap with the wall
+		if (particleInSimBox(potential_part)) {
+    		    parts[n_init] = potential_part;
+		    parts[n_init].show();
+		};
 		n_init = n_init + 1;
     	    };
         };
@@ -403,12 +407,16 @@ function restartParticles() {
 };
 
 function overlapExists(part) {
-    // checks the ensemble for particle overlaps
+    // checks the ensemble for particle/wall overlaps
     // returns a bool
     var answer = false;
+    console.log("particleInSimBox(part) = ", particleInSimBox(part));
+    if (!particleInSimBox(part)) {
+    	return true;
+    }
     for (i=0; i < particles.length; i++) {
 	if (overlapExistsParticle(part, particles[i])) {
-	    answer = true;
+	    return true;
 	    console.log("warning: overlap detected!");
 	};
     };
@@ -435,18 +443,32 @@ function randomMove(part) {
     // resulting position lies within the sim box.
 
     while (true) {
-        new_x = part.pos.x + part.radius*Math.random();
-        new_y = part.pos.y + part.radius*Math.random();
-        // accept if we're still in the sim box
-        if (0 < new_x - part.radius && new_x + part.radius < xmax && 0 < new_y - part.radius && new_y + part.radius < ymax) {
-	    part.pos.x = new_x;
-	    part.pos.y = new_y;
-            break;
-        };
+	var old_x = part.pos.x;
+	var old_y = part.pos.y;
+        part.pos.x = part.pos.x + part.radius*(Math.random()*2.0-1.0);
+        part.pos.y = part.pos.y + part.radius*(Math.random()*2.0-1.0);
+	console.log("part.pos.x,part.pos.y,old_x,old_y=",part.pos.x,part.pos.y,old_x,old_y);
+        // reject if we're outwith the sim box
+        if (!particleInSimBox(part)) {
+	    part.pos.x = old_x;
+	    part.pos.y = old_y;
+        }
+	else { break;};
     }
     return part;
 }
 
+function particleInSimBox(part) {
+    // check if the part lies completely within the sim box
+    
+    if (0 < part.pos.x - part.radius
+	&& part.pos.x + part.radius < xmax
+	&& 0 < part.pos.y - part.radius
+	&& part.pos.y+ part.radius < ymax) {
+	return true
+    };
+    return false;
+};
 //--------------------------------------------------------------------
 //                  Visualisation functionality
 //--------------------------------------------------------------------
