@@ -492,6 +492,11 @@ function mousePressed() {
     if (mouseinSimBox()) {addParticle()};
 }
 
+function touchStarted() {
+    mousePressed();
+    return false;
+}
+
 
 function getSimBoxDimensions() {
     //get the dimension of the simbox
