@@ -349,16 +349,19 @@ function initParticles(n,r,xmax, ymax) {
     var parts = [];
     var dx = initialSpacing(n, xmax, ymax);
     var n_init = 0 ;
+    var n_try = 0;
     for (i = 0; i < Math.round(xmax/dx); i++) {
 	for (j = 0; j < Math.round(ymax/dx); j++) {
-	    if (n_init < n) {
+	    if (n_try < n) {
 		potential_part = new Particle(dx*(i+0.5),dx*(j+0.5),getRadius());
 		// On small screens, there may be some overlap with the wall
 		if (particleInSimBox(potential_part)) {
     		    parts[n_init] = potential_part;
 		    parts[n_init].show();
+		    n_init = n_init + 1;
 		};
-		n_init = n_init + 1;
+		n_try = n_try + 1;
+		
     	    };
         };
     };
