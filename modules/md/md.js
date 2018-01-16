@@ -392,12 +392,13 @@ function addParticle() {
 	new_part = randomMove(new_part);
 	attempts = attempts + 1;
     };
-    console.log("Inception attempts: ", attempts);
     particles.push(new_part);
 }
 
 function restartParticles() {
-    // re-intialises the particle ensemble
+    
+    // Re-intialises the particle ensemble
+    
     paused_log = true;
     var dimensions = getSimBoxDimensions();
     xmax = dimensions.xmax;
@@ -407,24 +408,25 @@ function restartParticles() {
 };
 
 function overlapExists(part) {
-    // checks the ensemble for particle/wall overlaps
+    
+    // Checks the ensemble for particle/wall overlaps,
     // returns a bool
-    var answer = false;
-    console.log("particleInSimBox(part) = ", particleInSimBox(part));
+    
     if (!particleInSimBox(part)) {
     	return true;
     }
     for (i=0; i < particles.length; i++) {
 	if (overlapExistsParticle(part, particles[i])) {
 	    return true;
-	    console.log("warning: overlap detected!");
 	};
     };
-    return answer;
+    return false;
 }
 
 function overlapExistsParticle(p1, p2) {
-    // check if particles p1 and p2 overlap
+    
+    // Check if particles p1 and p2 overlap
+    
     if (distParticles(p1,p2) < p1.radius + p2.radius) {
 	return true;
     }
@@ -432,13 +434,16 @@ function overlapExistsParticle(p1, p2) {
 };
 
 function distParticles(p1, p2) {
+    
     // return the distance between two particles
+    
     var dx2 = Math.pow(p1.pos.x - p2.pos.x,2.0);
     var dy2 = Math.pow(p1.pos.y - p2.pos.y,2.0);
     return Math.pow(dx2 + dy2, 0.5);
 };
 
 function randomMove(part) {
+    
     // translate a particle by a small random amount, ensuring the
     // resulting position lies within the sim box.
 
@@ -447,7 +452,6 @@ function randomMove(part) {
 	var old_y = part.pos.y;
         part.pos.x = part.pos.x + part.radius*(Math.random()*2.0-1.0);
         part.pos.y = part.pos.y + part.radius*(Math.random()*2.0-1.0);
-	console.log("part.pos.x,part.pos.y,old_x,old_y=",part.pos.x,part.pos.y,old_x,old_y);
         // reject if we're outwith the sim box
         if (!particleInSimBox(part)) {
 	    part.pos.x = old_x;
@@ -459,6 +463,7 @@ function randomMove(part) {
 }
 
 function particleInSimBox(part) {
+    
     // check if the part lies completely within the sim box
     
     if (0 < part.pos.x - part.radius
