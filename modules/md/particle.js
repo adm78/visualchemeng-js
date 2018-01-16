@@ -22,22 +22,25 @@ function Particle(x,y,r) {
     */
     this.initVelocity = function() {
 
-	// intialise a random velocity based on the size
-	// of the particles (all particles have equal energy)
-	var v1 = Math.random()*4.0-2.0;
-	var k1 = Math.pow(125.0/Math.pow(this.radius,3),0.5);
-	var vel = createVector(k1*v1,k1*v1);
-	return vel
+	// return a random velocity vector based on particle energy
+	var Ex = this.energy*Math.random();
+	var Ey = this.energy - Ex;
+	var dir = [-1,1];
+	var vx = dir[Math.floor(Math.random() * dir.length)]*Math.pow(2.0*Ex/this.mass, 0.5);
+	var vy = dir[Math.floor(Math.random() * dir.length)]*Math.pow(2.0*Ey/this.mass, 0.5);
+	var v = createVector(vx,vy);
+	return v
 	
     }    
 
     // Particle attributes
     this.pos = createVector(x,y); // position vector
     this.radius = r;              // radius
-    this.vel = this.initVelocity();     // velocity vector
     this.acc = createVector(0,0); // current acceleration vector
     this.acc_old = this.acc;      // previous acceleration vector
-    this.mass = 1;                // mass (fixed for now)
+    this.mass = Math.pow(this.radius,3.0)/125.0; // mass 
+    this.energy = 1.0;                    // total particle energy
+    this.vel = this.initVelocity();     // velocity vector
     
     // Particle Methods
     this.update = function(dt) {
