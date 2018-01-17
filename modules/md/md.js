@@ -497,7 +497,10 @@ function mousePressed() {
 
 function touchStarted() {
     mousePressed();
-    return false;
+    // stop the reclicking without diabling jquery button clicks
+    if (mouseinSimBox()) {
+	return false;
+    };
 }
 
 
