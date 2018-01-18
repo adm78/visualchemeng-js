@@ -2,4 +2,7 @@
 Javascript modules for the [Visual Chemical Engineering Project](http://visualchemeng.com)
 
 
-![VCE screenshot](https://user-images.githubusercontent.com/17439476/31101994-107ad078-a7c8-11e7-9486-a86f9ee4d243.png)
+![VCE about screenshot](http://visualchemeng.com/wp-content/uploads/2018/01/vce_about.png)
+![VCE about screenshot](http://visualchemeng.com/wp-content/uploads/2018/01/vce_screenshot.png)
+
+
