@@ -14,10 +14,13 @@
 //             visualisation functionality
 // --------------------------------------------------
 var img; // fash tank image object used by draw
+var xmax;
+var ymax;
 
 function preload() {
-  // preload the flash tank image
-  img = loadImage("https://rawgit.com/adm78/visualchemeng_js/develop/modules/flash/assets/raster/flash_base.png");
+    // preload the flash tank image
+    URL = "http://visualchemeng.com/wp-content/uploads/2018/01/flash.svg";
+    img = loadImage(URL, pic => print(pic), loadImgErrFix);
 }
 
 function setup() {
@@ -26,11 +29,18 @@ function setup() {
        simulation canvas which we draw onto and run 
        a very simple flash unit test */
     
-    canvas = createCanvas(img.width*1.2,img.height*1.2);
+    var dimensions = getSimBoxDimensions();
+    xmax = dimensions.xmax;
+    ymax = dimensions.ymax;
+    console.log("xmax=",xmax);
+    console.log("ymax=",ymax);
+    var canvas= createCanvas(xmax, ymax);
+    canvas.parent("sim_container")
     var testInput = new Input(0.5, 390.0, [0.5,0.3,0.2], [1.685,0.742,0.532],20);
     var expectedOutput = new Output([0.33940869696634357, 0.3650560590371706, 0.2955352439964858],
 				[0.5719036543882889, 0.27087159580558057, 0.15722474980613044],
-				13.814605255477089, 6.185394744522911);
+				    13.814605255477089, 6.185394744522911);
+    //img = loadImage("http://visualchemeng.com/wp-content/uploads/2018/01/flash.svg");
     test(testInput,expectedOutput);
 
 }
@@ -43,9 +53,13 @@ function draw() {
        has completed. */
     
     background(51);
-    stroke(255);
-    strokeWeight(4);
-    image(img, 0 , 0);
+//     stroke(255);
+    //     strokeWeight(4);
+    imageMode(CENTER);
+    var img_display_height =  ymax*0.95;
+    var img_display_width = img.width*ymax/img.height;
+    image(img, xmax/2 , ymax/2, img_display_width, img_display_height);
+    //console.log("you should see the image now...");
 }
 
 // --------------------------------------------------

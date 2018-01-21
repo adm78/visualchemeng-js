@@ -129,3 +129,23 @@ var isEqual = function (value, other) {
 
 };
 
+function getSimBoxDimensions() {
+    //get the dimension of the simbox
+    var sb_ymax = $('#sim_container').outerHeight()*0.95;
+    var sb_xmax = $('#sim_container').outerWidth()*0.97;
+    return {
+	ymax: sb_ymax,
+        xmax: sb_xmax
+    };
+};
+
+function loadImgErrFix(errEvt) {
+    const pic = errEvt.target;
+    
+    if (!pic.crossOrigin)  return print(`Failed to reload ${pic.src}!`);
+    
+    print(`Attempting to reload ${pic.src} as a tainted image now...`);
+    pic.crossOrigin = null, pic.src = pic.src;
+}
+
+
