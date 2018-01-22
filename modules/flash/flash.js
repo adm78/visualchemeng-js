@@ -16,6 +16,11 @@
 var img; // fash tank image object used by draw
 var xmax;
 var ymax;
+var tops_particles = [];
+var bottoms_particles = [];
+var feed_particles = [];
+var rpart = 2;
+var img_shrink_factor = 0.90;
 
 function preload() {
     // preload the flash tank image
@@ -43,6 +48,9 @@ function setup() {
     //img = loadImage("http://visualchemeng.com/wp-content/uploads/2018/01/flash.svg");
     test(testInput,expectedOutput);
 
+    //initialise the particles
+    
+
 }
 
 function draw() {
@@ -56,10 +64,48 @@ function draw() {
 //     stroke(255);
     //     strokeWeight(4);
     imageMode(CENTER);
-    var img_display_height =  ymax*0.95;
-    var img_display_width = img.width*ymax/img.height;
-    image(img, xmax/2 , ymax/2, img_display_width, img_display_height);
+    var sid = getImgScaledDimensions(img);
+    image(img, xmax/2 , ymax/2, sid.width, sid.height);
+
+    // draw the particle stream
+    
+    
     //console.log("you should see the image now...");
+    var tops_pos = getTopsPosition(sid);
+    var bottoms_pos = getBottonsPositions(sid);
+    var testPart1 = new Particle(tops_pos.x, tops_pos.y,rpart);
+    var testPart2 = new Particle(bottoms_pos.x, bottoms_pos.y,rpart); 
+    testPart1.show();
+    testPart2.show();
+}
+
+function getTopsPosition(sid) {
+    
+    // return the position of the tops exit as a p5 vector
+    var tops_x = (xmax/2) + 0.5*sid.width;
+    var tops_y = (ymax/2.0) - 0.475*sid.height;
+    return createVector(tops_x,tops_y);
+    
+
+}
+
+function getBottonsPositions(sid) {
+    
+    // return the position of the bottoms exit as a p5 vector
+    var tops_x = (xmax/2.0) + 0.5*sid.width;
+    var tops_y = (ymax/2.0) + 0.475*sid.height;
+    return createVector(tops_x,tops_y);
+
+}
+
+function getImgScaledDimensions(img) {
+
+    // return the scaled image dimensions
+    var scaled_height =  ymax*img_shrink_factor;
+    var scaled_width = img.width*ymax/img.height;
+    return { width : scaled_width,
+	     height: scaled_height }
+
 }
 
 // --------------------------------------------------
