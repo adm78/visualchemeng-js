@@ -20,7 +20,9 @@ var tops_particles = [];
 var bottoms_particles = [];
 var feed_particles = [];
 var rpart = 2;
-var img_shrink_factor = 0.90;
+var img_shrink_factor = 0.60;
+var testPart1;
+var testPart2;
 
 function preload() {
     // preload the flash tank image
@@ -48,8 +50,17 @@ function setup() {
     //img = loadImage("http://visualchemeng.com/wp-content/uploads/2018/01/flash.svg");
     test(testInput,expectedOutput);
 
+    // draw the flash schematic to stream
+    background(51);
+    imageMode(CENTER);
+    var sid = getImgScaledDimensions(img);
+    image(img, xmax/2 , ymax/2, sid.width, sid.height);
+
     //initialise the particles
-    
+    var tops_pos = getTopsPosition(sid);
+    var bottoms_pos = getBottonsPositions(sid);
+    testPart1 = new Particle(tops_pos.x,tops_pos.y,rpart,1.0,2.0,0.0,null,createVector(0,-0.01));
+    testPart2 = new Particle(bottoms_pos.x,bottoms_pos.y,rpart,1.0,2.0,0.0,null,createVector(0,0.01)); 
 
 }
 
@@ -60,23 +71,17 @@ function draw() {
        lifetime of the scripts executions after setup()
        has completed. */
     
-    background(51);
-//     stroke(255);
-    //     strokeWeight(4);
-    imageMode(CENTER);
-    var sid = getImgScaledDimensions(img);
-    image(img, xmax/2 , ymax/2, sid.width, sid.height);
+
 
     // draw the particle stream
     
     
     //console.log("you should see the image now...");
-    var tops_pos = getTopsPosition(sid);
-    var bottoms_pos = getBottonsPositions(sid);
-    var testPart1 = new Particle(tops_pos.x,tops_pos.y,rpart,grad=7.0*Math.PI/4.0);
-    var testPart2 = new Particle(bottoms_pos.x,bottoms_pos.y,rpart,grad=Math.PI/4.0); 
+
     testPart1.show();
     testPart2.show();
+    testPart1.update(5.0);
+    testPart2.update(5.0);
 }
 
 function getTopsPosition(sid) {
@@ -102,7 +107,7 @@ function getImgScaledDimensions(img) {
 
     // return the scaled image dimensions
     var scaled_height =  ymax*img_shrink_factor;
-    var scaled_width = img.width*ymax/img.height;
+    var scaled_width = img.width*scaled_height/img.height;
     return { width : scaled_width,
 	     height: scaled_height }
 

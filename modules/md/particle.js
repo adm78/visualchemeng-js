@@ -10,7 +10,8 @@
 // a.mcguire227@gmail.com
 //----------------------------------------------------------
 
-function Particle(x,y,r,energy=1.0,vx=null,vy=null,theta=null) {
+function Particle(x,y,r,energy=1.0,vx=null,vy=null,theta=null,
+		  acc=createVector(0,0)) {
 
     /* Initialise the particle. 
 
@@ -39,7 +40,7 @@ function Particle(x,y,r,energy=1.0,vx=null,vy=null,theta=null) {
     // Particle attributes
     this.pos = createVector(x,y); // position vector
     this.radius = r;              // radius
-    this.acc = createVector(0,0); // current acceleration vector
+    this.acc = acc; // current acceleration vector
     this.acc_old = this.acc;      // previous acceleration vector
     this.mass = Math.pow(this.radius,3.0)/125.0; // mass 
     this.energy = energy;         // total particle energy
