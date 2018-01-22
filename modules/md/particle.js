@@ -10,28 +10,31 @@
 // a.mcguire227@gmail.com
 //----------------------------------------------------------
 
-function Particle(x,y,r) {
+function Particle(x,y,r,energy=1.0,vx=null,vy=null,theta=null) {
 
-    /* Initialise the particle with a random velocity
-       and zero acceleration.
+    /* Initialise the particle. 
+
+       If an energy arg is passed and vx and vy are null, then the
+       velocity vector is computed from the energy.
+       
+       The energy is split randomly between the x and y components of
+       the velocity unless a theta arg is specified.  theta is the
+       angle made by the particle trajectory to the normal.
+
+       If vx and vy are given, then these directlty specify the
+       velocity vector and the energy is ignored.
        
        args:
-       x - particle initial x position
-       y - particle in ital y position
-       r - particle radius                  
-    */
-    this.initVelocity = function() {
+       x      - particle initial x position
+       y      - particle in ital y position
+       r      - particle radius     
+       energy - particle energy
+       vx     - particle x velocity
+       vy     - particle y velocity
+       theta  - angle made by inital velocity vector (radians)
 
-	// return a random velocity vector based on particle energy
-	var Ex = this.energy*Math.random();
-	var Ey = this.energy - Ex;
-	var dir = [-1,1];
-	var vx = dir[Math.floor(Math.random() * dir.length)]*Math.pow(2.0*Ex/this.mass, 0.5);
-	var vy = dir[Math.floor(Math.random() * dir.length)]*Math.pow(2.0*Ey/this.mass, 0.5);
-	var v = createVector(vx,vy);
-	return v
-	
-    }    
+    */
+ 
 
     // Particle attributes
     this.pos = createVector(x,y); // position vector
@@ -39,10 +42,26 @@ function Particle(x,y,r) {
     this.acc = createVector(0,0); // current acceleration vector
     this.acc_old = this.acc;      // previous acceleration vector
     this.mass = Math.pow(this.radius,3.0)/125.0; // mass 
-    this.energy = 1.0;                    // total particle energy
-    this.vel = this.initVelocity();     // velocity vector
+    this.energy = energy;         // total particle energy
+    this.vel = initVelocity(this.mass,this.energy,vx,vy,theta);     // velocity vector
+ 	
     
     // Particle Methods
+    function initVelocity(mass,energy,vx,vy,theta) {
+
+	// initialises particle velocity based on ...
+
+	if (vx === null || vy === null) {
+	    var vres = Math.pow(2.0*energy/mass, 0.5);
+	    if (theta === null) {
+		var theta = 2.0*Math.PI*Math.random();
+	    };
+	    var vx = vres*Math.cos(theta);
+	    var vy = -vres*Math.sin(theta);
+	};
+	return createVector(vx,vy);	
+    } 
+    
     this.update = function(dt) {
 
 	/* Compute the new acceleration, position and
@@ -50,9 +69,9 @@ function Particle(x,y,r) {
 	   with time-step dt. Constant acceleration is
 	   assumed for the moment. */
 	
-	this.update_acc(dt)
-	this.update_pos(dt)
-	this.update_vel(dt)
+	this.update_acc(dt);
+	this.update_pos(dt);
+	this.update_vel(dt);
 
     }
 

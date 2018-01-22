@@ -73,8 +73,8 @@ function draw() {
     //console.log("you should see the image now...");
     var tops_pos = getTopsPosition(sid);
     var bottoms_pos = getBottonsPositions(sid);
-    var testPart1 = new Particle(tops_pos.x, tops_pos.y,rpart);
-    var testPart2 = new Particle(bottoms_pos.x, bottoms_pos.y,rpart); 
+    var testPart1 = new Particle(tops_pos.x,tops_pos.y,rpart,grad=7.0*Math.PI/4.0);
+    var testPart2 = new Particle(bottoms_pos.x,bottoms_pos.y,rpart,grad=Math.PI/4.0); 
     testPart1.show();
     testPart2.show();
 }
