@@ -17,8 +17,8 @@
 var img; // fash tank image object used by draw
 var xmax;
 var ymax;
-var tops_particles = [];
-var bottoms_particles = [];
+var tops_stream = new Ensemble();
+var bottoms_stream = new Ensemble();
 var feed_particles = [];
 var rpart = 2;
 var img_shrink_factor = 0.60;
@@ -52,7 +52,6 @@ function setup() {
     var expectedOutput = new Output([0.33940869696634357, 0.3650560590371706, 0.2955352439964858],
 				[0.5719036543882889, 0.27087159580558057, 0.15722474980613044],
 				    13.814605255477089, 6.185394744522911);
-    //img = loadImage("http://visualchemeng.com/wp-content/uploads/2018/01/flash.svg");
     test(testInput,expectedOutput);
 
     // draw the flash schematic to stream
@@ -60,12 +59,6 @@ function setup() {
     imageMode(CENTER);
     var sid = getImgScaledDimensions(img);
     image(img, xmax/2 , ymax/2, sid.width, sid.height);
-
-    //initialise the particles
-    // var tops_pos = getTopsPosition(sid);
-    // var bottoms_pos = getBottonsPositions(sid);
-    // testPart1 = new Particle(tops_pos.x,tops_pos.y,rpart,1.0,2.0,0.0,null,createVector(0,-0.01));
-    // testPart2 = new Particle(bottoms_pos.x,bottoms_pos.y,rpart,1.0,2.0,0.0,null,createVector(0,0.01)); 
 
 }
 
@@ -76,79 +69,43 @@ function draw() {
        lifetime of the scripts executions after setup()
        has completed. */
     
-    // draw the particle stream
+
+    // draw the tanks and particle streams
     background(51);
     imageMode(CENTER);
     var sid = getImgScaledDimensions(img);
     image(img, xmax/2 , ymax/2, sid.width, sid.height);
-    showAllParticles();
+    tops_stream.show();
+    bottoms_stream.show();
 
     
     // update particle streams
     if (!(paused_log)) {
 
 	// update exisiting particle positions
-	if (tops_particles.length !== 0 && bottoms_particles.length !== 0) {
-	    updateAllParticles(0.5);
-	    removeLostParticles();
-	}
+	tops_stream.update(0.5);
+	bottoms_stream.update(0.5);
+	tops_stream.removeOutliers(xmax,ymax);
+	bottoms_stream.removeOutliers(xmax,ymax);
+	tops_stream.perturb(rpart,rpart);
+	bottoms_stream.perturb(rpart/5.0,rpart/5.0);
+   
 
 	// add new particles at desired freq
-	if (ndraws % outlet_freq === 0) {
-	    tops_pos = getTopsPosition(sid);
-	    var new_tops_part = new Particle(tops_pos.x,tops_pos.y,rpart,1.0,2.0,0.0,null,createVector(0,-gravity));
-	    tops_particles.push(new_tops_part);
-	    var bottoms_pos = getBottonsPositions(sid);
-	    var new_bottoms_part = 	new Particle(bottoms_pos.x,bottoms_pos.y,rpart,1.0,2.0,0.0,null,createVector(0,gravity));
-	    bottoms_particles.push(new_bottoms_part);
-	};
+    	if (ndraws % outlet_freq === 0) {
+	    var tops_pos = getTopsPosition(sid);
+    	    var new_tops_part = new Particle(tops_pos.x,tops_pos.y,rpart,1.0,2.0,0.0,null,createVector(0,-gravity));
+    	    tops_stream.addParticle(new_tops_part);
+    	    var bottoms_pos = getBottonsPositions(sid);
+    	    var new_bottoms_part = new Particle(bottoms_pos.x,bottoms_pos.y,rpart,1.0,2.0,0.0,null,createVector(0,gravity));
+    	    bottoms_stream.addParticle(new_bottoms_part);
+    	};
 
-	// prevent potential overflow
-	ndraws = ndraws + 1;
-	if (ndraws === 10000) {
-	    ndraws = 0;
-	}
-    };
-};
-
-function showAllParticles() {
-
-    // draw the particle to the canvas
-    
-    stroke(255);
-    strokeWeight(1);
-    for (i = 0; i < tops_particles.length; i++) {
-	tops_particles[i].show();
-    };
-    for (i = 0; i < bottoms_particles.length; i++) {
-	bottoms_particles[i].show();
-    };
-};
-
-function updateAllParticles(dt) {
-
-    //move all the particles forward in time by dt
-    for (i = 0; i < tops_particles.length; i++) {
-	tops_particles[i].update(dt);
-	tops_particles[i].perturb(rpart,rpart);
-    };
-    for (i = 0; i < bottoms_particles.length; i++) {
-	bottoms_particles[i].update(dt);
-	bottoms_particles[i].perturb(rpart/5.0,rpart/5.0);
-    };
-};    
-
-function removeLostParticles() {
-       
-    for (i = 0; i < tops_particles.length; i++) {
-	if (!particleInSimBox(tops_particles[i])) {
-	    tops_particles.splice(i,1);
-	};
-    };
-    for (i = 0; i < bottoms_particles.length; i++) {
-	if (!particleInSimBox(bottoms_particles[i])) {
-	    bottoms_particles.splice(i,1);
-	};
+    	// prevent potential overflow
+    	ndraws = ndraws + 1;
+    	if (ndraws === 10000) {
+    	    ndraws = 0;
+    	};
     };
 };
 
@@ -158,8 +115,7 @@ function getTopsPosition(sid) {
     var tops_x = (xmax/2) + 0.5*sid.width;
     var tops_y = (ymax/2.0) - 0.475*sid.height;
     return createVector(tops_x,tops_y);
-    
-
+   
 }
 
 function getBottonsPositions(sid) {
@@ -181,17 +137,6 @@ function getImgScaledDimensions(img) {
 
 }
 
-function particleInSimBox(part) {
-    
-    // check if the part lies completely within the sim box
-    if (0 < part.pos.x - part.radius
-	&& part.pos.x + part.radius < xmax
-	&& 0 < part.pos.y - part.radius
-	&& part.pos.y+ part.radius < ymax) {
-	return true
-    };
-    return false;
-};
 
 // --------------------------------------------------
 //              flash tank calculations

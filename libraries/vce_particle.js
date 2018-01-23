@@ -10,7 +10,7 @@
 // a.mcguire227@gmail.com
 //----------------------------------------------------------
 
-function Particle(x,y,r,energy=1.0,vx=null,vy=null,theta=null,
+function Particle(x=0,y=0,r=5.0,energy=1.0,vx=null,vy=null,theta=null,
 		  acc=createVector(0,0)) {
 
     /* Initialise the particle. 
@@ -61,7 +61,7 @@ function Particle(x,y,r,energy=1.0,vx=null,vy=null,theta=null,
 	    var vy = -vres*Math.sin(theta);
 	};
 	return createVector(vx,vy);	
-    } 
+    };
     
     this.update = function(dt) {
 
@@ -183,6 +183,20 @@ function Particle(x,y,r,energy=1.0,vx=null,vy=null,theta=null,
 	this.pos.y = this.pos.y + getRandomSigned()*ymax;
 	
     }
+
+    this.inDomain = function(xmax,ymax) {
+    
+	// check if the part lies completely within
+	// the domain [0, xmax, 0, ymax]
+	
+	if (0 < this.pos.x - this.radius
+	    && this.pos.x + this.radius < xmax
+	    && 0 < this.pos.y - this.radius
+	    && this.pos.y+ this.radius < ymax) {
+	    return true
+	};
+	return false;
+    };
 
 
 } // end of Particle class
