@@ -23,6 +23,7 @@ var rpart = 2;
 var img_shrink_factor = 0.60;
 var testPart1;
 var testPart2;
+var paused_log = true;
 
 function preload() {
     // preload the flash tank image
@@ -71,18 +72,30 @@ function draw() {
        lifetime of the scripts executions after setup()
        has completed. */
     
-
-
     // draw the particle stream
-    
-    
-    //console.log("you should see the image now...");
-
+    background(51);
+    imageMode(CENTER);
+    var sid = getImgScaledDimensions(img);
+    image(img, xmax/2 , ymax/2, sid.width, sid.height);
+    stroke(255);
+    strokeWeight(1);
     testPart1.show();
     testPart2.show();
-    testPart1.update(5.0);
-    testPart2.update(5.0);
-}
+
+    // update the particle positions
+    if (!(paused_log)) {
+	testPart1.update(5.0);
+	testPart2.update(5.0);
+	if (!particleInSimBox(testPart1)) {
+	    var tops_pos = getTopsPosition(sid);
+	    testPart1 = new Particle(tops_pos.x,tops_pos.y,rpart,1.0,2.0,0.0,null,createVector(0,-0.01));
+	};
+	if (!particleInSimBox(testPart2)) {
+	    var bottoms_pos = getBottonsPositions(sid);
+	    testPart2 = new Particle(bottoms_pos.x,bottoms_pos.y,rpart,1.0,2.0,0.0,null,createVector(0,0.01)); 
+	}   
+    };
+};
 
 function getTopsPosition(sid) {
     
@@ -112,6 +125,18 @@ function getImgScaledDimensions(img) {
 	     height: scaled_height }
 
 }
+
+function particleInSimBox(part) {
+    
+    // check if the part lies completely within the sim box
+    if (0 < part.pos.x - part.radius
+	&& part.pos.x + part.radius < xmax
+	&& 0 < part.pos.y - part.radius
+	&& part.pos.y+ part.radius < ymax) {
+	return true
+    };
+    return false;
+};
 
 // --------------------------------------------------
 //              flash tank calculations
@@ -229,4 +254,19 @@ function test(input, expected) {
 
 }
 
+//--------------------------------------------------------------------
+//                  UI event listners
+//--------------------------------------------------------------------
+// run button
+$('#run').click(async function(){
 
+    // run/pause button functionality
+    console.log("You just clicked stream/pause!");
+    paused_log = !(paused_log);
+    if (paused_log) {
+	$("#run").text('Run');
+    }
+    else {
+	$("#run").text('Pause');
+    }
+});
