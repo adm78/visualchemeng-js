@@ -25,7 +25,7 @@ var testPart1;
 var testPart2;
 var paused_log = true;
 var ndraws = 0;
-var outlet_freq = 10;
+var outlet_freq = 1;
 
 function preload() {
     // preload the flash tank image
@@ -126,9 +126,11 @@ function updateAllParticles(dt) {
     //move all the particles forward in time by dt
     for (i = 0; i < tops_particles.length; i++) {
 	tops_particles[i].update(dt);
+	tops_particles[i].perturb(0,rpart);
     };
     for (i = 0; i < bottoms_particles.length; i++) {
 	bottoms_particles[i].update(dt);
+	bottoms_particles[i].perturb(0,rpart/5.0);
     };
 };    
 

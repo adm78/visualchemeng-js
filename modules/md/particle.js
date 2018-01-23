@@ -174,5 +174,15 @@ function Particle(x,y,r,energy=1.0,vx=null,vy=null,theta=null,
 	this.vel.y = this.vel.y + (Jy/this.mass);
     }
 
+    this.perturb = function(xmax,ymax) {
+
+	// randomly perturb the particle position
+	// by [0-xmax] in the x-direction and
+	// by [0-ymax] in the y-direction.
+	this.pos.x = this.pos.x + getRandomSigned()*xmax;
+	this.pos.y = this.pos.y + getRandomSigned()*ymax;
+	
+    }
+
 
 } // end of Particle class

@@ -140,6 +140,8 @@ function getSimBoxDimensions() {
 };
 
 function loadImgErrFix(errEvt) {
+    // load an image and handle any CORS errors that may
+    // occur.
     const pic = errEvt.target;
     
     if (!pic.crossOrigin)  return print(`Failed to reload ${pic.src}!`);
@@ -149,3 +151,14 @@ function loadImgErrFix(errEvt) {
 }
 
 
+function getRandomSigned() {
+    // generate a random number between 1 and -1
+    return Math.random()*2.0-1.0
+
+}
+
+function getRandomSingnedInt() {
+    // randomly return either -1 or 1
+    var dir = [-1,1];
+    return dir[Math.floor(Math.random() * dir.length)]
+}
