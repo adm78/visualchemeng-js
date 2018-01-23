@@ -24,6 +24,8 @@ var img_shrink_factor = 0.60;
 var testPart1;
 var testPart2;
 var paused_log = true;
+var ndraws = 0;
+var outlet_freq = 10;
 
 function preload() {
     // preload the flash tank image
@@ -58,10 +60,10 @@ function setup() {
     image(img, xmax/2 , ymax/2, sid.width, sid.height);
 
     //initialise the particles
-    var tops_pos = getTopsPosition(sid);
-    var bottoms_pos = getBottonsPositions(sid);
-    testPart1 = new Particle(tops_pos.x,tops_pos.y,rpart,1.0,2.0,0.0,null,createVector(0,-0.01));
-    testPart2 = new Particle(bottoms_pos.x,bottoms_pos.y,rpart,1.0,2.0,0.0,null,createVector(0,0.01)); 
+    // var tops_pos = getTopsPosition(sid);
+    // var bottoms_pos = getBottonsPositions(sid);
+    // testPart1 = new Particle(tops_pos.x,tops_pos.y,rpart,1.0,2.0,0.0,null,createVector(0,-0.01));
+    // testPart2 = new Particle(bottoms_pos.x,bottoms_pos.y,rpart,1.0,2.0,0.0,null,createVector(0,0.01)); 
 
 }
 
@@ -77,23 +79,70 @@ function draw() {
     imageMode(CENTER);
     var sid = getImgScaledDimensions(img);
     image(img, xmax/2 , ymax/2, sid.width, sid.height);
+    showAllParticles();
+
+    
+    // update particle streams
+    if (!(paused_log)) {
+
+	// update exisiting particle positions
+	if (tops_particles.length !== 0 && bottoms_particles.length !== 0) {
+	    updateAllParticles(0.5);
+	    removeLostParticles();
+	}
+
+	// add new particles at desired freq
+	if (ndraws % outlet_freq === 0) {
+	    tops_pos = getTopsPosition(sid);
+	    var new_tops_part = new Particle(tops_pos.x,tops_pos.y,rpart,1.0,2.0,0.0,null,createVector(0,-0.01));
+	    tops_particles.push(new_tops_part);
+	    var bottoms_pos = getBottonsPositions(sid);
+	    var new_bottoms_part = 	new Particle(bottoms_pos.x,bottoms_pos.y,rpart,1.0,2.0,0.0,null,createVector(0,0.01));
+	    bottoms_particles.push(new_bottoms_part);
+	};
+	ndraws = ndraws + 1;
+	if (ndraws === 10000) {
+	    ndraws = 0;
+	}
+    };
+};
+
+function showAllParticles() {
+
+    // draw the particle to the canvas
+    
     stroke(255);
     strokeWeight(1);
-    testPart1.show();
-    testPart2.show();
+    for (i = 0; i < tops_particles.length; i++) {
+	tops_particles[i].show();
+    };
+    for (i = 0; i < bottoms_particles.length; i++) {
+	bottoms_particles[i].show();
+    };
+};
 
-    // update the particle positions
-    if (!(paused_log)) {
-	testPart1.update(5.0);
-	testPart2.update(5.0);
-	if (!particleInSimBox(testPart1)) {
-	    var tops_pos = getTopsPosition(sid);
-	    testPart1 = new Particle(tops_pos.x,tops_pos.y,rpart,1.0,2.0,0.0,null,createVector(0,-0.01));
+function updateAllParticles(dt) {
+
+    //move all the particles forward in time by dt
+    for (i = 0; i < tops_particles.length; i++) {
+	tops_particles[i].update(dt);
+    };
+    for (i = 0; i < bottoms_particles.length; i++) {
+	bottoms_particles[i].update(dt);
+    };
+};    
+
+function removeLostParticles() {
+       
+    for (i = 0; i < tops_particles.length; i++) {
+	if (!particleInSimBox(tops_particles[i])) {
+	    tops_particles.splice(i,1);
 	};
-	if (!particleInSimBox(testPart2)) {
-	    var bottoms_pos = getBottonsPositions(sid);
-	    testPart2 = new Particle(bottoms_pos.x,bottoms_pos.y,rpart,1.0,2.0,0.0,null,createVector(0,0.01)); 
-	}   
+    };
+    for (i = 0; i < bottoms_particles.length; i++) {
+	if (!particleInSimBox(bottoms_particles[i])) {
+	    bottoms_particles.splice(i,1);
+	};
     };
 };
 
