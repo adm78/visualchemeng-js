@@ -21,7 +21,7 @@ var time = 0.0;        // global simulation time
 var xmax;              // canvas x-width
 var ymax;              // canvas y-width
 var paused_log = true; // paused indicator bool
-
+var ensemble_full = false; // ensemble full bool
 
 function setup() {
 
@@ -387,22 +387,32 @@ function addParticle() {
     // Add a new Particle object to the particles array
     // at the position of the mouse. If this overlaps with
     // another particle, then try another position until we
-    // find a overlap free position.
+    // find a overlap free position or deem the ensemble
+    // to be full.
 
     var new_part = new Particle(mouseX,mouseY,getRadius());
     var attempts = 1;
     while (overlapExists(new_part)) {
 	new_part = randomMove(new_part);
 	attempts = attempts + 1;
+	if (attempts > 1000) {
+	    ensemble_full = true;
+	    console.log("md.js: ensemble full!");
+	    break;
+	};
     };
-    particles.push(new_part);
-}
+    if (!ensemble_full || !overlapExists(new_part)) {
+	particles.push(new_part);
+    };
+};
+
 
 function restartParticles() {
     
     // Re-intialises the particle ensemble
     
     paused_log = true;
+    ensemble_full = false;
     var dimensions = getSimBoxDimensions();
     xmax = dimensions.xmax;
     ymax = dimensions.ymax;
@@ -492,7 +502,10 @@ function mouseinSimBox() {
 function mousePressed() {
 
     // Act on left mouse press
-    if (mouseinSimBox()) {addParticle()};
+    if (mouseinSimBox()) {
+	addParticle();
+	return false;
+    };
 }
 
 function touchStarted() {

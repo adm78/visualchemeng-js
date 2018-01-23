@@ -26,6 +26,7 @@ var testPart2;
 var paused_log = true;
 var ndraws = 0;
 var outlet_freq = 1;
+var gravity = 0.02;
 
 function preload() {
     // preload the flash tank image
@@ -94,12 +95,14 @@ function draw() {
 	// add new particles at desired freq
 	if (ndraws % outlet_freq === 0) {
 	    tops_pos = getTopsPosition(sid);
-	    var new_tops_part = new Particle(tops_pos.x,tops_pos.y,rpart,1.0,2.0,0.0,null,createVector(0,-0.01));
+	    var new_tops_part = new Particle(tops_pos.x,tops_pos.y,rpart,1.0,2.0,0.0,null,createVector(0,-gravity));
 	    tops_particles.push(new_tops_part);
 	    var bottoms_pos = getBottonsPositions(sid);
-	    var new_bottoms_part = 	new Particle(bottoms_pos.x,bottoms_pos.y,rpart,1.0,2.0,0.0,null,createVector(0,0.01));
+	    var new_bottoms_part = 	new Particle(bottoms_pos.x,bottoms_pos.y,rpart,1.0,2.0,0.0,null,createVector(0,gravity));
 	    bottoms_particles.push(new_bottoms_part);
 	};
+
+	// prevent potential overflow
 	ndraws = ndraws + 1;
 	if (ndraws === 10000) {
 	    ndraws = 0;
@@ -126,11 +129,11 @@ function updateAllParticles(dt) {
     //move all the particles forward in time by dt
     for (i = 0; i < tops_particles.length; i++) {
 	tops_particles[i].update(dt);
-	tops_particles[i].perturb(0,rpart);
+	tops_particles[i].perturb(rpart,rpart);
     };
     for (i = 0; i < bottoms_particles.length; i++) {
 	bottoms_particles[i].update(dt);
-	bottoms_particles[i].perturb(0,rpart/5.0);
+	bottoms_particles[i].perturb(rpart/5.0,rpart/5.0);
     };
 };    
 
