@@ -5,6 +5,7 @@
 // Requires:
 // - p5.js or p5.min.js
 // - vce_utils.js
+// - vce_particle.js
 //
 // Andrew D. McGuire 2017
 // a.mcguire227@gmail.com

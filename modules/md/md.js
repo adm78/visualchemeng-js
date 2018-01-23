@@ -5,7 +5,7 @@
 //
 // Requires:
 // - p5.js or p5.min.js
-// - particle.js
+// - vce_particle.js
 // - event.js
 //
 // Andrew D. McGuire 2017
