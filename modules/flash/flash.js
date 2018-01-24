@@ -19,7 +19,7 @@ var xmax;
 var ymax;
 var tops_stream = new Ensemble();
 var bottoms_stream = new Ensemble();
-var rpart = 1;
+var rpart = 1.5;
 var img_shrink_factor = 0.60;
 var paused_log = true;
 var ndraws = 0;
@@ -28,8 +28,8 @@ var gravity = 0.02;
 var component_colours = ['#2e8ade','#de912e','#2ede71']
 var flash_solution;
 var pout = 1; // number of particle to output at a time
-var dt = 0.7;
-var kpert = 5.0;
+var pspeed = 0.01;
+var kpert = 3.0;
 var fr = 30;
 
 function preload() {
@@ -86,14 +86,14 @@ function draw() {
     if (!(paused_log)) {
 
 	// update exisiting particle positions
-	tops_stream.update(dt);
-	bottoms_stream.update(dt);
+	var cfr = frameRate();
+	tops_stream.update(pspeed*cfr);
+	bottoms_stream.update(pspeed*cfr);
 	tops_stream.removeOutliers(xmax,ymax);
 	bottoms_stream.removeOutliers(xmax,ymax);
-	tops_stream.perturb(kpert*dt*rpart,kpert*dt*rpart);
-	bottoms_stream.perturb(kpert*dt*rpart/5.0,kpert*dt*rpart/5.0);
-
-
+	tops_stream.perturb(kpert/2.0,kpert/2.0);
+	bottoms_stream.perturb(kpert/5.0,kpert/5.0);
+	
 	// add new particles at desired freq
     	if (ndraws % outlet_freq === 0) {
 	    var colour = chooseColoursFromComposition(component_colours, flash_solution)
