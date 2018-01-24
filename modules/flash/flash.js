@@ -19,15 +19,18 @@ var xmax;
 var ymax;
 var tops_stream = new Ensemble();
 var bottoms_stream = new Ensemble();
-var feed_particles = [];
-var rpart = 2;
+var rpart = 1;
 var img_shrink_factor = 0.60;
-var testPart1;
-var testPart2;
 var paused_log = true;
 var ndraws = 0;
 var outlet_freq = 1;
 var gravity = 0.02;
+var component_colours = ['#2e8ade','#de912e','#2ede71']
+var flash_solution;
+var pout = 1; // number of particle to output at a time
+var dt = 0.7;
+var kpert = 5.0;
+var fr = 30;
 
 function preload() {
     // preload the flash tank image
@@ -36,11 +39,11 @@ function preload() {
 }
 
 function setup() {
-    
+
     /* This function is called upon entry to create the
-       simulation canvas which we draw onto and run 
+       simulation canvas which we draw onto and run
        a very simple flash unit test */
-    
+
     var dimensions = getSimBoxDimensions();
     xmax = dimensions.xmax;
     ymax = dimensions.ymax;
@@ -52,14 +55,14 @@ function setup() {
     var expectedOutput = new Output([0.33940869696634357, 0.3650560590371706, 0.2955352439964858],
 				[0.5719036543882889, 0.27087159580558057, 0.15722474980613044],
 				    13.814605255477089, 6.185394744522911);
-    test(testInput,expectedOutput);
+    flash_solution = (test(testInput,expectedOutput)).solution;
 
     // draw the flash schematic to stream
     background(51);
     imageMode(CENTER);
     var sid = getImgScaledDimensions(img);
     image(img, xmax/2 , ymax/2, sid.width, sid.height);
-
+    frameRate(fr);
 }
 
 function draw() {
@@ -68,7 +71,7 @@ function draw() {
        This function is continuously called for the
        lifetime of the scripts executions after setup()
        has completed. */
-    
+
 
     // draw the tanks and particle streams
     background(51);
@@ -78,27 +81,28 @@ function draw() {
     tops_stream.show();
     bottoms_stream.show();
 
-    
+
     // update particle streams
     if (!(paused_log)) {
 
 	// update exisiting particle positions
-	tops_stream.update(0.5);
-	bottoms_stream.update(0.5);
+	tops_stream.update(dt);
+	bottoms_stream.update(dt);
 	tops_stream.removeOutliers(xmax,ymax);
 	bottoms_stream.removeOutliers(xmax,ymax);
-	tops_stream.perturb(rpart,rpart);
-	bottoms_stream.perturb(rpart/5.0,rpart/5.0);
-   
+	tops_stream.perturb(kpert*dt*rpart,kpert*dt*rpart);
+	bottoms_stream.perturb(kpert*dt*rpart/5.0,kpert*dt*rpart/5.0);
+
 
 	// add new particles at desired freq
     	if (ndraws % outlet_freq === 0) {
+	    var colour = chooseColoursFromComposition(component_colours, flash_solution)
 	    var tops_pos = getTopsPosition(sid);
-    	    var new_tops_part = new Particle(tops_pos.x,tops_pos.y,rpart,1.0,2.0,0.0,null,createVector(0,-gravity));
-    	    tops_stream.addParticle(new_tops_part);
+    	    var new_tops_part = new Particle(tops_pos.x,tops_pos.y,rpart,1.0,2.0,0.0,null,createVector(0,-gravity),colour.y);
+    	    tops_stream.addParticle(new_tops_part,pout);
     	    var bottoms_pos = getBottonsPositions(sid);
-    	    var new_bottoms_part = new Particle(bottoms_pos.x,bottoms_pos.y,rpart,1.0,2.0,0.0,null,createVector(0,gravity));
-    	    bottoms_stream.addParticle(new_bottoms_part);
+    	    var new_bottoms_part = new Particle(bottoms_pos.x,bottoms_pos.y,rpart,1.0,2.0,0.0,null,createVector(0,gravity),colour.x);
+    	    bottoms_stream.addParticle(new_bottoms_part,pout);
     	};
 
     	// prevent potential overflow
@@ -110,16 +114,16 @@ function draw() {
 };
 
 function getTopsPosition(sid) {
-    
+
     // return the position of the tops exit as a p5 vector
     var tops_x = (xmax/2) + 0.5*sid.width;
     var tops_y = (ymax/2.0) - 0.475*sid.height;
     return createVector(tops_x,tops_y);
-   
+
 }
 
 function getBottonsPositions(sid) {
-    
+
     // return the position of the bottoms exit as a p5 vector
     var tops_x = (xmax/2.0) + 0.5*sid.width;
     var tops_y = (ymax/2.0) + 0.475*sid.height;
@@ -137,13 +141,44 @@ function getImgScaledDimensions(img) {
 
 }
 
+function chooseColoursFromComposition(colours, s) {
+
+    // select a particle colour from a list, based on
+    // compositions on flash solution s (Output object).
+    var x_cum = [s.x[0]];
+    var y_cum = [s.y[0]];
+
+    // generate cumulative composition lists
+    for (var i = 1; i < s.x.length; i++) {
+	x_cum[i] = x_cum[i-1] + s.x[i];
+	y_cum[i] = y_cum[i-1] + s.y[i];
+    };
+    // choose a component
+    var rndx = Math.random();
+    for (var i = 0; i < x_cum.length; i++) {
+	if (rndx <= x_cum[i]) {
+	    var i_x = i;
+	    break;
+	}
+    };
+    var rndy = Math.random();
+    for (var i = 0; i < y_cum.length; i++) {
+	if (rndy <= y_cum[i]) {
+	    var i_y = i;
+	    break;
+	}
+    };
+
+    return {x : colours[i_x],
+	    y : colours[i_y]};
+};
 
 // --------------------------------------------------
 //              flash tank calculations
 // --------------------------------------------------
 
 function RachfordRiceSum(beta,z,K) {
-    
+
     /* Compute Rachford Rice sum
        http://folk.ntnu.no/skoge/bok/mer/flash_english_edition_2009
 
@@ -158,18 +193,18 @@ function RachfordRiceSum(beta,z,K) {
     for (var i = 0; i < arrayLength; i++) {
 	result = result + RachfordRiceElem(z[i],K[i],beta);
     }
-    return result;   
+    return result;
 }
 
 function RachfordRiceElem(zi,Ki,beta) {
 
     /* Compute a single term of the rachford Rice sum
-       
+
        args:
        beta - vapour liquid split (float)
        zi   - feed composition point
-       Ki   - component equilibrium constant 
-    */ 
+       Ki   - component equilibrium constant
+    */
     var result = zi*(Ki-1)/(1+beta*(Ki-1));
     return result;
 }
@@ -178,7 +213,7 @@ function RachfordRiceBeta(beta, args) {
     // Wrapper function for RachfordRiceSum
     // that ensure it has a fixed number of args
     // args = [z,k]
-    return RachfordRiceSum(beta, args[0], args[1]);    
+    return RachfordRiceSum(beta, args[0], args[1]);
 }
 
 
@@ -228,7 +263,7 @@ function test(input, expected) {
 
     // A simple unit test to make sure the flash tank works
     // as expected.
-   
+
     // solve the flash system
     var args = [input.z,input.K];
     var beta_solution = newtonsMethod(RachfordRiceBeta,0.5,args);
@@ -238,19 +273,21 @@ function test(input, expected) {
     var x = getX(input.z,input.K,beta);
     var y = getY(x,input.K);
     var Solution = new Output(x,y,V,L);
-    
-    // check that the solution is okay (only flowrates for now)   
+
+    // check that the solution is okay (only flowrates for now)
     if (Solution.V !== expected.V || Solution.L !== expected.L) {
 	console.log("Flash unit test failed: incorrect flowrates.");
 	console.log("Expected: ", expected);
 	console.log("Got: ", Solution);
-	return 1;
-    } 
+	return {success:1,
+		solution:Solution};
+    }
 
     // test passed
     console.log("Flash unit test passed!");
     console.log("Got: ", Solution);
-    return 0;
+    return {success:1,
+	    solution:Solution};
 
 }
 

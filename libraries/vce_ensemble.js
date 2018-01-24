@@ -25,8 +25,10 @@ function Ensemble(p=[]) {
 
 
     // Ensemble methods
-    this.addParticle = function(p) {
-	this.particles.push(p);
+    this.addParticle = function(p,n=1) {
+	for (var i = 0; i < n; i++) {
+	    this.particles.push(p);
+	};
     };
     
     this.update = function(dt) {

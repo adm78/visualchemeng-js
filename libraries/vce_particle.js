@@ -11,7 +11,7 @@
 //----------------------------------------------------------
 
 function Particle(x=0,y=0,r=5.0,energy=1.0,vx=null,vy=null,theta=null,
-		  acc=createVector(0,0)) {
+		  acc=createVector(0,0),colour='#2e8ade') {
 
     /* Initialise the particle. 
 
@@ -33,6 +33,7 @@ function Particle(x=0,y=0,r=5.0,energy=1.0,vx=null,vy=null,theta=null,
        vx     - particle x velocity
        vy     - particle y velocity
        theta  - angle made by inital velocity vector (radians)
+       colour - particle colour for display (Hex CSS)
 
     */
  
@@ -43,14 +44,17 @@ function Particle(x=0,y=0,r=5.0,energy=1.0,vx=null,vy=null,theta=null,
     this.acc = acc; // current acceleration vector
     this.acc_old = this.acc;      // previous acceleration vector
     this.mass = Math.pow(this.radius,3.0)/125.0; // mass 
-    this.energy = energy;         // total particle energy
+    this.energy = energy;         // particle kinetic energy
     this.vel = initVelocity(this.mass,this.energy,vx,vy,theta);     // velocity vector
- 	
+    this.colour = colour;
     
     // Particle Methods
     function initVelocity(mass,energy,vx,vy,theta) {
 
-	// initialises particle velocity based on ...
+	// initialises particle velocity based on
+	// (in order of priority)
+	// 1.) mass and energy (and traj angle theta, if provided)
+	// 2.) velocity components vx and vy
 
 	if (vx === null || vy === null) {
 	    var vres = Math.pow(2.0*energy/mass, 0.5);
@@ -82,7 +86,7 @@ function Particle(x=0,y=0,r=5.0,energy=1.0,vx=null,vy=null,theta=null,
 	   the canvas. Size is controlled by
 	   the particle radius. */
 	
-	fill(46,138,222);
+	fill(this.colour);
 	noStroke();
 	ellipse(this.pos.x,this.pos.y,2.0*this.radius);
     }
