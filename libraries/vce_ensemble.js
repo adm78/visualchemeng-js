@@ -22,8 +22,9 @@ function Ensemble(p=[]) {
  
     // Ensemble attributes
     this.particles = p;
-
-
+    this.outlier_removed = false; // at least one outlier has been removed
+    this.outliers = 0;
+    
     // Ensemble methods
     this.addParticle = function(p,n=1) {
 	for (var i = 0; i < n; i++) {
@@ -77,10 +78,18 @@ function Ensemble(p=[]) {
 	for (i = 0; i < this.particles.length; i++) {
 	    if (!this.particles[i].inDomain(xmax,ymax)) {
 		this.particles.splice(i,1);
+		this.updateOutliers();
 	    };
 	};
     };
+
+    this.updateOutliers = function() {
+
+	// update the number of outliers
+	this.outliers = Math.min(this.outliers + 1,1000);
+	this.outlier_removed = true;
 	
+    };
 
 
 } // end of Particle class

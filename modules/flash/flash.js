@@ -17,6 +17,7 @@
 var img; // fash tank image object used by draw
 var xmax;
 var ymax;
+var feed_stream = new Ensemble();
 var tops_stream = new Ensemble();
 var bottoms_stream = new Ensemble();
 var rpart = 1.5;
@@ -28,13 +29,16 @@ var gravity = 0.02;
 var component_colours = ['#2e8ade','#de912e','#2ede71']
 var flash_solution;
 var pout = 1; // number of particle to output at a time
-var pspeed = 0.01;
-var kpert = 3.0;
-var fr = 30;
+var pspeed = 0.4;
+var kpert = 4.0;
+var fr = 40;
+var testInput;
+var output_delay = 60;
 
 function preload() {
     // preload the flash tank image
-    URL = "http://visualchemeng.com/wp-content/uploads/2018/01/flash.svg";
+    //URL = "http://visualchemeng.com/wp-content/uploads/2018/01/flash.svg";
+    URL = "flash.svg";
     img = loadImage(URL, pic => print(pic), loadImgErrFix);
 }
 
@@ -51,7 +55,7 @@ function setup() {
     console.log("ymax=",ymax);
     var canvas= createCanvas(xmax, ymax);
     canvas.parent("sim_container")
-    var testInput = new Input(0.5, 390.0, [0.5,0.3,0.2], [1.685,0.742,0.532],20);
+    testInput = new Input(0.5, 390.0, [0.5,0.3,0.2], [1.685,0.742,0.532],20);
     var expectedOutput = new Output([0.33940869696634357, 0.3650560590371706, 0.2955352439964858],
 				[0.5719036543882889, 0.27087159580558057, 0.15722474980613044],
 				    13.814605255477089, 6.185394744522911);
@@ -78,6 +82,7 @@ function draw() {
     imageMode(CENTER);
     var sid = getImgScaledDimensions(img);
     image(img, xmax/2 , ymax/2, sid.width, sid.height);
+    feed_stream.show();
     tops_stream.show();
     bottoms_stream.show();
 
@@ -86,9 +91,10 @@ function draw() {
     if (!(paused_log)) {
 
 	// update exisiting particle positions
-	var cfr = frameRate();
-	tops_stream.update(pspeed*cfr);
-	bottoms_stream.update(pspeed*cfr);
+	feed_stream.update(pspeed);
+	tops_stream.update(pspeed);
+	bottoms_stream.update(pspeed);
+	feed_stream.removeOutliers(0.5*(xmax-sid.width),2*ymax);
 	tops_stream.removeOutliers(xmax,ymax);
 	bottoms_stream.removeOutliers(xmax,ymax);
 	tops_stream.perturb(kpert/2.0,kpert/2.0);
@@ -96,13 +102,25 @@ function draw() {
 	
 	// add new particles at desired freq
     	if (ndraws % outlet_freq === 0) {
-	    var colour = chooseColoursFromComposition(component_colours, flash_solution)
-	    var tops_pos = getTopsPosition(sid);
-    	    var new_tops_part = new Particle(tops_pos.x,tops_pos.y,rpart,1.0,2.0,0.0,null,createVector(0,-gravity),colour.y);
-    	    tops_stream.addParticle(new_tops_part,pout);
-    	    var bottoms_pos = getBottonsPositions(sid);
-    	    var new_bottoms_part = new Particle(bottoms_pos.x,bottoms_pos.y,rpart,1.0,2.0,0.0,null,createVector(0,gravity),colour.x);
-    	    bottoms_stream.addParticle(new_bottoms_part,pout);
+	    
+	    var colour = chooseColoursFromComposition(component_colours, flash_solution,testInput)
+
+	    // handle the feed stream
+	    var feed_pos = getFeedPosition(sid,xmax);
+    	    var new_feed_part1 = new Particle(feed_pos.x,feed_pos.y+0.01*sid.height,rpart,1.0,2.0,0.0,null,createVector(0,0),colour.z);
+    	    var new_feed_part2 = new Particle(feed_pos.x,feed_pos.y-0.01*sid.height,rpart,1.0,2.0,0.0,null,createVector(0,0),colour.z);	    
+    	    feed_stream.addParticle(new_feed_part1,pout);
+	    feed_stream.addParticle(new_feed_part2,pout);
+
+	    // handle the delayed outlet and inlet streams
+	    if (feed_stream.outliers >  output_delay) {
+		var tops_pos = getTopsPosition(sid);
+    		var new_tops_part = new Particle(tops_pos.x,tops_pos.y,rpart,1.0,2.0,0.0,null,createVector(0,-gravity),colour.y);
+    		tops_stream.addParticle(new_tops_part,pout);
+    		var bottoms_pos = getBottonsPositions(sid);
+    		var new_bottoms_part = new Particle(bottoms_pos.x,bottoms_pos.y,rpart,1.0,2.0,0.0,null,createVector(0,gravity),colour.x);
+    		bottoms_stream.addParticle(new_bottoms_part,pout);
+	    };
     	};
 
     	// prevent potential overflow
@@ -112,6 +130,15 @@ function draw() {
     	};
     };
 };
+
+function getFeedPosition(sid,xmax) {
+
+    // return the position the feed stream should start
+    var feed_x =  0.75*(0.5*xmax - 0.5*sid.width);
+    var feed_y = (ymax/2.0)+0.05*sid.height;
+    return createVector(feed_x,feed_y);
+}
+
 
 function getTopsPosition(sid) {
 
@@ -141,17 +168,19 @@ function getImgScaledDimensions(img) {
 
 }
 
-function chooseColoursFromComposition(colours, s) {
+function chooseColoursFromComposition(colours, s, input) {
 
     // select a particle colour from a list, based on
     // compositions on flash solution s (Output object).
     var x_cum = [s.x[0]];
     var y_cum = [s.y[0]];
+    var z_cum = [input.z[0]];
 
     // generate cumulative composition lists
     for (var i = 1; i < s.x.length; i++) {
 	x_cum[i] = x_cum[i-1] + s.x[i];
 	y_cum[i] = y_cum[i-1] + s.y[i];
+	z_cum[i] = z_cum[i-1] + input.z[i];
     };
     // choose a component
     var rndx = Math.random();
@@ -168,9 +197,23 @@ function chooseColoursFromComposition(colours, s) {
 	    break;
 	}
     };
-
+    var rndy = Math.random();
+    for (var i = 0; i < y_cum.length; i++) {
+	if (rndy <= y_cum[i]) {
+	    var i_y = i;
+	    break;
+	}
+    };
+    var rndz = Math.random();
+    for (var i = 0; i < z_cum.length; i++) {
+	if (rndz <= z_cum[i]) {
+	    var i_z = i;
+	    break;
+	}
+    };
     return {x : colours[i_x],
-	    y : colours[i_y]};
+	    y : colours[i_y],
+	    z : colours[i_z]};
 };
 
 // --------------------------------------------------
