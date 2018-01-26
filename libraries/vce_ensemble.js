@@ -78,6 +78,7 @@ function Ensemble(p=[]) {
 	for (i = 0; i < this.particles.length; i++) {
 	    if (!this.particles[i].inDomain(xmax,ymax)) {
 		this.particles.splice(i,1);
+		i = i - 1;
 		this.updateOutliers();
 	    };
 	};

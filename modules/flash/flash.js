@@ -24,10 +24,6 @@ var feed_pos;
 var tops_pos;
 var bottoms_pos;
 var sid;
-var new_feed_part1;
-var new_feed_part2;
-var new_tops_part;
-var new_bottoms_part;
 
 // visualt set-up globals
 var rpart = 1.5;
@@ -38,8 +34,8 @@ var outlet_freq = 1;
 var gravity = 0.02;
 var component_colours = ['#2e8ade','#de912e','#2ede71']
 var flash_solution;
-var pout = 1; // number of particle to output at a time
-var pspeed = 0.4;
+var pout = 10; // number of particle to output at a time
+var pspeed = 1.0;
 var kpert = 4.0;
 var fr = 40;
 var testInput;
@@ -84,10 +80,9 @@ function setup() {
     bottoms_pos = getBottomsPosition(sid);
 
     // pre-build stream particles
-    new_feed_part1 = new Particle(feed_pos.x,feed_pos.y+0.01*sid.height,rpart,1.0,2.0,0.0,null,createVector(0,0));
-    new_feed_part2 = new Particle(feed_pos.x,feed_pos.y+0.01*sid.height,rpart,1.0,2.0,0.0,null,createVector(0,0));
-    new_tops_part = new Particle(tops_pos.x,tops_pos.y,rpart,1.0,2.0,0.0,null,createVector(0,-gravity));
-    new_bottoms_part = new Particle(bottoms_pos.x,bottoms_pos.y,rpart,1.0,2.0,0.0,null,createVector(0,gravity));
+
+    
+    
 }
 
 function draw() {
@@ -117,8 +112,8 @@ function draw() {
 	feed_stream.removeOutliers(0.5*(xmax-sid.width),2*ymax);
 	tops_stream.removeOutliers(xmax,ymax);
 	bottoms_stream.removeOutliers(xmax,ymax);
-	tops_stream.perturb(kpert/2.0,kpert/2.0);
-	bottoms_stream.perturb(kpert/5.0,kpert/5.0);
+	tops_stream.perturb(kpert/1.0,kpert/1.0);
+	bottoms_stream.perturb(kpert/4.0,kpert/4.0);
 	
 	// add new particles at desired freq
     	if (ndraws % outlet_freq === 0) {
@@ -126,18 +121,21 @@ function draw() {
 	    var colour = chooseColoursFromComposition(component_colours, flash_solution,testInput)
 
 	    // handle the feed stream
-    	    new_feed_part1.colour = colour.z; 
-    	    new_feed_part2.colour = colour.z;	    
-    	    feed_stream.addParticle(new_feed_part1,pout);
-	    feed_stream.addParticle(new_feed_part2,pout);
+	    for (i=0; i < pout; i++) {
+		var new_feed_part1 = new Particle(feed_pos.x,feed_pos.y+0.01*sid.height,rpart,1.0,2.0,0.0,null,createVector(0,0), colour.z);
+		var new_feed_part2 = new Particle(feed_pos.x,feed_pos.y-0.01*sid.height,rpart,1.0,2.0,0.0,null,createVector(0,0), colour.z);
+		feed_stream.addParticle(new_feed_part1);
+		feed_stream.addParticle(new_feed_part2);
+	    };
 
 	    // handle the delayed outlet and inlet streams
 	    if (feed_stream.outliers >  output_delay) {
-		
-		new_tops_part.colour = colour.y;
-    		tops_stream.addParticle(new_tops_part,pout);
-    		new_bottoms_part.colour = colour.x;
-    		bottoms_stream.addParticle(new_bottoms_part,pout);
+		for (i=0; i < pout; i++) {
+		    var new_tops_part = new Particle(tops_pos.x,tops_pos.y,rpart,1.0,2.0,0.0,null,createVector(0,-gravity), colour.y);
+		    var new_bottoms_part = new Particle(bottoms_pos.x,bottoms_pos.y,rpart,1.0,2.0,0.0,null,createVector(0,gravity), colour.x);
+    		    tops_stream.addParticle(new_tops_part);
+    		    bottoms_stream.addParticle(new_bottoms_part);
+		};
 		
 	    };
     	};
