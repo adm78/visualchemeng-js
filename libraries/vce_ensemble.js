@@ -66,9 +66,7 @@ function Ensemble(p=[]) {
 	// by [0-xmax] in the x-direction and
 	// by [0-ymax] in the y-direction.
 	for (i = 0; i < this.particles.length; i++) {
-	    var part = this.particles[i];
-	    part.pos.x = part.pos.x + getRandomSigned()*xmax;
-	    part.pos.y = part.pos.y + getRandomSigned()*ymax;
+	    this.particles[i].perturb(xmax,ymax);
 	};
     };
 
