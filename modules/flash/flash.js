@@ -20,6 +20,16 @@ var ymax;
 var feed_stream = new Ensemble();
 var tops_stream = new Ensemble();
 var bottoms_stream = new Ensemble();
+var feed_pos;
+var tops_pos;
+var bottoms_pos;
+var sid;
+var new_feed_part1;
+var new_feed_part2;
+var new_tops_part;
+var new_bottoms_part;
+
+// visualt set-up globals
 var rpart = 1.5;
 var img_shrink_factor = 0.60;
 var paused_log = true;
@@ -64,9 +74,20 @@ function setup() {
     // draw the flash schematic to stream
     background(51);
     imageMode(CENTER);
-    var sid = getImgScaledDimensions(img);
+    sid = getImgScaledDimensions(img);
     image(img, xmax/2 , ymax/2, sid.width, sid.height);
     frameRate(fr);
+
+    // pre-compute key canvas positions
+    feed_pos = getFeedPosition(sid,xmax);
+    tops_pos = getTopsPosition(sid);
+    bottoms_pos = getBottomsPosition(sid);
+
+    // pre-build stream particles
+    new_feed_part1 = new Particle(feed_pos.x,feed_pos.y+0.01*sid.height,rpart,1.0,2.0,0.0,null,createVector(0,0));
+    new_feed_part2 = new Particle(feed_pos.x,feed_pos.y+0.01*sid.height,rpart,1.0,2.0,0.0,null,createVector(0,0));
+    new_tops_part = new Particle(tops_pos.x,tops_pos.y,rpart,1.0,2.0,0.0,null,createVector(0,-gravity));
+    new_bottoms_part = new Particle(bottoms_pos.x,bottoms_pos.y,rpart,1.0,2.0,0.0,null,createVector(0,gravity));
 }
 
 function draw() {
@@ -80,7 +101,6 @@ function draw() {
     // draw the tanks and particle streams
     background(51);
     imageMode(CENTER);
-    var sid = getImgScaledDimensions(img);
     image(img, xmax/2 , ymax/2, sid.width, sid.height);
     feed_stream.show();
     tops_stream.show();
@@ -106,20 +126,19 @@ function draw() {
 	    var colour = chooseColoursFromComposition(component_colours, flash_solution,testInput)
 
 	    // handle the feed stream
-	    var feed_pos = getFeedPosition(sid,xmax);
-    	    var new_feed_part1 = new Particle(feed_pos.x,feed_pos.y+0.01*sid.height,rpart,1.0,2.0,0.0,null,createVector(0,0),colour.z);
-    	    var new_feed_part2 = new Particle(feed_pos.x,feed_pos.y-0.01*sid.height,rpart,1.0,2.0,0.0,null,createVector(0,0),colour.z);	    
+    	    new_feed_part1.colour = colour.z; 
+    	    new_feed_part2.colour = colour.z;	    
     	    feed_stream.addParticle(new_feed_part1,pout);
 	    feed_stream.addParticle(new_feed_part2,pout);
 
 	    // handle the delayed outlet and inlet streams
 	    if (feed_stream.outliers >  output_delay) {
-		var tops_pos = getTopsPosition(sid);
-    		var new_tops_part = new Particle(tops_pos.x,tops_pos.y,rpart,1.0,2.0,0.0,null,createVector(0,-gravity),colour.y);
+		
+		new_tops_part.colour = colour.y;
     		tops_stream.addParticle(new_tops_part,pout);
-    		var bottoms_pos = getBottonsPositions(sid);
-    		var new_bottoms_part = new Particle(bottoms_pos.x,bottoms_pos.y,rpart,1.0,2.0,0.0,null,createVector(0,gravity),colour.x);
+    		new_bottoms_part.colour = colour.x;
     		bottoms_stream.addParticle(new_bottoms_part,pout);
+		
 	    };
     	};
 
@@ -149,7 +168,7 @@ function getTopsPosition(sid) {
 
 }
 
-function getBottonsPositions(sid) {
+function getBottomsPosition(sid) {
 
     // return the position of the bottoms exit as a p5 vector
     var tops_x = (xmax/2.0) + 0.5*sid.width;
