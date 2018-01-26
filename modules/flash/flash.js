@@ -40,6 +40,7 @@ var kpert = 4.0;
 var fr = 40;
 var testInput;
 var output_delay = 60;
+var e_coeff = 0.3; // liquid-wall coefficent of restitution (kind of)
 
 function preload() {
     // preload the flash tank image
@@ -111,7 +112,8 @@ function draw() {
 	bottoms_stream.update(pspeed);
 	feed_stream.removeOutliers(0.5*(xmax-sid.width),2*ymax);
 	tops_stream.removeOutliers(xmax,ymax);
-	bottoms_stream.removeOutliers(xmax,ymax);
+	bottoms_stream.applyBoundary(0.98*ymax,e_coeff);
+	bottoms_stream.removeOutliers(xmax,2*ymax);
 	tops_stream.perturb(kpert/1.0,kpert/1.0);
 	bottoms_stream.perturb(kpert/4.0,kpert/4.0);
 	

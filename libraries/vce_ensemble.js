@@ -90,5 +90,19 @@ function Ensemble(p=[]) {
 	
     };
 
+    this.applyBoundary = function(ymax,e_coeff) {
+
+	// bounce articles that hit lower ymax boundary
+	// mutiplying the magnitude of their y-velocity by
+	// a factor e_coag
+	
+	for (i = 0; i < this.particles.length; i++) {
+	    if (!this.particles[i].inDomain(100*ymax,ymax)) {
+		this.particles[i].reflect_top();
+		this.particles[i].vel.y = this.particles[i].vel.y*e_coeff;
+	    };
+	};
+    };
+
 
 } // end of Particle class
