@@ -69,7 +69,29 @@ function setup() {
     flash_solution = (test(testInput,expectedOutput)).solution;
 
     // draw the bar charts to screen
-    //resizeWindow();
+    var feed_data = [{
+    x: ['z1', 'z2', 'z3'],
+	y: [testInput.z[0], testInput.z[1], testInput.z[2]],
+	type: 'bar',
+    }];
+    
+    var tops_data = [{
+	x: ['y1', 'y2', 'y3'],
+	y: [flash_solution.y[0], flash_solution.y[1], flash_solution.y[2]],
+	type: 'bar',
+    }];
+    
+    var bottoms_data = [{
+	x: ['x1', 'x2', 'x3'],
+	y: [flash_solution.x[0], flash_solution.x[1], flash_solution.x[2]],
+    type: 'bar',
+    }];
+
+    bar_chart_layout.yaxis.range = [0,getMaxComposition(flash_solution,testInput)];
+    Plotly.newPlot('feedplotDiv', feed_data, bar_chart_layout);
+    Plotly.newPlot('topsplotDiv', tops_data, bar_chart_layout);
+    Plotly.newPlot('bottomsplotDiv', bottoms_data, bar_chart_layout);
+    
     
     // draw the flash schematic to screen
     background(51);
@@ -83,9 +105,6 @@ function setup() {
     tops_pos = getTopsPosition(sid);
     bottoms_pos = getBottomsPosition(sid);
 
-    // pre-build stream particles
-    
-    
     
 }
 
@@ -161,6 +180,26 @@ function restart() {
     tops_stream = new Ensemble();
     bottoms_stream = new Ensemble();
 
+
+}
+
+function getMaxComposition(s, input) {
+
+    // return the maximum composition value
+    // across all streams
+    var max = input.z[0];
+    for (var i = 0; i < input.length; i++) {
+	if (input.z[i] > max) {
+	    max = input.z[i];
+	};
+	if (s.x[i] > max) {
+	    max = s.x[i];   
+	}
+	if (s.y[i] > max) {
+	    max = s.y[i];   
+	}
+    };
+    return max;
 
 }
 
@@ -249,73 +288,48 @@ function chooseColoursFromComposition(colours, s, input) {
 	    z : colours[i_z]};
 };
 // --------------------------------------------------
-//              composition graphs
+//              composition graph layout
 // --------------------------------------------------
-
-
-var feed_data = [{
-    x: ['z1', 'z2', 'z3'],
-    y: [20, 14, 23],
-    type: 'bar',
-    hoverlabel: {bordercolor:'#333438'},
-    plot_bgcolor: '#333438',
-    paper_bgcolor: 'black',
-    marker: {
-	color : '#008CBA'
-    },
-}];
-
-var tops_data = [{
-    x: ['y1', 'y2', 'y3'],
-    y: [20, 14, 23],
-    type: 'bar',
-    hoverlabel: {bordercolor:'#333438'},
-    plot_bgcolor: '#333438',
-    paper_bgcolor: 'black',
-    marker: {
-	color : '#008CBA'
-    }
-}];
-
-var bottoms_data = [{
-    x: ['x1', 'x2', 'x3'],
-    y: [20, 14, 23],
-    type: 'bar',
-    hoverlabel: {bordercolor:'#333438'},
-    plot_bgcolor: '#333438',
-    paper_bgcolor: 'black',
-    marker: {
-	color : '#008CBA'
-    }
+var bar_chart_layout = {
     
-}];
-
-var feedplot = Plotly.newPlot('feedplotDiv', feed_data);
-var topsplot = Plotly.newPlot('topsplotDiv', tops_data);
-var bottomsplot = Plotly.newPlot('bottomsplotDiv', bottoms_data);
-
-function resizeWindow() {
-    var window_height;
-    var svg_container;
-    var d3 = Plotly.d3;
-    var fp = d3.select("div[id='feedplotDiv']");
-    var fpnode = fp.node();
-    var tp = d3.select("div[id='topsplotDiv']");
-    var tpnode = tp.node();
-    var bp = d3.select("div[id='bottomsplotDiv']");
-    var bpnode = bp.node();
-    window_height = document.getElementById('bar_chart_container').offsetHeight/3.0;
-    console.log("window_height = ", window_height);
-    svg_container = document.getElementById('feedplotDiv').getElementsByClassName('svg-container')[0];
-    svg_container.style.height = (window_height) + 'px';
-    Plotly.Plots.resize(fpnode);
-    svg_container = document.getElementById('topsplotDiv').getElementsByClassName('svg-container')[0];
-    svg_container.style.height = (window_height) + 'px';
-    Plotly.Plots.resize(tpnode);
-    svg_container = document.getElementById('bottomsplotDiv').getElementsByClassName('svg-container')[0];
-    svg_container.style.height = (window_height) + 'px';
-    Plotly.Plots.resize(bpnode);
+    margin : {
+	l: 30,
+	r: 30,
+	b: 30,
+	t: 20,
+	pad: 5
+    },
+    hoverlabel: {bordercolor:'#333438'},
+    plot_bgcolor: '#333438',
+    paper_bgcolor: '#333438',
+    marker: {
+	color : component_colours
+    },
+    height:200,
+    xaxis: {
+	showgrid: false,
+	gridcolor: '#44474c',
+	tickmode: 'auto',
+	titlefont: {
+	    family: 'Roboto, serif',
+	    size: 18,
+	    color: 'white'
+	},
+	tickfont: {color:'white'}
+    },
+    yaxis: {
+	showgrid: true,
+	gridcolor: '#44474c',
+	tickmode: 'auto',
+	titlefont: {
+	    family: 'Roboto, serif',
+	    size: 18,
+	    color: 'white'
+	},
+	tickfont: {color:'white'}
+    },
 };
+
 
 // --------------------------------------------------
 //              flash tank calculations
