@@ -150,6 +150,17 @@ function draw() {
     };
 };
 
+function restart() {
+    
+    // effectively reload the page
+    paused_log = true;
+    feed_stream = new Ensemble();
+    tops_stream = new Ensemble();
+    bottoms_stream = new Ensemble();
+
+
+}
+
 function getFeedPosition(sid,xmax) {
 
     // return the position the feed stream should start
@@ -368,4 +379,12 @@ $('#run').click(async function(){
     else {
 	$("#run").text('Pause');
     }
+});
+
+// restart button
+$('#restart').click(async function(){
+
+    // restart button functionality
+    console.log("You just clicked restart!");
+    restart();
 });
