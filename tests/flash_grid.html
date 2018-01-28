@@ -3,11 +3,17 @@
     <link rel="stylesheet" type="text/css" href="../css/buttons.css">
     <link rel="stylesheet" type="text/css" href="../css/slider.css">
     <link rel="stylesheet" type="text/css" href="../css/vce.css">
+    <link rel="stylesheet" type="text/css" href="../css/flash.css">
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto">
   </head>
   <body style="background-color:white;">
     <div class="wrapper" id="target">
+      <div class="box bar_chart_container" id="bar_chart_container">
+	<div class="bar_chart_1" id="feedplotDiv"></div>
+	<div class="bar_chart_2" id="topsplotDiv"></div>
+	<div class="bar_chart_3" id="bottomsplotDiv"></div>
+      </div>
       <div class="box sim_container" id="sim_container">
         <div class="plotly_graph"; id="myDiv"></div>
       </div>
@@ -23,10 +29,6 @@
       <div class="box button_container">
         <button class="button" id="run" style="width:96%">Run</button><br/>
 	<button class="button" id="restart" style="width:96%">Restart</button><br/>
-      </div>
-      <div class="box slider_container">
-      </div>
-      <div class="box fs_container">
 	<button class="button" id="fullscreen" style="width:96%">Fullscreen</button>
       </div>
     </div>

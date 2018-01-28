@@ -68,7 +68,10 @@ function setup() {
 				    13.814605255477089, 6.185394744522911);
     flash_solution = (test(testInput,expectedOutput)).solution;
 
-    // draw the flash schematic to stream
+    // draw the bar charts to screen
+    //resizeWindow();
+    
+    // draw the flash schematic to screen
     background(51);
     imageMode(CENTER);
     sid = getImgScaledDimensions(img);
@@ -81,7 +84,7 @@ function setup() {
     bottoms_pos = getBottomsPosition(sid);
 
     // pre-build stream particles
-
+    
     
     
 }
@@ -245,6 +248,74 @@ function chooseColoursFromComposition(colours, s, input) {
 	    y : colours[i_y],
 	    z : colours[i_z]};
 };
+// --------------------------------------------------
+//              composition graphs
+// --------------------------------------------------
+
+
+var feed_data = [{
+    x: ['z1', 'z2', 'z3'],
+    y: [20, 14, 23],
+    type: 'bar',
+    hoverlabel: {bordercolor:'#333438'},
+    plot_bgcolor: '#333438',
+    paper_bgcolor: 'black',
+    marker: {
+	color : '#008CBA'
+    },
+}];
+
+var tops_data = [{
+    x: ['y1', 'y2', 'y3'],
+    y: [20, 14, 23],
+    type: 'bar',
+    hoverlabel: {bordercolor:'#333438'},
+    plot_bgcolor: '#333438',
+    paper_bgcolor: 'black',
+    marker: {
+	color : '#008CBA'
+    }
+}];
+
+var bottoms_data = [{
+    x: ['x1', 'x2', 'x3'],
+    y: [20, 14, 23],
+    type: 'bar',
+    hoverlabel: {bordercolor:'#333438'},
+    plot_bgcolor: '#333438',
+    paper_bgcolor: 'black',
+    marker: {
+	color : '#008CBA'
+    }
+    
+}];
+
+var feedplot = Plotly.newPlot('feedplotDiv', feed_data);
+var topsplot = Plotly.newPlot('topsplotDiv', tops_data);
+var bottomsplot = Plotly.newPlot('bottomsplotDiv', bottoms_data);
+
+function resizeWindow() {
+    var window_height;
+    var svg_container;
+    var d3 = Plotly.d3;
+    var fp = d3.select("div[id='feedplotDiv']");
+    var fpnode = fp.node();
+    var tp = d3.select("div[id='topsplotDiv']");
+    var tpnode = tp.node();
+    var bp = d3.select("div[id='bottomsplotDiv']");
+    var bpnode = bp.node();
+    window_height = document.getElementById('bar_chart_container').offsetHeight/3.0;
+    console.log("window_height = ", window_height);
+    svg_container = document.getElementById('feedplotDiv').getElementsByClassName('svg-container')[0];
+    svg_container.style.height = (window_height) + 'px';
+    Plotly.Plots.resize(fpnode);
+    svg_container = document.getElementById('topsplotDiv').getElementsByClassName('svg-container')[0];
+    svg_container.style.height = (window_height) + 'px';
+    Plotly.Plots.resize(tpnode);
+    svg_container = document.getElementById('bottomsplotDiv').getElementsByClassName('svg-container')[0];
+    svg_container.style.height = (window_height) + 'px';
+    Plotly.Plots.resize(bpnode);
+};
 
 // --------------------------------------------------
 //              flash tank calculations
@@ -387,4 +458,9 @@ $('#restart').click(async function(){
     // restart button functionality
     console.log("You just clicked restart!");
     restart();
+});
+
+// resize on full page load (jquery)
+$(document).ready(function () {
+    //resizeWindow()
 });
