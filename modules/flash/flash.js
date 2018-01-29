@@ -77,6 +77,7 @@ function setup() {
 	marker: {
 	    color : component_colours
 	},
+	width: 0.3
     }];
     
     var tops_data = [{
@@ -85,7 +86,8 @@ function setup() {
 	type: 'bar',
 	marker: {
 	    color : component_colours
-	}
+	},
+	width: 0.3
     }];
 
     var bottoms_data = [{
@@ -94,7 +96,8 @@ function setup() {
 	type: 'bar',
 	marker: {
 	    color : component_colours
-	}
+	},
+	width: 0.3
     }];
 
     bar_chart_layout.yaxis.range = [0,getMaxComposition(flash_solution,testInput)];
@@ -462,7 +465,27 @@ function test(input, expected) {
     return {success:1,
 	    solution:Solution};
 
-}
+};
+
+function update_pressure() {
+
+};
+
+function update_temp() {
+
+};
+
+function update_F() {
+
+};
+
+function update_V() {
+
+};
+
+function update_L() {
+
+};
 
 //--------------------------------------------------------------------
 //                  UI event listners
@@ -493,3 +516,71 @@ $('#restart').click(async function(){
 $(document).ready(function () {
     //resizeWindow()
 });
+
+
+// sliders
+$( function() {
+    // pressure slider
+    $( "#k1_slider" ).slider({
+	orientation: "horizontal",
+	range: "min",
+	max: 200,
+	value: 100,
+	slide: update_pressure,
+	change: update_pressure
+    });
+    $( "#k1_slider" ).slider( "value", 50.0 );
+} );
+
+
+$( function() {
+    // temp slider
+    $( "#k2_slider" ).slider({
+	orientation: "horizontal",
+	range: "min",
+	max: 200,
+	value: 100,
+	slide: update_temp,
+	change: update_temp
+    });
+    $( "#k2_slider" ).slider( "value", 50.0 );
+} );
+
+$( function() {
+    // feed flowrate slider
+    $( "#k3_slider" ).slider({
+	orientation: "horizontal",
+	range: "min",
+	max: 200,
+	value: 100,
+	slide: update_F,
+	change: update_F
+    });
+    $( "#k3_slider" ).slider( "value", 50.0 );
+} );
+
+$( function() {
+    // tops flowrate slider
+    $( "#k4_slider" ).slider({
+	orientation: "horizontal",
+	range: "min",
+	max: 200,
+	value: 100,
+	slide: update_V,
+	change: update_V
+    });
+    $( "#k4_slider" ).slider( "value", 50.0 );
+} );
+
+$( function() {
+    // tops flowrate slider
+    $( "#k5_slider" ).slider({
+	orientation: "horizontal",
+	range: "min",
+	max: 200,
+	value: 100,
+	slide: update_L,
+	change: update_L
+    });
+    $( "#k5_slider" ).slider( "value", 50.0 );
+} );

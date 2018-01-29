@@ -30,6 +30,12 @@
     grid-column: 2;
     grid-row: 4;
 }
+#k5_slider {
+    width: 80%;
+    margin: 8px;
+    grid-column: 2;
+    grid-row: 5;
+}
 
 #k1_slider .ui-slider-range { background: #ff974c; }
 #k1_slider .ui-slider-handle { border-color: #ff974c; }
@@ -39,4 +45,5 @@
 #k3_slider .ui-slider-handle { border-color: #ff974c; }
 #k4_slider .ui-slider-range { background: #ff974c; }
 #k4_slider .ui-slider-handle { border-color: #ff974c; }
-
+#k5_slider .ui-slider-range { background: #ff974c; }
+#k5_slider .ui-slider-handle { border-color: #ff974c; 
