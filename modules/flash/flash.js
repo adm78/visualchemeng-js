@@ -211,6 +211,7 @@ function restart() {
     tops_stream = new Ensemble();
     bottoms_stream = new Ensemble();
     flash = set_intial_conditions(flash);
+    flash.solve_PTZF();
 
 };
 
@@ -458,6 +459,12 @@ $('#restart').click(async function(){
     // restart button functionality
     console.log("You just clicked restart!");
     restart();
+    if (paused_log) {
+	$("#run").text('Run');
+    }
+    else {
+	$("#run").text('Pause');
+    }
 });
 
 // resize on full page load (jquery)
