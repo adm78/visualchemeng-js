@@ -17,6 +17,7 @@
 var img; // fash tank image object used by draw
 var xmax;
 var ymax;
+var flash =  new Separator();
 var feed_stream = new Ensemble();
 var tops_stream = new Ensemble();
 var bottoms_stream = new Ensemble();
@@ -584,3 +585,4 @@ $( function() {
     });
     $( "#k5_slider" ).slider( "value", 50.0 );
 } );
+
