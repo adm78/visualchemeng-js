@@ -63,20 +63,6 @@ function derivative(f,x,args) {
 }
 
 
-function P_Antoine(T,coeffs) {
-
-    // Return the pressue in mmHg based on Antoine coefficients where
-    // T is in [K]
-    // http://ddbonline.ddbst.com/AntoineCalculation/
-    // AntoineCalculationCGI.exe?component=Ethanol
-    
-    var A = coeffs[0];
-    var B = coeffs[1];
-    var C = coeffs[2];
-    var exponent = A - (B/(C+T));
-    return Math.pow(10,exponent);   
-}
-
 function sleep (time) {
     // time delay functionality
     // use as await sleep(sleep_time);

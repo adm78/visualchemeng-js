@@ -14,11 +14,13 @@
 // --------------------------------------------------
 //             visualisation functionality
 // --------------------------------------------------
+var debug = true;
 var img; // fash tank image object used by draw
 var xmax;
 var ymax;
-var flash =  new Separator();
-flash = set_intial_conditions(flash);
+var ic = getInitialConditions();
+flash = new Separator(ic.x,ic.y,ic.z,ic.L,
+		      ic.V,ic.F,ic.T,ic.P,ic.A,debug);
 console.log("flash = ", flash);
 var feed_stream = new Ensemble();
 var tops_stream = new Ensemble();
@@ -160,8 +162,11 @@ function draw() {
     };
 };
 
-function plotCompositionData(flash) {
+function plotCompositionData(flash, debug=false) {
 
+    if (debug) { console.log("flash.js: plotCompositionData: running plotCompositionData with input", flash) }
+    
+    
     var feed_data = [{
     x: ['z1', 'z2', 'z3'],
 	y: [flash.z[0], flash.z[1], flash.z[2]],
@@ -210,7 +215,7 @@ function restart() {
     feed_stream = new Ensemble();
     tops_stream = new Ensemble();
     bottoms_stream = new Ensemble();
-    flash = set_intial_conditions(flash);
+    resetFlash(flash)
     flash.solve_PTZF();
 
 };
@@ -231,7 +236,7 @@ function getMaxComposition(sep) {
 	    max = sep.y[i];   
 	}
     };
-    return max;
+    return 1.0;
 
 }
 
@@ -368,15 +373,25 @@ var bar_chart_layout = {
 // --------------------------------------------------
 //              flash tank operations
 // --------------------------------------------------
-function set_intial_conditions(sep) {
-    sep.x = null;
-    sep.y = null;
-    sep.z = [0.5,0.3,0.2];
-    sep.P = 0.5;
-    sep.T = 390.0;
-    sep.K = [1.685,0.742,0.532];
-    sep.F = 20.0;
-    return sep    
+function resetFlash(flash) {
+    var ic = getInitialConditions();
+    flash = new Separator(ic.x,ic.y,ic.z,ic.L,
+			  ic.V,ic.F,ic.T,ic.P,ic.A);
+    return flash;
+}
+
+function getInitialConditions() {
+    return {
+	x : null,
+	y : null,
+	z : [0.5,0.3,0.2],
+	P : 5,
+	T : 390.0,
+	A : [ [3.97786,1064.840,-41.136],
+	      [4.00139,1170.875,-48.833],
+	      [3.93002,1182.774,-52.532]],
+	F : 20.0
+    };
 }
 
 function getRanges() {
@@ -385,8 +400,8 @@ function getRanges() {
     // the limits of each slider prop
     return {
 	P: {
-	    min: 0.1,
-	    max: 1.0
+	    min: 1.0,
+	    max: 10.0
 	},
 	T: {
 	    min:330,
@@ -409,14 +424,14 @@ function getRanges() {
 
 function update_pressure() {
     console.log("P = ", $( "#k1_slider" ).slider( "value"));
-    flash.P = $( "#k1_slider" ).slider( "value");
-    flash.solve_PTZF();
-    plotCompositionData(flash);
+    flash.updateP($( "#k1_slider" ).slider( "value"));
+    flash.solve_PTZF(debug=debug);
+    plotCompositionData(flash,debug=debug);
 };
 
 function update_temp() {
     console.log("T = ", $( "#k2_slider" ).slider( "value"));
-    flash.T = $( "#k2_slider" ).slider( "value");
+    flash.updateT($( "#k2_slider" ).slider( "value"));
     flash.solve_PTZF();
     plotCompositionData(flash);
 };

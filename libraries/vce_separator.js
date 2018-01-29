@@ -11,7 +11,7 @@
 //----------------------------------------------------------
 
 function Separator(x=null,y=null,z=null,L=null,V=null,F=null,T=null,
-		   P=null,K=null) {
+		   P=null,A=null,debug=false) {
 
     /* Initialise the separator. 
 
@@ -27,15 +27,18 @@ function Separator(x=null,y=null,z=null,L=null,V=null,F=null,T=null,
     this.F = F;
     this.T = T;
     this.P = P;
-    this.K = K;
+    this.A = A;
+    this.K = getK(T,P,A,debug);
 
     // Separator methods   
-    this.solve_PTZF = function() {
+    this.solve_PTZF = function(debug=false) {
 
 	// Solve for/assing all ckomputable attributes given
 	// pressure, temp, feed comp and feed flowrate
 	// using the Rachford-Rice method.
-	
+
+	if (debug) { console.log("vce_seperator.js: running solve_PTZF...") };
+
 	var beta_solution = newtonsMethod(RachfordRiceBeta,0.5,[this.z,this.K]);
 	var beta = beta_solution[1];
 	this.V = beta*this.F;
@@ -45,31 +48,18 @@ function Separator(x=null,y=null,z=null,L=null,V=null,F=null,T=null,
 	
     };
 
-    function getY(x,K) {
-	
-	// Generate the vapour composition array
-	
-	var y = [];
-	var arrayLength = x.length;
-	for (var i = 0; i < arrayLength; i++) {
-	    y[i] = K[i]*x[i];
-	};
-	return y;
+    this.updateP = function(P,debug=false) {
+	this.P = P;
+	this.K = getK(this.T,this.P,this.A,debug);
     };
 
 
-    function getX(z,K,beta) {
-
-	// Generate the liquid composition array
-	var x = [];
-	var arrayLength = z.length;
-	for (var i = 0; i < arrayLength; i++) {
-	    x[i] = z[i]/(1+beta*(K[i]-1));
-	};
-	return x;
+    this.updateT = function(T,debug=false) {
+	this.T = T;
+	this.K = getK(this.T,this.P,this.A,debug)
     };
 
-
+;
     
 } // end of Separator class
 
@@ -115,6 +105,52 @@ function RachfordRiceSum(beta,z,K) {
     return result;
 };
 
+function P_Antoine(T,coeffs) {
+
+    // Return the pressue in mmHg based on Antoine coefficients where
+    // T is in [K]
+    // http://ddbonline.ddbst.com/AntoineCalculation/
+    // AntoineCalculationCGI.exe?component=Ethanol
+    
+    var A = coeffs[0];
+    var B = coeffs[1];
+    var C = coeffs[2];
+    var exponent = A - (B/(C+T));
+    return Math.pow(10,exponent);   
+}
+
+function getK(T,P,A,debug=false) {
+    K = [];
+    for (var i = 0; i < A.length; i++) {
+	K[i] = P_Antoine(T,A[i])/P;
+    };
+    if (debug) {console.log("K = ", K)};
+    return K;
+}
+
+function getY(x,K) {
+    
+    // Generate the vapour composition array
+    
+    var y = [];
+    var arrayLength = x.length;
+    for (var i = 0; i < arrayLength; i++) {
+	y[i] = K[i]*x[i];
+    };
+    return y;
+};
+
+
+function getX(z,K,beta) {
+
+    // Generate the liquid composition array
+    var x = [];
+    var arrayLength = z.length;
+    for (var i = 0; i < arrayLength; i++) {
+	x[i] = z[i]/(1+beta*(K[i]-1));
+    };
+    return x;
+};
 
 // testInput = new Input(0.5, 390.0, [0.5,0.3,0.2], [1.685,0.742,0.532],20);
 // var expectedOutput = new Output([0.33940869696634357, 0.3650560590371706, 0.2955352439964858],
