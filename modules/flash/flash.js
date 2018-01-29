@@ -18,6 +18,8 @@ var img; // fash tank image object used by draw
 var xmax;
 var ymax;
 var flash =  new Separator();
+flash = set_intial_conditions(flash);
+console.log("flash = ", flash);
 var feed_stream = new Ensemble();
 var tops_stream = new Ensemble();
 var bottoms_stream = new Ensemble();
@@ -63,51 +65,12 @@ function setup() {
     console.log("xmax=",xmax);
     console.log("ymax=",ymax);
     var canvas= createCanvas(xmax, ymax);
-    canvas.parent("sim_container")
-    testInput = new Input(0.5, 390.0, [0.5,0.3,0.2], [1.685,0.742,0.532],20);
-    var expectedOutput = new Output([0.33940869696634357, 0.3650560590371706, 0.2955352439964858],
-				[0.5719036543882889, 0.27087159580558057, 0.15722474980613044],
-				    13.814605255477089, 6.185394744522911);
-    flash_solution = (test(testInput,expectedOutput)).solution;
+    canvas.parent("sim_container");
+    flash.solve_PTZF();
+    
 
     // draw the bar charts to screen
-    var feed_data = [{
-    x: ['z1', 'z2', 'z3'],
-	y: [testInput.z[0], testInput.z[1], testInput.z[2]],
-	type: 'bar',
-	marker: {
-	    color : component_colours
-	},
-	width: 0.3
-    }];
-    
-    var tops_data = [{
-	x: ['y1', 'y2', 'y3'],
-	y: [flash_solution.y[0], flash_solution.y[1], flash_solution.y[2]],
-	type: 'bar',
-	marker: {
-	    color : component_colours
-	},
-	width: 0.3
-    }];
-
-    var bottoms_data = [{
-	x: ['x1', 'x2', 'x3'],
-	y: [flash_solution.x[0], flash_solution.x[1], flash_solution.x[2]],
-	type: 'bar',
-	marker: {
-	    color : component_colours
-	},
-	width: 0.3
-    }];
-
-    bar_chart_layout.yaxis.range = [0,getMaxComposition(flash_solution,testInput)];
-    bar_chart_layout.title = 'Feed';
-    Plotly.newPlot('feedplotDiv', feed_data, bar_chart_layout);
-    bar_chart_layout.title = 'Tops';
-    Plotly.newPlot('topsplotDiv', tops_data, bar_chart_layout);
-    bar_chart_layout.title = 'Bottoms';
-    Plotly.newPlot('bottomsplotDiv', bottoms_data, bar_chart_layout);
+    plotCompositionData(flash); 
     
     
     // draw the flash schematic to screen
@@ -159,12 +122,16 @@ function draw() {
 	// add new particles at desired freq
     	if (ndraws % outlet_freq === 0) {
 	    
-	    var colour = chooseColoursFromComposition(component_colours, flash_solution,testInput)
+	    var colour = chooseColoursFromComposition(component_colours,flash)
 
 	    // handle the feed stream
 	    for (i=0; i < pout; i++) {
-		var new_feed_part1 = new Particle(feed_pos.x,feed_pos.y+0.01*sid.height,rpart,1.0,2.0,0.0,null,createVector(0,0), colour.z);
-		var new_feed_part2 = new Particle(feed_pos.x,feed_pos.y-0.01*sid.height,rpart,1.0,2.0,0.0,null,createVector(0,0), colour.z);
+		var new_feed_part1 = new Particle(feed_pos.x,feed_pos.y+0.01*sid.height,
+						  rpart,1.0,2.0,0.0,null,
+						  createVector(0,0), colour.z);
+		var new_feed_part2 = new Particle(feed_pos.x,feed_pos.y-0.01*sid.height,
+						  rpart,1.0,2.0,0.0,null,
+						  createVector(0,0), colour.z);
 		feed_stream.addParticle(new_feed_part1);
 		feed_stream.addParticle(new_feed_part2);
 	    };
@@ -172,8 +139,12 @@ function draw() {
 	    // handle the delayed outlet and inlet streams
 	    if (feed_stream.outliers >  output_delay) {
 		for (i=0; i < pout; i++) {
-		    var new_tops_part = new Particle(tops_pos.x,tops_pos.y,rpart,1.0,2.0,0.0,null,createVector(0,-gravity), colour.y);
-		    var new_bottoms_part = new Particle(bottoms_pos.x,bottoms_pos.y,rpart,1.0,2.0,0.0,null,createVector(0,gravity), colour.x);
+		    var new_tops_part = new Particle(tops_pos.x,tops_pos.y,rpart,
+						     1.0,2.0,0.0,null,
+						     createVector(0,-gravity), colour.y);
+		    var new_bottoms_part = new Particle(bottoms_pos.x,bottoms_pos.y,rpart,
+							1.0,2.0,0.0,null,
+							createVector(0,gravity), colour.x);
     		    tops_stream.addParticle(new_tops_part);
     		    bottoms_stream.addParticle(new_bottoms_part);
 		};
@@ -189,6 +160,49 @@ function draw() {
     };
 };
 
+function plotCompositionData(flash) {
+
+    var feed_data = [{
+    x: ['z1', 'z2', 'z3'],
+	y: [flash.z[0], flash.z[1], flash.z[2]],
+	type: 'bar',
+	marker: {
+	    color : component_colours
+	},
+	width: 0.3
+    }];
+    
+    var tops_data = [{
+	x: ['y1', 'y2', 'y3'],
+	y: [flash.y[0], flash.y[1], flash.y[2]],
+	type: 'bar',
+	marker: {
+	    color : component_colours
+	},
+	width: 0.3
+    }];
+
+    var bottoms_data = [{
+	x: ['x1', 'x2', 'x3'],
+	y: [flash.x[0], flash.x[1], flash.x[2]],
+	type: 'bar',
+	marker: {
+	    color : component_colours
+	},
+	width: 0.3
+    }];
+
+    bar_chart_layout.yaxis.range = [0,getMaxComposition(flash)];
+    bar_chart_layout.title = 'Feed';
+    Plotly.newPlot('feedplotDiv', feed_data, bar_chart_layout);
+    bar_chart_layout.title = 'Tops';
+    Plotly.newPlot('topsplotDiv', tops_data, bar_chart_layout);
+    bar_chart_layout.title = 'Bottoms';
+    Plotly.newPlot('bottomsplotDiv', bottoms_data, bar_chart_layout);
+    
+};
+
+
 function restart() {
     
     // effectively reload the page
@@ -196,24 +210,24 @@ function restart() {
     feed_stream = new Ensemble();
     tops_stream = new Ensemble();
     bottoms_stream = new Ensemble();
+    flash = set_intial_conditions(flash);
 
+};
 
-}
-
-function getMaxComposition(s, input) {
+function getMaxComposition(sep) {
 
     // return the maximum composition value
     // across all streams
-    var max = input.z[0];
-    for (var i = 0; i < input.length; i++) {
-	if (input.z[i] > max) {
-	    max = input.z[i];
+    var max = sep.z[0];
+    for (var i = 0; i < sep.z.length; i++) {
+	if (sep.z[i] > max) {
+	    max = sep.z[i];
 	};
-	if (s.x[i] > max) {
-	    max = s.x[i];   
+	if (sep.x[i] > max) {
+	    max = sep.x[i];   
 	}
-	if (s.y[i] > max) {
-	    max = s.y[i];   
+	if (sep.y[i] > max) {
+	    max = sep.y[i];   
 	}
     };
     return max;
@@ -257,19 +271,19 @@ function getImgScaledDimensions(img) {
 
 }
 
-function chooseColoursFromComposition(colours, s, input) {
+function chooseColoursFromComposition(colours, sep) {
 
     // select a particle colour from a list, based on
     // compositions on flash solution s (Output object).
-    var x_cum = [s.x[0]];
-    var y_cum = [s.y[0]];
-    var z_cum = [input.z[0]];
+    var x_cum = [sep.x[0]];
+    var y_cum = [sep.y[0]];
+    var z_cum = [sep.z[0]];
 
     // generate cumulative composition lists
-    for (var i = 1; i < s.x.length; i++) {
-	x_cum[i] = x_cum[i-1] + s.x[i];
-	y_cum[i] = y_cum[i-1] + s.y[i];
-	z_cum[i] = z_cum[i-1] + input.z[i];
+    for (var i = 1; i < sep.x.length; i++) {
+	x_cum[i] = x_cum[i-1] + sep.x[i];
+	y_cum[i] = y_cum[i-1] + sep.y[i];
+	z_cum[i] = z_cum[i-1] + sep.z[i];
     };
     // choose a component
     var rndx = Math.random();
@@ -351,133 +365,66 @@ var bar_chart_layout = {
 
 
 // --------------------------------------------------
-//              flash tank calculations
+//              flash tank operations
 // --------------------------------------------------
-
-function RachfordRiceSum(beta,z,K) {
-
-    /* Compute Rachford Rice sum
-       http://folk.ntnu.no/skoge/bok/mer/flash_english_edition_2009
-
-       args:
-       beta - vapour liquid split (float)
-       z    - feed composition array
-       K    - component equilibrium constant array
-    */
-
-    var result = 0.0;
-    var arrayLength = z.length;
-    for (var i = 0; i < arrayLength; i++) {
-	result = result + RachfordRiceElem(z[i],K[i],beta);
-    }
-    return result;
+function set_intial_conditions(sep) {
+    sep.x = null;
+    sep.y = null;
+    sep.z = [0.5,0.3,0.2];
+    sep.P = 0.5;
+    sep.T = 390.0;
+    sep.K = [1.685,0.742,0.532];
+    sep.F = 20.0;
+    return sep    
 }
 
-function RachfordRiceElem(zi,Ki,beta) {
+function getRanges() {
 
-    /* Compute a single term of the rachford Rice sum
-
-       args:
-       beta - vapour liquid split (float)
-       zi   - feed composition point
-       Ki   - component equilibrium constant
-    */
-    var result = zi*(Ki-1)/(1+beta*(Ki-1));
-    return result;
+    // return an object containing
+    // the limits of each slider prop
+    return {
+	P: {
+	    min: 0.1,
+	    max: 1.0
+	},
+	T: {
+	    min:330,
+	    max:450
+	},
+	F: {
+	    min: 1.0,
+	    max: 40.0
+	},
+	V: {
+	    min: 0.0,
+	    max: 40.0
+	},
+	L: {
+	    min: 0.0,
+	    max: 40.0
+	}
+    };  	
 }
-
-function RachfordRiceBeta(beta, args) {
-    // Wrapper function for RachfordRiceSum
-    // that ensure it has a fixed number of args
-    // args = [z,k]
-    return RachfordRiceSum(beta, args[0], args[1]);
-}
-
-
-function getX(z,K,beta) {
-    // Generate the liquid composition array
-    var x = []
-    var arrayLength = z.length;
-    for (var i = 0; i < arrayLength; i++) {
-	x[i] = z[i]/(1+beta*(K[i]-1));
-    }
-    return x
-}
-
-function getY(x,K) {
-    // Generate the vapour composition array
-    var y = []
-    var arrayLength = x.length;
-    for (var i = 0; i < arrayLength; i++) {
-	y[i] = K[i]*x[i];
-    }
-    return y
-}
-
-function Input(P,T,z,K,F) {
-
-    // A simple class to store flash tank conditions
-    this.P = P; // pressure [bar]
-    this.T = T; // temperature [K[
-    this.z = z; // inlet mole fraction array
-    this.K = K; // equilibrium constant array
-    this.F = F; // feed flowrate [kmol/hr]
-
-}
-
-function Output(x,y,V,L) {
-
-    // A simple class to store flash tank solution
-    // conditions
-    this.x = x // liquid output composition array
-    this.y = y // vapour output composition array
-    this.V = V // vapour flowrate [kmol/hr]
-    this.L = L // liquid flowaret [kmol/hr]
-
-}
-
-function test(input, expected) {
-
-    // A simple unit test to make sure the flash tank works
-    // as expected.
-
-    // solve the flash system
-    var args = [input.z,input.K];
-    var beta_solution = newtonsMethod(RachfordRiceBeta,0.5,args);
-    var beta = beta_solution[1];
-    var V = beta*input.F;
-    var L = input.F - V;
-    var x = getX(input.z,input.K,beta);
-    var y = getY(x,input.K);
-    var Solution = new Output(x,y,V,L);
-
-    // check that the solution is okay (only flowrates for now)
-    if (Solution.V !== expected.V || Solution.L !== expected.L) {
-	console.log("Flash unit test failed: incorrect flowrates.");
-	console.log("Expected: ", expected);
-	console.log("Got: ", Solution);
-	return {success:1,
-		solution:Solution};
-    }
-
-    // test passed
-    console.log("Flash unit test passed!");
-    console.log("Got: ", Solution);
-    return {success:1,
-	    solution:Solution};
-
-};
 
 function update_pressure() {
-
+    console.log("P = ", $( "#k1_slider" ).slider( "value"));
+    flash.P = $( "#k1_slider" ).slider( "value");
+    flash.solve_PTZF();
+    plotCompositionData(flash);
 };
 
 function update_temp() {
-
+    console.log("T = ", $( "#k2_slider" ).slider( "value"));
+    flash.T = $( "#k2_slider" ).slider( "value");
+    flash.solve_PTZF();
+    plotCompositionData(flash);
 };
 
 function update_F() {
-
+    console.log("F = ", $( "#k3_slider" ).slider( "value"));
+    flash.F = $( "#k3_slider" ).slider( "value");
+    flash.solve_PTZF();
+    plotCompositionData(flash);
 };
 
 function update_V() {
@@ -522,67 +469,85 @@ $(document).ready(function () {
 // sliders
 $( function() {
     // pressure slider
+    var P_range = getRanges().P;
     $( "#k1_slider" ).slider({
 	orientation: "horizontal",
 	range: "min",
-	max: 200,
-	value: 100,
+	min: P_range.min,
+	max: P_range.max,
+	step: 0.1,
+	value: P_range.min,
 	slide: update_pressure,
 	change: update_pressure
     });
-    $( "#k1_slider" ).slider( "value", 50.0 );
+    
+    $( "#k1_slider" ).slider( "value", flash.P );
 } );
 
 
 $( function() {
     // temp slider
+    var T_range = getRanges().T;
     $( "#k2_slider" ).slider({
 	orientation: "horizontal",
 	range: "min",
-	max: 200,
-	value: 100,
+	min: T_range.min,
+	max: T_range.max,
+	step: 0.1,
+	value: T_range.min,
 	slide: update_temp,
 	change: update_temp
     });
-    $( "#k2_slider" ).slider( "value", 50.0 );
+    $( "#k2_slider" ).slider( "value", flash.T );
 } );
 
 $( function() {
     // feed flowrate slider
+    var F_range = getRanges().F;
     $( "#k3_slider" ).slider({
 	orientation: "horizontal",
 	range: "min",
-	max: 200,
-	value: 100,
+	min: F_range.min,
+	max: F_range.max,
+	step: 0.1,
+	value: F_range.min,	
 	slide: update_F,
 	change: update_F
     });
-    $( "#k3_slider" ).slider( "value", 50.0 );
+    $( "#k3_slider" ).slider( "value", flash.F );
 } );
 
 $( function() {
-    // tops flowrate slider
+    // bottoms flowrate slider
+    var L_range = getRanges().L;
     $( "#k4_slider" ).slider({
 	orientation: "horizontal",
 	range: "min",
-	max: 200,
-	value: 100,
-	slide: update_V,
-	change: update_V
+	min: L_range.min,
+	max: L_range.max,
+	step: 0.1,
+	value: L_range.min,
+	slide: update_L,
+	change: update_L,
+	disabled: true
     });
-    $( "#k4_slider" ).slider( "value", 50.0 );
+    $( "#k4_slider" ).slider( "value", flash.L );
 } );
 
 $( function() {
     // tops flowrate slider
+    var V_range = getRanges().V;
     $( "#k5_slider" ).slider({
 	orientation: "horizontal",
 	range: "min",
-	max: 200,
-	value: 100,
-	slide: update_L,
-	change: update_L
+	min: V_range.min,
+	max: V_range.max,
+	step: 0.1,
+	value: V_range.min,
+	slide: update_V,
+	change: update_V,
+	disabled: true
     });
-    $( "#k5_slider" ).slider( "value", 50.0 );
+    $( "#k5_slider" ).slider( "value", flash.L );
 } );
 
