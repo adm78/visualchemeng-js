@@ -32,7 +32,8 @@ var paused_log = true;
 var ndraws = 0;
 var outlet_freq = 1;
 var gravity = 0.02;
-var component_colours = ['#2e8ade','#de912e','#2ede71']
+var component_colours = ['#2e8ade','#de912e','#2ede71'];
+//var cc = ['rgb(46,138,222)','rgb(222,145,46)','rgb(46,222,113)'];
 var flash_solution;
 var pout = 10; // number of particle to output at a time
 var pspeed = 1.0;
@@ -73,23 +74,35 @@ function setup() {
     x: ['z1', 'z2', 'z3'],
 	y: [testInput.z[0], testInput.z[1], testInput.z[2]],
 	type: 'bar',
+	marker: {
+	    color : component_colours
+	},
     }];
     
     var tops_data = [{
 	x: ['y1', 'y2', 'y3'],
 	y: [flash_solution.y[0], flash_solution.y[1], flash_solution.y[2]],
 	type: 'bar',
+	marker: {
+	    color : component_colours
+	}
     }];
-    
+
     var bottoms_data = [{
 	x: ['x1', 'x2', 'x3'],
 	y: [flash_solution.x[0], flash_solution.x[1], flash_solution.x[2]],
-    type: 'bar',
+	type: 'bar',
+	marker: {
+	    color : component_colours
+	}
     }];
 
     bar_chart_layout.yaxis.range = [0,getMaxComposition(flash_solution,testInput)];
+    bar_chart_layout.title = 'Feed';
     Plotly.newPlot('feedplotDiv', feed_data, bar_chart_layout);
+    bar_chart_layout.title = 'Tops';
     Plotly.newPlot('topsplotDiv', tops_data, bar_chart_layout);
+    bar_chart_layout.title = 'Bottoms';
     Plotly.newPlot('bottomsplotDiv', bottoms_data, bar_chart_layout);
     
     
@@ -296,15 +309,17 @@ var bar_chart_layout = {
 	l: 30,
 	r: 30,
 	b: 30,
-	t: 20,
+	t: 35,
 	pad: 5
+    },
+    titlefont: {
+	family: 'Roboto, serif',
+	size: 16,
+	color: 'white'
     },
     hoverlabel: {bordercolor:'#333438'},
     plot_bgcolor: '#333438',
     paper_bgcolor: '#333438',
-    marker: {
-	color : component_colours
-    },
     height:200,
     xaxis: {
 	showgrid: false,
