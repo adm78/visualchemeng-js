@@ -590,3 +590,23 @@ $( function() {
     $( "#k5_slider" ).slider( "value", flash.L );
 } );
 
+function resizeWindow(gd,container_id) {
+    var window_height = document.getElementById(container_id).offsetHeight;
+    var svg_container = document.getElementById(container_id).getElementsByClassName('svg-container')[0];
+    svg_container.style.height = (window_height - 25) + 'px';
+    Plotly.Plots.resize(gd);
+};
+// resize on window resize
+window.onresize = function() {
+    var d3 = Plotly.d3;
+    var gd3 = d3.select("div[id='flow_chart_container']");
+    var gd = gd3.node();
+    resizeWindow(gd,'flow_chart_container');
+};
+// resize on full page load (jquery)
+$(document).ready(function () {
+    var d3 = Plotly.d3;
+    var gd3 = d3.select("div[id='flow_chart_container']");
+    var gd = gd3.node();
+    resizeWindow(gd,'flow_chart_container');
+});
