@@ -41,10 +41,24 @@ function Separator(x=null,y=null,z=null,L=null,V=null,F=null,T=null,
 
 	var beta_solution = newtonsMethod(RachfordRiceBeta,0.5,[this.z,this.K]);
 	var beta = beta_solution[1];
-	this.V = beta*this.F;
-	this.L = this.F - this.V;
-	this.x = getX(this.z,this.K,beta);
-	this.y = getY(this.x,this.K);
+	if (beta > 1) {
+	    this.V = this.F;
+	    this.L = this.F - this.V;
+	    this.x = [null,null,null];
+	    this.y = this.z;
+	}
+	else if (beta < 0) {
+	    this.V = 0.0;
+	    this.L = this.F;
+	    this.x = this.z;
+	    this.y = [null,null,null];	    
+	}
+	else {
+	    this.V = beta*this.F;
+	    this.L = this.F - this.V;
+	    this.x = getX(this.z,this.K,beta);
+	    this.y = getY(this.x,this.K);
+	}
 	
     };
 

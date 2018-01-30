@@ -14,7 +14,7 @@
 // --------------------------------------------------
 //             visualisation functionality
 // --------------------------------------------------
-var debug = true;
+var debug = false;
 var img; // fash tank image object used by draw
 var xmax;
 var ymax;
@@ -33,14 +33,14 @@ var sid;
 // visualt set-up globals
 var rpart = 1.5;
 var img_shrink_factor = 0.60;
-var paused_log = true;
+var paused_log = false;
 var ndraws = 0;
 var outlet_freq = 1;
 var gravity = 0.02;
 var component_colours = ['#2e8ade','#de912e','#2ede71'];
 //var cc = ['rgb(46,138,222)','rgb(222,145,46)','rgb(46,222,113)'];
 var flash_solution;
-var pout = 10; // number of particle to output at a time
+var pout = 0.5; // controls number of particle to output at a time
 var pspeed = 1.0;
 var kpert = 4.0;
 var fr = 40;
@@ -127,7 +127,7 @@ function draw() {
 	    var colour = chooseColoursFromComposition(component_colours,flash)
 
 	    // handle the feed stream
-	    for (i=0; i < pout; i++) {
+	    for (i=0; i < pout*flash.F; i++) {
 		var new_feed_part1 = new Particle(feed_pos.x,feed_pos.y+0.01*sid.height,
 						  rpart,1.0,2.0,0.0,null,
 						  createVector(0,0), colour.z);
@@ -140,17 +140,19 @@ function draw() {
 
 	    // handle the delayed outlet and inlet streams
 	    if (feed_stream.outliers >  output_delay) {
-		for (i=0; i < pout; i++) {
+		for (i=0; i < pout*flash.V; i++) {
 		    var new_tops_part = new Particle(tops_pos.x,tops_pos.y,rpart,
 						     1.0,2.0,0.0,null,
 						     createVector(0,-gravity), colour.y);
+    		    tops_stream.addParticle(new_tops_part);
+    		    
+		};
+		for (i=0; i < pout*flash.L; i++) {
 		    var new_bottoms_part = new Particle(bottoms_pos.x,bottoms_pos.y,rpart,
 							1.0,2.0,0.0,null,
 							createVector(0,gravity), colour.x);
-    		    tops_stream.addParticle(new_tops_part);
-    		    bottoms_stream.addParticle(new_bottoms_part);
-		};
-		
+		    bottoms_stream.addParticle(new_bottoms_part);
+		}
 	    };
     	};
 
@@ -197,6 +199,16 @@ function plotCompositionData(flash, debug=false) {
 	width: 0.3
     }];
 
+    var flowrate_data = [{
+	x: ['F', 'V', 'L'],
+	y: [flash.F, flash.V, flash.L],
+	type: 'bar',
+	marker: {
+	    color : '#2e8ade'
+	},
+	width: 0.3
+    }];
+
     bar_chart_layout.yaxis.range = [0,getMaxComposition(flash)];
     bar_chart_layout.title = 'Feed';
     Plotly.newPlot('feedplotDiv', feed_data, bar_chart_layout);
@@ -204,7 +216,10 @@ function plotCompositionData(flash, debug=false) {
     Plotly.newPlot('topsplotDiv', tops_data, bar_chart_layout);
     bar_chart_layout.title = 'Bottoms';
     Plotly.newPlot('bottomsplotDiv', bottoms_data, bar_chart_layout);
-    
+    bar_chart_layout.title = 'Flowrates';
+    var F_range = getRanges().F;
+    bar_chart_layout.yaxis.range = [F_range.min, F_range.max];
+    Plotly.newPlot('flow_chart_container', flowrate_data, bar_chart_layout);
 };
 
 
@@ -239,6 +254,8 @@ function getMaxComposition(sep) {
     return 1.0;
 
 }
+
+
 
 function getFeedPosition(sid,xmax) {
 
@@ -400,8 +417,8 @@ function getRanges() {
     // the limits of each slider prop
     return {
 	P: {
-	    min: 1.0,
-	    max: 10.0
+	    min: 4.6,
+	    max: 5.8
 	},
 	T: {
 	    min:330,
