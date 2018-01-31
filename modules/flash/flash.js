@@ -69,12 +69,12 @@ function setup() {
     var canvas= createCanvas(xmax, ymax);
     canvas.parent("sim_container");
     flash.solve_PTZF();
-    
+
 
     // draw the bar charts to screen
-    plotCompositionData(flash); 
-    
-    
+    plotCompositionData(flash);
+
+
     // draw the flash schematic to screen
     background(51);
     imageMode(CENTER);
@@ -87,7 +87,7 @@ function setup() {
     tops_pos = getTopsPosition(sid);
     bottoms_pos = getBottomsPosition(sid);
 
-    
+
 }
 
 function draw() {
@@ -120,10 +120,10 @@ function draw() {
 	bottoms_stream.removeOutliers(xmax,2*ymax);
 	tops_stream.perturb(kpert/1.0,kpert/1.0);
 	bottoms_stream.perturb(kpert/4.0,kpert/4.0);
-	
+
 	// add new particles at desired freq
     	if (ndraws % outlet_freq === 0) {
-	    
+
 	    var colour = chooseColoursFromComposition(component_colours,flash)
 
 	    // handle the feed stream
@@ -145,7 +145,7 @@ function draw() {
 						     1.0,2.0,0.0,null,
 						     createVector(0,-gravity), colour.y);
     		    tops_stream.addParticle(new_tops_part);
-    		    
+
 		};
 		for (i=0; i < pout*flash.L; i++) {
 		    var new_bottoms_part = new Particle(bottoms_pos.x,bottoms_pos.y,rpart,
@@ -167,8 +167,8 @@ function draw() {
 function plotCompositionData(flash, debug=false) {
 
     if (debug) { console.log("flash.js: plotCompositionData: running plotCompositionData with input", flash) }
-    
-    
+
+
     var feed_data = [{
     x: ['z1', 'z2', 'z3'],
 	y: [flash.z[0], flash.z[1], flash.z[2]],
@@ -178,7 +178,7 @@ function plotCompositionData(flash, debug=false) {
 	},
 	width: 0.3
     }];
-    
+
     var tops_data = [{
 	x: ['y1', 'y2', 'y3'],
 	y: [flash.y[0], flash.y[1], flash.y[2]],
@@ -224,7 +224,7 @@ function plotCompositionData(flash, debug=false) {
 
 
 function restart() {
-    
+
     // effectively reload the page
     paused_log = true;
     feed_stream = new Ensemble();
@@ -245,10 +245,10 @@ function getMaxComposition(sep) {
 	    max = sep.z[i];
 	};
 	if (sep.x[i] > max) {
-	    max = sep.x[i];   
+	    max = sep.x[i];
 	}
 	if (sep.y[i] > max) {
-	    max = sep.y[i];   
+	    max = sep.y[i];
 	}
     };
     return 1.0;
@@ -345,7 +345,7 @@ function chooseColoursFromComposition(colours, sep) {
 //              composition graph layout
 // --------------------------------------------------
 var bar_chart_layout = {
-    
+
     margin : {
 	l: 30,
 	r: 30,
@@ -436,7 +436,7 @@ function getRanges() {
 	    min: 0.0,
 	    max: 40.0
 	}
-    };  	
+    };
 }
 
 function update_pressure() {
@@ -514,12 +514,12 @@ $( function() {
 	range: "min",
 	min: P_range.min,
 	max: P_range.max,
-	step: 0.1,
+	step: (P_range.max-P_range.min)/10.0,
 	value: P_range.min,
 	slide: update_pressure,
 	change: update_pressure
     });
-    
+
     $( "#k1_slider" ).slider( "value", flash.P );
 } );
 
@@ -532,7 +532,7 @@ $( function() {
 	range: "min",
 	min: T_range.min,
 	max: T_range.max,
-	step: 0.1,
+	step: (T_range.max-T_range.min)/10.0,
 	value: T_range.min,
 	slide: update_temp,
 	change: update_temp
@@ -548,8 +548,8 @@ $( function() {
 	range: "min",
 	min: F_range.min,
 	max: F_range.max,
-	step: 0.1,
-	value: F_range.min,	
+	step: (F_range.max-F_range.min)/10.0,
+	value: F_range.min,
 	slide: update_F,
 	change: update_F
     });
@@ -564,7 +564,7 @@ $( function() {
 	range: "min",
 	min: L_range.min,
 	max: L_range.max,
-	step: 0.1,
+	step: (L_range.max-L_range.min)/10.0,
 	value: L_range.min,
 	slide: update_L,
 	change: update_L,
@@ -581,7 +581,7 @@ $( function() {
 	range: "min",
 	min: V_range.min,
 	max: V_range.max,
-	step: 0.1,
+	step: (V_range.max-V_range.min)/10.0,
 	value: V_range.min,
 	slide: update_V,
 	change: update_V,
