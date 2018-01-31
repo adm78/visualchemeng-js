@@ -30,7 +30,7 @@ var tops_pos;
 var bottoms_pos;
 var sid;
 
-// visualt set-up globals
+// visual set-up globals
 var rpart = 1.5;
 var img_shrink_factor = 0.60;
 var paused_log = false;
