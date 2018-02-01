@@ -13,7 +13,13 @@
 
 .button_container {
     grid-column: 3 ;
-    grid-row: 2 / 4
+    grid-row: 3 / 4
+}
+
+.system_id_container {
+    grid-column: 3 ;
+    grid-row: 2 / 3;
+    text-align: center;
 }
 
 .flow_chart_container {

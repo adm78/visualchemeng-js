@@ -29,6 +29,7 @@ var feed_pos;
 var tops_pos;
 var bottoms_pos;
 var sid;
+var chem_sys = 0; // chemical system index
 
 // visual set-up globals
 var rpart = 1.5;
@@ -499,11 +500,6 @@ $('#restart').click(async function(){
     }
 });
 
-// resize on full page load (jquery)
-$(document).ready(function () {
-    //resizeWindow()
-});
-
 
 // sliders
 $( function() {
@@ -514,7 +510,7 @@ $( function() {
 	range: "min",
 	min: P_range.min,
 	max: P_range.max,
-	step: (P_range.max-P_range.min)/10.0,
+	step: (P_range.max-P_range.min)/20.0,
 	value: P_range.min,
 	slide: update_pressure,
 	change: update_pressure
@@ -532,7 +528,7 @@ $( function() {
 	range: "min",
 	min: T_range.min,
 	max: T_range.max,
-	step: (T_range.max-T_range.min)/10.0,
+	step: (T_range.max-T_range.min)/20.0,
 	value: T_range.min,
 	slide: update_temp,
 	change: update_temp
@@ -548,7 +544,7 @@ $( function() {
 	range: "min",
 	min: F_range.min,
 	max: F_range.max,
-	step: (F_range.max-F_range.min)/10.0,
+	step: (F_range.max-F_range.min)/20.0,
 	value: F_range.min,
 	slide: update_F,
 	change: update_F
@@ -564,7 +560,7 @@ $( function() {
 	range: "min",
 	min: L_range.min,
 	max: L_range.max,
-	step: (L_range.max-L_range.min)/10.0,
+	step: (L_range.max-L_range.min)/20.0,
 	value: L_range.min,
 	slide: update_L,
 	change: update_L,
@@ -581,7 +577,7 @@ $( function() {
 	range: "min",
 	min: V_range.min,
 	max: V_range.max,
-	step: (V_range.max-V_range.min)/10.0,
+	step: (V_range.max-V_range.min)/20.0,
 	value: V_range.min,
 	slide: update_V,
 	change: update_V,
@@ -609,4 +605,9 @@ $(document).ready(function () {
     var gd3 = d3.select("div[id='flow_chart_container']");
     var gd = gd3.node();
     resizeWindow(gd,'flow_chart_container');
+});
+
+// system selector
+$(document).ready(function() {
+    $('select').niceSelect();
 });
