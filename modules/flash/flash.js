@@ -51,7 +51,7 @@ var e_coeff = 0.3; // liquid-wall coefficent of restitution (kind of)
 function preload() {
     // preload the flash tank image
     //URL = "http://visualchemeng.com/wp-content/uploads/2018/01/flash.svg";
-    URL = "flash.svg";
+    URL = "../modules/flash/assets/vector/flash.svg";
     img = loadImage(URL, pic => print(pic), loadImgErrFix);
 }
 
