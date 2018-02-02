@@ -597,8 +597,9 @@ window.onresize = function() {
     var d3 = Plotly.d3;
     var gd3 = d3.select("div[id='flow_chart_container']");
     var gd = gd3.node();
-    resizeWindow(gd,'flow_chart_container');
+    resizeWindow(gd,'flow_chart_container');  
 };
+
 // resize on full page load (jquery)
 $(document).ready(function () {
     var d3 = Plotly.d3;
