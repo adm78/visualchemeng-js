@@ -30,30 +30,31 @@ var tops_pos;
 var bottoms_pos;
 var sid;
 var chem_sys = 0; // chemical system index
+var myFont;
+var ndraws = 0; // counter for drawing the stream
 
-// visual set-up globals
-var rpart = 1.5;
-var img_shrink_factor = 0.60;
-var paused_log = false;
-var ndraws = 0;
-var outlet_freq = 1;
-var gravity = 0.02;
-var component_colours = ['#2e8ade','#de912e','#2ede71'];
-//var cc = ['rgb(46,138,222)','rgb(222,145,46)','rgb(46,222,113)'];
-var flash_solution;
+// visual set-up globals (can be tuned)
+var rpart = 1.5; // stream particle radii (float)
+var img_shrink_factor = 0.60; // height of flash svg as fraction of canvas height (float, >0, <=1)
+var paused_log = false; // logical to paused the stream updates
+var outlet_freq = 1; // # draws/stream replenish (int)
+var gravity = 0.02;  // what it says on the tin
+var component_colours = ['#2e8ade','#de912e','#2ede71']; // particle colours, in order
 var pout = 0.5; // controls number of particle to output at a time
-var pspeed = 1.0;
-var kpert = 4.0;
-var fr = 40;
-var testInput;
-var output_delay = 60;
+var pspeed = 1.0; // dt between particle updates
+var kpert = 4.0; // particle perturbation scaling constant (float)
+var fr = 40;    // target frame rate
+var output_delay = 60; // contro delay between feed entering flash and first particle exit
 var e_coeff = 0.3; // liquid-wall coefficent of restitution (kind of)
 
+
 function preload() {
-    // preload the flash tank image
+    // preload the flash tank image and font
     //URL = "http://visualchemeng.com/wp-content/uploads/2018/01/flash.svg";
     URL = "../modules/flash/assets/vector/flash.svg";
     img = loadImage(URL, pic => print(pic), loadImgErrFix);
+
+    //myFont = loadFont('../fonts/Roboto/Roboto-Regular.ttf');
 }
 
 function setup() {
@@ -106,6 +107,9 @@ function draw() {
     feed_stream.show();
     tops_stream.show();
     bottoms_stream.show();
+
+    //draw the operating param values to screen
+    drawOperatingValues(flash,sid);
 
 
     // update particle streams
@@ -165,6 +169,34 @@ function draw() {
     };
 };
 
+function drawOperatingValues(flash,sid) {
+
+    // write current operating params such as
+    // T and P to the canvas as text
+    textSize(32);
+    fill(255, 255, 255);
+    textAlign(LEFT);
+    var T_string = flash.T.toFixed(0)+" K";
+    var P_string = flash.P.toFixed(2)+" bar";
+    var F_string_pos_x = 0.5*(xmax-sid.width);
+    var F_string_pos_y = feed_pos.y-30;
+    var V_string_pos_x = tops_pos.x;
+    var V_string_pos_y = tops_pos.y-30;
+    var L_string_pos_x = bottoms_pos.x;
+    var L_string_pos_y = bottoms_pos.y+50;
+
+    
+    text(T_string, 10, 30);
+    text(P_string, 10, 65);
+    textAlign(CENTER);
+    textSize(24);
+    text("F", F_string_pos_x,F_string_pos_y);
+    text("V", V_string_pos_x,V_string_pos_y);
+    text("L", L_string_pos_x,L_string_pos_y);
+        
+
+};
+
 function plotCompositionData(flash, debug=false) {
 
     if (debug) { console.log("flash.js: plotCompositionData: running plotCompositionData with input", flash) }
@@ -217,7 +249,7 @@ function plotCompositionData(flash, debug=false) {
     Plotly.newPlot('topsplotDiv', tops_data, bar_chart_layout);
     bar_chart_layout.title = 'Bottoms';
     Plotly.newPlot('bottomsplotDiv', bottoms_data, bar_chart_layout);
-    bar_chart_layout.title = 'Flowrates';
+    bar_chart_layout.title = 'Flowrate/ kmol/hr';
     var F_range = getRanges().F;
     bar_chart_layout.yaxis.range = [F_range.min, F_range.max];
     Plotly.newPlot('flow_chart_container', flowrate_data, bar_chart_layout);
@@ -441,21 +473,21 @@ function getRanges() {
 }
 
 function update_pressure() {
-    console.log("P = ", $( "#k1_slider" ).slider( "value"));
+    //console.log("P = ", $( "#k1_slider" ).slider( "value"));
     flash.updateP($( "#k1_slider" ).slider( "value"));
     flash.solve_PTZF(debug=debug);
     plotCompositionData(flash,debug=debug);
 };
 
 function update_temp() {
-    console.log("T = ", $( "#k2_slider" ).slider( "value"));
+    //console.log("T = ", $( "#k2_slider" ).slider( "value"));
     flash.updateT($( "#k2_slider" ).slider( "value"));
     flash.solve_PTZF();
     plotCompositionData(flash);
 };
 
 function update_F() {
-    console.log("F = ", $( "#k3_slider" ).slider( "value"));
+    //console.log("F = ", $( "#k3_slider" ).slider( "value"));
     flash.F = $( "#k3_slider" ).slider( "value");
     flash.solve_PTZF();
     plotCompositionData(flash);
@@ -510,7 +542,7 @@ $( function() {
 	range: "min",
 	min: P_range.min,
 	max: P_range.max,
-	step: (P_range.max-P_range.min)/20.0,
+	step: (P_range.max-P_range.min)/200.0,
 	value: P_range.min,
 	slide: update_pressure,
 	change: update_pressure
@@ -528,7 +560,7 @@ $( function() {
 	range: "min",
 	min: T_range.min,
 	max: T_range.max,
-	step: (T_range.max-T_range.min)/20.0,
+	step: 1.0,
 	value: T_range.min,
 	slide: update_temp,
 	change: update_temp
@@ -544,7 +576,7 @@ $( function() {
 	range: "min",
 	min: F_range.min,
 	max: F_range.max,
-	step: (F_range.max-F_range.min)/20.0,
+	step: (F_range.max-F_range.min)/50.0,
 	value: F_range.min,
 	slide: update_F,
 	change: update_F
