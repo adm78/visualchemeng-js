@@ -109,7 +109,7 @@ function draw() {
     bottoms_stream.show();
 
     //draw the operating param values to screen
-    drawOperatingValues(flash,sid);
+    updateCanvasText(flash,sid);
 
 
     // update particle streams
@@ -169,13 +169,12 @@ function draw() {
     };
 };
 
-function drawOperatingValues(flash,sid) {
+function updateCanvasText(flash,sid) {
 
-    // write current operating params such as
-    // T and P to the canvas as text
-    textSize(32);
-    fill(255, 255, 255);
-    textAlign(LEFT);
+    // write/update the canvas text based on
+    // separator object 'flash' and scaled flash image
+    // dimensions 'sid'.
+    
     var T_string = flash.T.toFixed(0)+" K";
     var P_string = flash.P.toFixed(2)+" bar";
     var F_string_pos_x = 0.5*(xmax-sid.width);
@@ -185,15 +184,21 @@ function drawOperatingValues(flash,sid) {
     var L_string_pos_x = bottoms_pos.x;
     var L_string_pos_y = bottoms_pos.y+50;
 
-    
+    textSize(32);
+    fill(255, 255, 255);
+    textAlign(LEFT);    
     text(T_string, 10, 30);
     text(P_string, 10, 65);
     textAlign(CENTER);
     textSize(24);
+    fill('#444');
+    ellipse(F_string_pos_x,F_string_pos_y-8,30);
+    ellipse(V_string_pos_x,V_string_pos_y-8,30);
+    ellipse(L_string_pos_x,L_string_pos_y-8,30);
+    fill(255, 255, 255);
     text("F", F_string_pos_x,F_string_pos_y);
     text("V", V_string_pos_x,V_string_pos_y);
-    text("L", L_string_pos_x,L_string_pos_y);
-        
+    text("L", L_string_pos_x,L_string_pos_y);       
 
 };
 
