@@ -29,8 +29,11 @@
 	   </a>
       </div>
       <div class="box system_id_container" id="system_id_container">
-	<select class="wide">
+	<select class="wide" id="system_id">
 	  <option value="0">pentane, hexane, cyclohexane</option>
+	</select>
+	<select class="wide" id="flash_type">
+	  <option value="0">pT-flash</option>
 	</select>
       </div>
       <div class="box button_container">
@@ -38,6 +41,11 @@
 	<button class="button" id="restart" style="width:96%">Restart</button><br/>
 	<button class="button" id="fullscreen" style="width:96%">Fullscreen</button>
       </div>
+      <!-- <div class="box flash_type_container" id="flash_type_container"> -->
+      <!-- 	<select class="wide" id="flash_type"> -->
+      <!-- 	  <option value="0">pT-flash</option> -->
+      <!-- 	</select> -->
+      <!-- </div> -->
       <div class="box slider_container">
 	<div class="k1_slider_text" id="k1">P</div>
 	<div class="k1_slider" id="k1_slider"></div>

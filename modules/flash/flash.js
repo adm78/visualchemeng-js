@@ -609,5 +609,6 @@ $(document).ready(function () {
 
 // system selector
 $(document).ready(function() {
-    $('select').niceSelect();
+    $('#system_id').niceSelect();
+    $('#flash_type').niceSelect();
 });
