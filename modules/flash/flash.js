@@ -14,7 +14,7 @@
 // --------------------------------------------------
 //             visualisation functionality
 // --------------------------------------------------
-var debug = false;
+var debug = true;
 var img; // fash tank image object used by draw
 var xmax;
 var ymax;
@@ -169,7 +169,7 @@ function draw() {
     };
 };
 
-function updateCanvasText(flash,sid) {
+function updateCanvasText(flash, sid) {
 
     // write/update the canvas text based on
     // separator object 'flash' and scaled flash image
@@ -198,7 +198,11 @@ function updateCanvasText(flash,sid) {
     fill(255, 255, 255);
     text("F", F_string_pos_x,F_string_pos_y);
     text("V", V_string_pos_x,V_string_pos_y);
-    text("L", L_string_pos_x,L_string_pos_y);       
+    text("L", L_string_pos_x,L_string_pos_y);
+
+    // update disabled sliders while we're here
+    $( "#k4_slider" ).slider( "value", flash.V);
+    $( "#k5_slider" ).slider( "value", flash.L);
 
 };
 
@@ -264,11 +268,10 @@ function plotCompositionData(flash, debug=false) {
 function restart() {
 
     // effectively reload the page
-    paused_log = true;
     feed_stream = new Ensemble();
     tops_stream = new Ensemble();
     bottoms_stream = new Ensemble();
-    resetFlash(flash)
+    resetFlash(flash);
     flash.solve_PTZF();
 
 };
@@ -430,8 +433,13 @@ var bar_chart_layout = {
 // --------------------------------------------------
 function resetFlash(flash) {
     var ic = getInitialConditions();
+    $( "#k1_slider" ).slider( "value",ic.P);
+    $( "#k2_slider" ).slider( "value",ic.T);
+    $( "#k3_slider" ).slider( "value",ic.F);
     flash = new Separator(ic.x,ic.y,ic.z,ic.L,
 			  ic.V,ic.F,ic.T,ic.P,ic.A);
+    $( "#k4_slider" ).slider( "value",flash.V);
+    $( "#k5_slider" ).slider( "value",flash.L);
     return flash;
 }
 
@@ -459,7 +467,7 @@ function getRanges() {
 	    max: 5.8
 	},
 	T: {
-	    min:330,
+	    min:360,
 	    max:450
 	},
 	F: {
