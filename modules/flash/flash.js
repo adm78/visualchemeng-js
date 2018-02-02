@@ -506,7 +506,7 @@ $( function() {
     // pressure slider
     var P_range = getRanges().P;
     $( "#k1_slider" ).slider({
-	orientation: "horizontal",
+	orientation: "vertical",
 	range: "min",
 	min: P_range.min,
 	max: P_range.max,
@@ -524,7 +524,7 @@ $( function() {
     // temp slider
     var T_range = getRanges().T;
     $( "#k2_slider" ).slider({
-	orientation: "horizontal",
+	orientation: "vertical",
 	range: "min",
 	min: T_range.min,
 	max: T_range.max,
@@ -540,7 +540,7 @@ $( function() {
     // feed flowrate slider
     var F_range = getRanges().F;
     $( "#k3_slider" ).slider({
-	orientation: "horizontal",
+	orientation: "vertical",
 	range: "min",
 	min: F_range.min,
 	max: F_range.max,
@@ -556,7 +556,7 @@ $( function() {
     // bottoms flowrate slider
     var L_range = getRanges().L;
     $( "#k4_slider" ).slider({
-	orientation: "horizontal",
+	orientation: "vertical",
 	range: "min",
 	min: L_range.min,
 	max: L_range.max,
@@ -573,7 +573,7 @@ $( function() {
     // tops flowrate slider
     var V_range = getRanges().V;
     $( "#k5_slider" ).slider({
-	orientation: "horizontal",
+	orientation: "vertical",
 	range: "min",
 	min: V_range.min,
 	max: V_range.max,
