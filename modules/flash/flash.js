@@ -658,3 +658,12 @@ $(document).ready(function() {
     $('#system_id').niceSelect();
     $('#flash_type').niceSelect();
 });
+
+// fullscreen functionality
+const target = $('#target')[0]; // Get DOM element from jQuery collection
+$('#fullscreen').on('click', () => {
+    console.log("fullscreen requested");
+    if (screenfull.enabled) {
+	screenfull.request(target);
+    }
+})
