@@ -88,3 +88,7 @@ body {
     margin: auto;
     margin-top: 5px;
 }
+
+select {
+  display: none;
+}
