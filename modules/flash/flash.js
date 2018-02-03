@@ -404,6 +404,7 @@ var bar_chart_layout = {
     paper_bgcolor: '#333438',
     height:200,
     xaxis: {
+	fixedrange: true,
 	showgrid: false,
 	gridcolor: '#44474c',
 	tickmode: 'auto',
@@ -415,6 +416,7 @@ var bar_chart_layout = {
 	tickfont: {color:'white'}
     },
     yaxis: {
+	fixedrange: true,
 	showgrid: true,
 	gridcolor: '#44474c',
 	tickmode: 'auto',
