@@ -470,7 +470,7 @@ function getRanges() {
 	},
 	T: {
 	    min:360,
-	    max:450
+	    max:420
 	},
 	F: {
 	    min: 1.0,
