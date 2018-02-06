@@ -148,7 +148,7 @@ function getRandomSingnedInt() {
     return dir[Math.floor(Math.random() * dir.length)]
 };
 
-function resizePlotlyWidth(gd,id,frac=0.95) {
+function resizePlotlyWidth(gd,id,frac=0.33) {
 
     // resize the width of a plotly svg container with
     // div id = id, gd = 
