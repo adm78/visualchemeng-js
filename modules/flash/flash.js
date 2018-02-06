@@ -633,12 +633,7 @@ $( function() {
     $( "#k5_slider" ).slider( "value", flash.L );
 } );
 
-function resizeWindow(gd,container_id) {
-    var window_height = document.getElementById(container_id).offsetHeight;
-    var svg_container = document.getElementById(container_id).getElementsByClassName('svg-container')[0];
-    svg_container.style.height = (window_height - 25) + 'px';
-    Plotly.Plots.resize(gd);
-};
+
 // resize on window resize
 window.onresize = function() {
     var d3 = Plotly.d3;
@@ -647,12 +642,21 @@ window.onresize = function() {
     resizeWindow(gd,'flow_chart_container');  
 };
 
-// resize on full page load (jquery)
+// resize plotly containers on full page load (jquery)
 $(document).ready(function () {
     var d3 = Plotly.d3;
-    var gd3 = d3.select("div[id='flow_chart_container']");
-    var gd = gd3.node();
-    resizeWindow(gd,'flow_chart_container');
+    var gd0 = d3.select("div[id='flow_chart_container']");
+    var gd0_node = gd0.node();
+    resizePlotlyHeight(gd0_node,'flow_chart_container');
+    var gd1 = d3.select("div[id='feedplotDiv']");
+    var gd1_node = gd1.node();
+    resizePlotlyWidth(gd1_node,'feedplotDiv');
+    var gd2 = d3.select("div[id='topsplotDiv']");
+    var gd2_node = gd2.node();
+    resizePlotlyWidth(gd2_node,'topsplotDiv');
+    var gd3 = d3.select("div[id='bottomsplotDiv']");
+    var gd3_node = gd3.node();
+    resizePlotlyWidth(gd3_node,'bottomsplotDiv');
 });
 
 // system selector
@@ -668,4 +672,4 @@ $('#fullscreen').on('click', () => {
     if (screenfull.enabled) {
 	screenfull.request(target);
     }
-})
+});

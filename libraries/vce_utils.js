@@ -134,17 +134,34 @@ function loadImgErrFix(errEvt) {
     
     print(`Attempting to reload ${pic.src} as a tainted image now...`);
     pic.crossOrigin = null, pic.src = pic.src;
-}
+};
 
 
 function getRandomSigned() {
     // generate a random number between 1 and -1
     return Math.random()*2.0-1.0
-
-}
+};
 
 function getRandomSingnedInt() {
     // randomly return either -1 or 1
     var dir = [-1,1];
     return dir[Math.floor(Math.random() * dir.length)]
-}
+};
+
+function resizePlotlyWidth(gd,id,frac=0.95) {
+
+    // resize the width of a plotly svg container with
+    // div id = id, gd = 
+    var container_id = id;
+    var window_width = document.getElementById(container_id).offsetWidth;
+    var svg_container = document.getElementById(container_id).getElementsByClassName('svg-container')[0];
+    svg_container.style.width = (window_width*frac) + 'px';
+    Plotly.Plots.resize(gd);
+};
+
+function resizePlotlyHeight(gd,container_id) {
+    var window_height = document.getElementById(container_id).offsetHeight;
+    var svg_container = document.getElementById(container_id).getElementsByClassName('svg-container')[0];
+    svg_container.style.height = (window_height - 25) + 'px';
+    Plotly.Plots.resize(gd);
+};
