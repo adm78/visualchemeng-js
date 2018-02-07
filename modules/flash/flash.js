@@ -445,18 +445,42 @@ function resetFlash(flash) {
     return flash;
 }
 
-function getInitialConditions() {
-    return {
-	x : null,
-	y : null,
-	z : [0.5,0.3,0.2],
-	P : 5,
-	T : 390.0,
-	A : [ [3.97786,1064.840,-41.136],
-	      [4.00139,1170.875,-48.833],
-	      [3.93002,1182.774,-52.532]],
-	F : 20.0
+function getInitialConditions(sys=1) {
+
+    // return the intial conditions and property data
+    // object
+    //
+    // args:
+    // sys - chemical system id
+    
+    var ic;
+    if (sys === 1) {
+	 ic = {
+	    x : null,
+	    y : null,
+	    z : [0.5,0.3,0.2],
+	    P : 5,
+	    T : 390.0,
+	    A : [ [3.97786,1064.840,-41.136],
+		  [4.00139,1170.875,-48.833],
+		  [3.93002,1182.774,-52.532]],
+	    F : 20.0
+	 };
+    }
+    else if (sys === 2) {
+	 ic = {
+	    x : null,
+	    y : null,
+	    z : [0.5,0.3,0.2],
+	    P : 5,
+	    T : 320.0,
+	    A : [ [3.97786,1064.840,-41.136], 
+		  [4.00139,1170.875,-48.833],
+		  [3.93002,1182.774,-52.532]],
+	    F : 20.0
+	 };	
     };
+    return ic;	
 }
 
 function getRanges() {
