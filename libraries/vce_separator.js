@@ -41,6 +41,10 @@ function Separator(x=null,y=null,z=null,L=null,V=null,F=null,T=null,
 
 	var beta_solution = newtonsMethod(RachfordRiceBeta,0.5,[this.z,this.K]);
 	var beta = beta_solution[1];
+	if (debug) {
+	    console.log("vce_seperator.js: beta_solution = ", beta_solution);
+	};
+	
 	if (beta > 1) {
 	    this.V = this.F;
 	    this.L = this.F - this.V;
@@ -59,7 +63,7 @@ function Separator(x=null,y=null,z=null,L=null,V=null,F=null,T=null,
 	    this.x = getX(this.z,this.K,beta);
 	    this.y = getY(this.x,this.K);
 	}
-	
+
     };
 
     this.updateP = function(P,debug=false) {

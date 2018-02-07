@@ -18,7 +18,8 @@ var debug = true;
 var img; // fash tank image object used by draw
 var xmax;
 var ymax;
-var ic = getInitialConditions();
+var sys = 1;
+var ic = getInitialConditions(sys);
 flash = new Separator(ic.x,ic.y,ic.z,ic.L,
 		      ic.V,ic.F,ic.T,ic.P,ic.A,debug);
 console.log("flash = ", flash);
@@ -47,7 +48,6 @@ var fr = 40;    // target frame rate
 var output_delay = 60; // contro delay between feed entering flash and first particle exit
 var e_coeff = 0.3; // liquid-wall coefficent of restitution (kind of)
 
-
 function preload() {
     // preload the flash tank image and font
     //URL = "http://visualchemeng.com/wp-content/uploads/2018/01/flash.svg";
@@ -71,11 +71,10 @@ function setup() {
     var canvas= createCanvas(xmax, ymax);
     canvas.parent("sim_container");
     flash.solve_PTZF();
+    
 
-
-    // draw the bar charts to screen
+    // draw the bar charts to screen and set slider values/ranges
     plotCompositionData(flash);
-
 
     // draw the flash schematic to screen
     background(51);
@@ -259,7 +258,7 @@ function plotCompositionData(flash, debug=false) {
     bar_chart_layout.title = 'Bottoms';
     Plotly.newPlot('bottomsplotDiv', bottoms_data, bar_chart_layout);
     bar_chart_layout.title = 'Flowrate/ kmol/hr';
-    var F_range = getRanges().F;
+    var F_range = getRanges(sys).F;
     bar_chart_layout.yaxis.range = [F_range.min, F_range.max];
     Plotly.newPlot('flow_chart_container', flowrate_data, bar_chart_layout);
 };
@@ -434,81 +433,16 @@ var bar_chart_layout = {
 //              flash tank operations
 // --------------------------------------------------
 function resetFlash(flash) {
-    var ic = getInitialConditions();
+    var ic = getInitialConditions(sys,debug);
+    updateSliders(sys);
     $( "#k1_slider" ).slider( "value",ic.P);
     $( "#k2_slider" ).slider( "value",ic.T);
     $( "#k3_slider" ).slider( "value",ic.F);
     flash = new Separator(ic.x,ic.y,ic.z,ic.L,
-			  ic.V,ic.F,ic.T,ic.P,ic.A);
+			  ic.V,ic.F,ic.T,ic.P,ic.A,debug);
     $( "#k4_slider" ).slider( "value",flash.V);
     $( "#k5_slider" ).slider( "value",flash.L);
     return flash;
-}
-
-function getInitialConditions(sys=1) {
-
-    // return the intial conditions and property data
-    // object
-    //
-    // args:
-    // sys - chemical system id
-    
-    var ic;
-    if (sys === 1) {
-	 ic = {
-	    x : null,
-	    y : null,
-	    z : [0.5,0.3,0.2],
-	    P : 5,
-	    T : 390.0,
-	    A : [ [3.97786,1064.840,-41.136],
-		  [4.00139,1170.875,-48.833],
-		  [3.93002,1182.774,-52.532]],
-	    F : 20.0
-	 };
-    }
-    else if (sys === 2) {
-	 ic = {
-	    x : null,
-	    y : null,
-	    z : [0.5,0.3,0.2],
-	    P : 5,
-	    T : 320.0,
-	    A : [ [3.97786,1064.840,-41.136], 
-		  [4.00139,1170.875,-48.833],
-		  [3.93002,1182.774,-52.532]],
-	    F : 20.0
-	 };	
-    };
-    return ic;	
-}
-
-function getRanges() {
-
-    // return an object containing
-    // the limits of each slider prop
-    return {
-	P: {
-	    min: 4.6,
-	    max: 5.8
-	},
-	T: {
-	    min:360,
-	    max:420
-	},
-	F: {
-	    min: 1.0,
-	    max: 40.0
-	},
-	V: {
-	    min: 0.0,
-	    max: 40.0
-	},
-	L: {
-	    min: 0.0,
-	    max: 40.0
-	}
-    };
 }
 
 function update_pressure() {
@@ -575,7 +509,7 @@ $('#restart').click(async function(){
 // sliders
 $( function() {
     // pressure slider
-    var P_range = getRanges().P;
+    var P_range = getRanges(sys).P;
     $( "#k1_slider" ).slider({
 	orientation: "vertical",
 	range: "min",
@@ -593,7 +527,7 @@ $( function() {
 
 $( function() {
     // temp slider
-    var T_range = getRanges().T;
+    var T_range = getRanges(sys).T;
     $( "#k2_slider" ).slider({
 	orientation: "vertical",
 	range: "min",
@@ -609,7 +543,7 @@ $( function() {
 
 $( function() {
     // feed flowrate slider
-    var F_range = getRanges().F;
+    var F_range = getRanges(sys).F;
     $( "#k3_slider" ).slider({
 	orientation: "vertical",
 	range: "min",
@@ -625,7 +559,7 @@ $( function() {
 
 $( function() {
     // bottoms flowrate slider
-    var L_range = getRanges().L;
+    var L_range = getRanges(sys).L;
     $( "#k4_slider" ).slider({
 	orientation: "vertical",
 	range: "min",
@@ -642,7 +576,7 @@ $( function() {
 
 $( function() {
     // tops flowrate slider
-    var V_range = getRanges().V;
+    var V_range = getRanges(sys).V;
     $( "#k5_slider" ).slider({
 	orientation: "vertical",
 	range: "min",
@@ -656,7 +590,6 @@ $( function() {
     });
     $( "#k5_slider" ).slider( "value", flash.L );
 } );
-
 
 // resize on window resize
 window.onresize = function() {
@@ -697,3 +630,9 @@ $('#fullscreen').on('click', () => {
 	screenfull.request(target);
     }
 });
+
+// chemical system selector
+$('#system_id').on('change', function() {
+    sys = Number(this.value) + 1;
+    restart();
+})
