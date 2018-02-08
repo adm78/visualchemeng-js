@@ -264,13 +264,15 @@ function plotCompositionData(flash, debug=false) {
 };
 
 
-function restart() {
+function restartFlash() {
 
     // effectively reload the page
     feed_stream = new Ensemble();
     tops_stream = new Ensemble();
     bottoms_stream = new Ensemble();
-    resetFlash(flash);
+    ic = getInitialConditions(sys,debug);
+    flash = new Separator(ic.x,ic.y,ic.z,ic.L,
+		      ic.V,ic.F,ic.T,ic.P,ic.A,debug);
     flash.solve_PTZF();
 
 };
@@ -432,19 +434,6 @@ var bar_chart_layout = {
 // --------------------------------------------------
 //              flash tank operations
 // --------------------------------------------------
-function resetFlash(flash) {
-    var ic = getInitialConditions(sys,debug);
-    updateSliders(sys);
-    $( "#k1_slider" ).slider( "value",ic.P);
-    $( "#k2_slider" ).slider( "value",ic.T);
-    $( "#k3_slider" ).slider( "value",ic.F);
-    flash = new Separator(ic.x,ic.y,ic.z,ic.L,
-			  ic.V,ic.F,ic.T,ic.P,ic.A,debug);
-    $( "#k4_slider" ).slider( "value",flash.V);
-    $( "#k5_slider" ).slider( "value",flash.L);
-    return flash;
-}
-
 function update_pressure() {
     //console.log("P = ", $( "#k1_slider" ).slider( "value"));
     flash.updateP($( "#k1_slider" ).slider( "value"));
@@ -496,7 +485,8 @@ $('#restart').click(async function(){
 
     // restart button functionality
     console.log("You just clicked restart!");
-    restart();
+    restartFlash();
+    updateAllSliders();
     if (paused_log) {
 	$("#run").text('Run');
     }
@@ -505,10 +495,25 @@ $('#restart').click(async function(){
     }
 });
 
-
-// sliders
+// intialise the sliders (jquery)
 $( function() {
-    // pressure slider
+    updateAllSliders(sys) 
+} );
+
+function updateAllSliders(sys) {
+    // update all sliders based on the initial
+    // conditions of chemical system index 'sys'
+    
+    updatePSlider(sys); // pressure slider
+    updateTSlider(sys); // temp slider
+    updateFSlider(sys); // F slider
+    updateVSlider(sys); // V slider
+    updateLSlider(sys); // L slider  
+
+};
+
+
+function updatePSlider(sys) {
     var P_range = getRanges(sys).P;
     $( "#k1_slider" ).slider({
 	orientation: "vertical",
@@ -522,11 +527,9 @@ $( function() {
     });
 
     $( "#k1_slider" ).slider( "value", flash.P );
-} );
+};
 
-
-$( function() {
-    // temp slider
+function updateTSlider(sys) {
     var T_range = getRanges(sys).T;
     $( "#k2_slider" ).slider({
 	orientation: "vertical",
@@ -539,10 +542,9 @@ $( function() {
 	change: update_temp
     });
     $( "#k2_slider" ).slider( "value", flash.T );
-} );
+};
 
-$( function() {
-    // feed flowrate slider
+function updateFSlider(sys) {
     var F_range = getRanges(sys).F;
     $( "#k3_slider" ).slider({
 	orientation: "vertical",
@@ -555,9 +557,9 @@ $( function() {
 	change: update_F
     });
     $( "#k3_slider" ).slider( "value", flash.F );
-} );
+};
 
-$( function() {
+function updateLSlider(sys) {
     // bottoms flowrate slider
     var L_range = getRanges(sys).L;
     $( "#k4_slider" ).slider({
@@ -572,9 +574,10 @@ $( function() {
 	disabled: true
     });
     $( "#k4_slider" ).slider( "value", flash.L );
-} );
+};
 
-$( function() {
+
+function updateVSlider(sys) {
     // tops flowrate slider
     var V_range = getRanges(sys).V;
     $( "#k5_slider" ).slider({
@@ -589,7 +592,7 @@ $( function() {
 	disabled: true
     });
     $( "#k5_slider" ).slider( "value", flash.L );
-} );
+};
 
 // resize on window resize
 window.onresize = function() {
@@ -634,5 +637,7 @@ $('#fullscreen').on('click', () => {
 // chemical system selector
 $('#system_id').on('change', function() {
     sys = Number(this.value) + 1;
-    restart();
+    console.log("-------chemical system changed------");
+    restartFlash();
+    updateAllSliders(sys);
 })

@@ -63,6 +63,7 @@ function Separator(x=null,y=null,z=null,L=null,V=null,F=null,T=null,
 	    this.x = getX(this.z,this.K,beta);
 	    this.y = getY(this.x,this.K);
 	}
+	if (debug) { console.log("vce_seperator.js: post solve_PTZF object = ", this) };
 
     };
 

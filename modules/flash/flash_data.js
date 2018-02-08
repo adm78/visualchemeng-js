@@ -26,7 +26,6 @@ function getInitialConditions(sys=1,debug=false) {
     // sys - chemical system id
     
     var ic;
-    if (debug) {console.log("flash_data.js: getInitialConditions: sys = ", sys)};
     if (sys === 1) {
 	 ic = {
 	    x : null,
@@ -56,6 +55,7 @@ function getInitialConditions(sys=1,debug=false) {
 	    F : 20.0
 	 };	
     };
+    if (debug) {console.log("flash_data.js: getInitialConditions: sys = ", sys, "ic = ", ic)};
     return ic;	
 }
 
@@ -92,7 +92,7 @@ function getRanges(sys=1) {
 	    }
 	};
     }
-    else if (sys == 1) {
+    else if (sys == 2) {
 	range = {
 	    P: {
 		min: 0.5,
