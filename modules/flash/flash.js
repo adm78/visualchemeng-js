@@ -616,7 +616,7 @@ const target = $('#target')[0]; // Get DOM element from jQuery collection
 $('#fullscreen').on('click', () => {
     console.log("fullscreen requested");
     if (screenfull.enabled) {
-	screenfull.request(target);
+	screenfull.toggle(target);
     }
 });
 

@@ -125,9 +125,9 @@ function getColours(sys) {
 	return ['#2e8ade','#de912e','#2ede71'];
     }
     else if (sys === 2) {
-	return ['#DF310C', '#ffffff', '#2e8ade'];
+	// return ['#DF310C', '#ffffff', '#2e8ade'];
 	//return ['#858585', '#ffffff', '#2e8ade'];
-	//return ['#BC0CDF','#DFBC0C','#0CDFBC'];
+	return ['#BC0CDF','#DFBC0C','#0CDFBC'];
     };
 
 };
