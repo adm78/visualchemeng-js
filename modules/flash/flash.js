@@ -75,6 +75,10 @@ function setup() {
 
     // draw the bar charts to screen and set slider values/ranges
     plotCompositionData(flash);
+    resizePlotlyContainers();
+    
+    // initialise the sliders
+    updateAllSliders(sys);
 
     // draw the flash schematic to screen
     background(51);
@@ -263,17 +267,18 @@ function plotCompositionData(flash, debug=false) {
     Plotly.newPlot('flow_chart_container', flowrate_data, bar_chart_layout);
 };
 
-
-function restartFlash() {
+function restartFlash(flash,debug=false) {
 
     // effectively reload the page
     feed_stream = new Ensemble();
     tops_stream = new Ensemble();
     bottoms_stream = new Ensemble();
     ic = getInitialConditions(sys,debug);
+    if (debug) {console.log("flash.js: restartFlash: initial conditions before solve =", ic)};
     flash = new Separator(ic.x,ic.y,ic.z,ic.L,
 		      ic.V,ic.F,ic.T,ic.P,ic.A,debug);
     flash.solve_PTZF();
+    if (debug) {console.log("flash.js: restartFlash: flash after restart =", flash)};
 
 };
 
@@ -485,7 +490,7 @@ $('#restart').click(async function(){
 
     // restart button functionality
     console.log("You just clicked restart!");
-    restartFlash();
+    restartFlash(flash,debug);
     updateAllSliders();
     if (paused_log) {
 	$("#run").text('Run');
@@ -494,11 +499,6 @@ $('#restart').click(async function(){
 	$("#run").text('Pause');
     }
 });
-
-// intialise the sliders (jquery)
-$( function() {
-    updateAllSliders(sys) 
-} );
 
 function updateAllSliders(sys) {
     // update all sliders based on the initial
@@ -594,16 +594,8 @@ function updateVSlider(sys) {
     $( "#k5_slider" ).slider( "value", flash.L );
 };
 
-// resize on window resize
-window.onresize = function() {
-    var d3 = Plotly.d3;
-    var gd3 = d3.select("div[id='flow_chart_container']");
-    var gd = gd3.node();
-    resizeWindow(gd,'flow_chart_container');  
-};
-
-// resize plotly containers on full page load (jquery)
-$(document).ready(function () {
+function resizePlotlyContainers() {
+    
     var d3 = Plotly.d3;
     var gd0 = d3.select("div[id='flow_chart_container']");
     var gd0_node = gd0.node();
@@ -617,10 +609,16 @@ $(document).ready(function () {
     var gd3 = d3.select("div[id='bottomsplotDiv']");
     var gd3_node = gd3.node();
     resizePlotlyWidth(gd3_node,'bottomsplotDiv');
-});
+};
 
-// system selector
-$(document).ready(function() {
+// resize on window resize
+window.onresize = function() {
+    resizePlotlyContainers();
+    plotCompositionData(flash, debug);
+};
+
+// render selectors on full page load (jquery)
+$(document).ready(function () {
     $('#system_id').niceSelect();
     $('#flash_type').niceSelect();
 });
@@ -638,6 +636,6 @@ $('#fullscreen').on('click', () => {
 $('#system_id').on('change', function() {
     sys = Number(this.value) + 1;
     console.log("-------chemical system changed------");
-    restartFlash();
+    restartFlash(flash,debug);
     updateAllSliders(sys);
 })

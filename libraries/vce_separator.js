@@ -37,7 +37,7 @@ function Separator(x=null,y=null,z=null,L=null,V=null,F=null,T=null,
 	// pressure, temp, feed comp and feed flowrate
 	// using the Rachford-Rice method.
 
-	if (debug) { console.log("vce_seperator.js: running solve_PTZF...") };
+	if (debug) { console.log("vce_seperator.js: running solve_PTZF on sep =", this) };
 
 	var beta_solution = newtonsMethod(RachfordRiceBeta,0.5,[this.z,this.K]);
 	var beta = beta_solution[1];
