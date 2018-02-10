@@ -47,7 +47,7 @@ function getInitialConditions(sys=1,debug=false) {
 	    x : null,
 	    y : null,
 	    z : [0.5,0.0,0.5],
-	    P : 0.6,
+	    P : 1.0,
 	    T : 330.0,
 	    A : [ [5.20409,1581.341,-33.50], 
 		  [5.24677,1598.673,-46.424],
@@ -92,7 +92,7 @@ function getRanges(sys=1) {
 	    }
 	};
     }
-    else if (sys == 2) {
+    else if (sys === 2) {
 	range = {
 	    P: {
 		min: 0.5,

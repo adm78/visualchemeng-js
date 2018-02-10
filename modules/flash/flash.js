@@ -78,7 +78,7 @@ function setup() {
     resizePlotlyContainers();
     
     // initialise the sliders
-    updateAllSliders(sys);
+    updateAllSliders();
 
     // draw the flash schematic to screen
     background(51);
@@ -267,7 +267,7 @@ function plotCompositionData(flash, debug=false) {
     Plotly.newPlot('flow_chart_container', flowrate_data, bar_chart_layout);
 };
 
-function restartFlash(flash,debug=false) {
+function restartFlash(debug=false) {
 
     // effectively reload the page
     feed_stream = new Ensemble();
@@ -490,30 +490,24 @@ $('#restart').click(async function(){
 
     // restart button functionality
     console.log("You just clicked restart!");
-    restartFlash(flash,debug);
+    restartFlash(debug);
     updateAllSliders();
-    if (paused_log) {
-	$("#run").text('Run');
-    }
-    else {
-	$("#run").text('Pause');
-    }
 });
 
-function updateAllSliders(sys) {
+function updateAllSliders() {
     // update all sliders based on the initial
     // conditions of chemical system index 'sys'
     
-    updatePSlider(sys); // pressure slider
-    updateTSlider(sys); // temp slider
-    updateFSlider(sys); // F slider
-    updateVSlider(sys); // V slider
-    updateLSlider(sys); // L slider  
+    updatePSlider(); // pressure slider
+    updateTSlider(); // temp slider
+    updateFSlider(); // F slider
+    updateVSlider(); // V slider
+    updateLSlider(); // L slider  
 
 };
 
 
-function updatePSlider(sys) {
+function updatePSlider() {
     var P_range = getRanges(sys).P;
     $( "#k1_slider" ).slider({
 	orientation: "vertical",
@@ -523,13 +517,12 @@ function updatePSlider(sys) {
 	step: (P_range.max-P_range.min)/200.0,
 	value: P_range.min,
 	slide: update_pressure,
-	change: update_pressure
     });
 
     $( "#k1_slider" ).slider( "value", flash.P );
 };
 
-function updateTSlider(sys) {
+function updateTSlider() {
     var T_range = getRanges(sys).T;
     $( "#k2_slider" ).slider({
 	orientation: "vertical",
@@ -539,12 +532,11 @@ function updateTSlider(sys) {
 	step: 1.0,
 	value: T_range.min,
 	slide: update_temp,
-	change: update_temp
     });
     $( "#k2_slider" ).slider( "value", flash.T );
 };
 
-function updateFSlider(sys) {
+function updateFSlider() {
     var F_range = getRanges(sys).F;
     $( "#k3_slider" ).slider({
 	orientation: "vertical",
@@ -554,12 +546,11 @@ function updateFSlider(sys) {
 	step: (F_range.max-F_range.min)/50.0,
 	value: F_range.min,
 	slide: update_F,
-	change: update_F
     });
     $( "#k3_slider" ).slider( "value", flash.F );
 };
 
-function updateLSlider(sys) {
+function updateLSlider() {
     // bottoms flowrate slider
     var L_range = getRanges(sys).L;
     $( "#k4_slider" ).slider({
@@ -570,14 +561,13 @@ function updateLSlider(sys) {
 	step: (L_range.max-L_range.min)/20.0,
 	value: L_range.min,
 	slide: update_L,
-	change: update_L,
 	disabled: true
     });
     $( "#k4_slider" ).slider( "value", flash.L );
 };
 
 
-function updateVSlider(sys) {
+function updateVSlider() {
     // tops flowrate slider
     var V_range = getRanges(sys).V;
     $( "#k5_slider" ).slider({
@@ -588,7 +578,6 @@ function updateVSlider(sys) {
 	step: (V_range.max-V_range.min)/20.0,
 	value: V_range.min,
 	slide: update_V,
-	change: update_V,
 	disabled: true
     });
     $( "#k5_slider" ).slider( "value", flash.L );
@@ -634,8 +623,13 @@ $('#fullscreen').on('click', () => {
 
 // chemical system selector
 $('#system_id').on('change', function() {
+
+    console.log("-------potential chemical system change------");
+    console.log("old sys = ", sys);
     sys = Number(this.value) + 1;
-    console.log("-------chemical system changed------");
-    restartFlash(flash,debug);
-    updateAllSliders(sys);
+    console.log("new sys = ", sys);   
+    
+    restartFlash(debug);
+    plotCompositionData(flash, debug=false);
+    updateAllSliders();
 })
