@@ -53,8 +53,7 @@ function preload() {
     URL = "../modules/flash/assets/vector/flash.svg";
     img = loadImage(URL, pic => print(pic), loadImgErrFix);
 
-    //myFont = loadFont('../fonts/Roboto/Roboto-Regular.ttf');
-}
+};
 
 function setup() {
 
@@ -253,17 +252,10 @@ function plotCompositionData(flash, debug=false) {
 	width: 0.3
     }];
 
-    bar_chart_layout.yaxis.range = [0,getMaxComposition(flash)];
-    bar_chart_layout.title = 'Feed';
-    Plotly.newPlot('feedplotDiv', feed_data, bar_chart_layout);
-    bar_chart_layout.title = 'Tops';
-    Plotly.newPlot('topsplotDiv', tops_data, bar_chart_layout);
-    bar_chart_layout.title = 'Bottoms';
-    Plotly.newPlot('bottomsplotDiv', bottoms_data, bar_chart_layout);
-    bar_chart_layout.title = 'Flowrate/ kmol/hr';
-    var F_range = getRanges(sys).F;
-    bar_chart_layout.yaxis.range = [F_range.min, F_range.max];
-    Plotly.newPlot('flow_chart_container', flowrate_data, bar_chart_layout);
+    Plotly.newPlot('feedplotDiv', feed_data, feed_bar_chart_layout);
+    Plotly.newPlot('topsplotDiv', tops_data, tops_bar_chart_layout);
+    Plotly.newPlot('bottomsplotDiv', bottoms_data, bottoms_bar_chart_layout);
+    Plotly.newPlot('flow_chart_container', flowrate_data, flowrate_bar_chart_layout);
 };
 
 function restartFlash(debug=false) {
@@ -281,35 +273,13 @@ function restartFlash(debug=false) {
 
 };
 
-function getMaxComposition(sep) {
-
-    // return the maximum composition value
-    // across all streams
-    var max = sep.z[0];
-    for (var i = 0; i < sep.z.length; i++) {
-	if (sep.z[i] > max) {
-	    max = sep.z[i];
-	};
-	if (sep.x[i] > max) {
-	    max = sep.x[i];
-	}
-	if (sep.y[i] > max) {
-	    max = sep.y[i];
-	}
-    };
-    return 1.0;
-
-}
-
-
-
 function getFeedPosition(sid,xmax) {
 
     // return the position the feed stream should start
     var feed_x =  0.75*(0.5*xmax - 0.5*sid.width);
     var feed_y = (ymax/2.0)+0.05*sid.height;
     return createVector(feed_x,feed_y);
-}
+};
 
 
 function getTopsPosition(sid) {
@@ -319,7 +289,7 @@ function getTopsPosition(sid) {
     var tops_y = (ymax/2.0) - 0.475*sid.height;
     return createVector(tops_x,tops_y);
 
-}
+};
 
 function getBottomsPosition(sid) {
 
@@ -328,7 +298,7 @@ function getBottomsPosition(sid) {
     var tops_y = (ymax/2.0) + 0.475*sid.height;
     return createVector(tops_x,tops_y);
 
-}
+};
 
 function getImgScaledDimensions(img) {
 
@@ -338,7 +308,7 @@ function getImgScaledDimensions(img) {
     return { width : scaled_width,
 	     height: scaled_height }
 
-}
+};
 
 function chooseColoursFromComposition(colours, sep) {
 
@@ -390,7 +360,7 @@ function chooseColoursFromComposition(colours, sep) {
 // --------------------------------------------------
 //              composition graph layout
 // --------------------------------------------------
-var bar_chart_layout = {
+var base_bar_chart_layout = {
 
     margin : {
 	l: 30,
@@ -434,6 +404,22 @@ var bar_chart_layout = {
     },
 };
 
+var feed_bar_chart_layout = jQuery.extend(true, {}, base_bar_chart_layout);
+feed_bar_chart_layout.yaxis.range = [0,1.0];
+feed_bar_chart_layout.title = 'Feed';
+
+var tops_bar_chart_layout = jQuery.extend(true, {}, base_bar_chart_layout);
+tops_bar_chart_layout.yaxis.range = [0,1.0];
+tops_bar_chart_layout.title = 'Tops';
+
+var bottoms_bar_chart_layout = jQuery.extend(true, {}, base_bar_chart_layout);
+bottoms_bar_chart_layout.yaxis.range = [0,1.0];
+bottoms_bar_chart_layout.title = 'Bottoms';
+
+var flowrate_bar_chart_layout = jQuery.extend(true, {}, base_bar_chart_layout);
+flowrate_bar_chart_layout.title = 'Flowrate/ kmol/hr';
+var F_range = getRanges(sys).F;
+flowrate_bar_chart_layout.yaxis.range = [F_range.min, F_range.max];
 
 // --------------------------------------------------
 //              flash tank operations
@@ -624,11 +610,14 @@ $('#fullscreen').on('click', () => {
 $('#system_id').on('change', function() {
 
     console.log("-------potential chemical system change------");
-    console.log("old sys = ", sys);
+    var old_sys = sys;
+    console.log("old sys = ", old_sys);
     sys = Number(this.value) + 1;
     console.log("new sys = ", sys);   
-    
-    restartFlash(debug);
-    plotCompositionData(flash, debug=false);
-    updateAllSliders();
+
+    if (old_sys != sys) {
+	restartFlash(debug);
+	plotCompositionData(flash, debug=false);
+	updateAllSliders();
+    };
 })

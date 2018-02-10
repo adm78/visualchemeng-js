@@ -55,7 +55,7 @@ function getInitialConditions(sys=1,debug=false) {
 		  [5.0768,1659.793,-45.854]],
 	    F : 20.0
 	 };	
-    };
+    }
     else if (sys === 3) {
 	// methanol, ethanol, water
 	// data: http://webbook.nist.gov/cgi/cbook.cgi?ID=C67561&Mask=4&Type=ANTOINE&Plot=on
