@@ -40,7 +40,6 @@ var img_shrink_factor = 0.60; // height of flash svg as fraction of canvas heigh
 var paused_log = false; // logical to paused the stream updates
 var outlet_freq = 1; // # draws/stream replenish (int)
 var gravity = 0.02;  // what it says on the tin
-var component_colours = ['#2e8ade','#de912e','#2ede71']; // particle colours, in order
 var pout = 0.5; // controls number of particle to output at a time
 var pspeed = 1.0; // dt between particle updates
 var kpert = 4.0; // particle perturbation scaling constant (float)
@@ -132,7 +131,7 @@ function draw() {
 	// add new particles at desired freq
     	if (ndraws % outlet_freq === 0) {
 
-	    var colour = chooseColoursFromComposition(component_colours,flash)
+	    var colour = chooseColoursFromComposition(getColours(sys),flash)
 
 	    // handle the feed stream
 	    for (i=0; i < pout*flash.F; i++) {
@@ -219,7 +218,7 @@ function plotCompositionData(flash, debug=false) {
 	y: [flash.z[0], flash.z[1], flash.z[2]],
 	type: 'bar',
 	marker: {
-	    color : component_colours
+	    color : getColours(sys)
 	},
 	width: 0.3
     }];
@@ -229,7 +228,7 @@ function plotCompositionData(flash, debug=false) {
 	y: [flash.y[0], flash.y[1], flash.y[2]],
 	type: 'bar',
 	marker: {
-	    color : component_colours
+	    color : getColours(sys)
 	},
 	width: 0.3
     }];
@@ -239,7 +238,7 @@ function plotCompositionData(flash, debug=false) {
 	y: [flash.x[0], flash.x[1], flash.x[2]],
 	type: 'bar',
 	marker: {
-	    color : component_colours
+	    color : getColours(sys)
 	},
 	width: 0.3
     }];

@@ -46,8 +46,8 @@ function getInitialConditions(sys=1,debug=false) {
 	 ic = {
 	    x : null,
 	    y : null,
-	    z : [0.5,0.0,0.5],
-	    P : 1.0,
+	    z : [0.333,0.333,0.333],
+	    P : 0.4,
 	    T : 330.0,
 	    A : [ [5.20409,1581.341,-33.50], 
 		  [5.24677,1598.673,-46.424],
@@ -95,8 +95,8 @@ function getRanges(sys=1) {
     else if (sys === 2) {
 	range = {
 	    P: {
-		min: 0.5,
-		max: 2.0
+		min: 0.2,
+		max: 1.2
 	    },
 	    T: {
 		min:320.0,
@@ -119,3 +119,15 @@ function getRanges(sys=1) {
     return range;
 };
 
+function getColours(sys) {
+
+    if (sys === 1) {
+	return ['#2e8ade','#de912e','#2ede71'];
+    }
+    else if (sys === 2) {
+	return ['#DF310C', '#ffffff', '#2e8ade'];
+	//return ['#858585', '#ffffff', '#2e8ade'];
+	//return ['#BC0CDF','#DFBC0C','#0CDFBC'];
+    };
+
+};
