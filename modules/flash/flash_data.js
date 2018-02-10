@@ -15,6 +15,7 @@
 // sys:
 // 1 - pentane, hexane, cyclohexane
 // 2 - methanol, ethanol, water
+// 3 - methanol, water, glycerol, methyl-ester (biodiesel), triglyceride
 //---------------------------------------------------------
 
 function getInitialConditions(sys=1,debug=false) {
@@ -49,6 +50,22 @@ function getInitialConditions(sys=1,debug=false) {
 	    z : [0.333,0.333,0.333],
 	    P : 0.4,
 	    T : 330.0,
+	    A : [ [5.20409,1581.341,-33.50], 
+		  [5.24677,1598.673,-46.424],
+		  [5.0768,1659.793,-45.854]],
+	    F : 20.0
+	 };	
+    };
+    else if (sys === 3) {
+	// methanol, ethanol, water
+	// data: http://webbook.nist.gov/cgi/cbook.cgi?ID=C67561&Mask=4&Type=ANTOINE&Plot=on
+	//
+	ic = {
+	    x : null,
+	    y : null,
+	    z : [0.53,0.039,0.0980,0.328,0.003012],
+	    P : 0.2,
+	    T : 363.0,
 	    A : [ [5.20409,1581.341,-33.50], 
 		  [5.24677,1598.673,-46.424],
 		  [5.0768,1659.793,-45.854]],

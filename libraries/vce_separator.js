@@ -126,7 +126,7 @@ function RachfordRiceSum(beta,z,K) {
 
 function P_Antoine(T,coeffs) {
 
-    // Return the pressue in mmHg based on Antoine coefficients where
+    // Return the pressue in bar based on Antoine coefficients where
     // T is in [K]
     // http://ddbonline.ddbst.com/AntoineCalculation/
     // AntoineCalculationCGI.exe?component=Ethanol
@@ -136,7 +136,21 @@ function P_Antoine(T,coeffs) {
     var C = coeffs[2];
     var exponent = A - (B/(C+T));
     return Math.pow(10,exponent);   
-}
+};
+
+function P_Antoine_Alt(T,coeffs) {
+
+    // Return the pressue in mmHg based on
+    // alternative vap pressure equation
+    
+    var A = coeffs[0];
+    var B = coeffs[1];
+    var C = coeffs[2];
+    var D = coeffs[3];
+    var E = coeffs[4];
+    var exponent = A - (B/T) + C*Math.log(T) + D*Math.pow(T,E);
+    return Math.exp(exponent);   
+};
 
 function getK(T,P,A,debug=false) {
     K = [];
@@ -145,7 +159,7 @@ function getK(T,P,A,debug=false) {
     };
     if (debug) {console.log("K = ", K)};
     return K;
-}
+};
 
 function getY(x,K) {
     
