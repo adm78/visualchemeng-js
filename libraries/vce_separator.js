@@ -140,7 +140,7 @@ function P_Antoine(T,coeffs) {
 
 function P_Antoine_Alt(T,coeffs) {
 
-    // Return the pressue in mmHg based on
+    // Return the pressue in bar based on
     // alternative vap pressure equation
     
     var A = coeffs[0];
@@ -148,9 +148,10 @@ function P_Antoine_Alt(T,coeffs) {
     var C = coeffs[2];
     var D = coeffs[3];
     var E = coeffs[4];
-    var exponent = A - (B/T) + C*Math.log(T) + D*Math.pow(T,E);
-    return Math.exp(exponent)/760.0;   
+    var exponent = A + (B/T) + C*Math.log(T) + D*Math.pow(T,E);
+    return Math.exp(exponent)/101325.0;   
 };
+
 
 function getK(T,P,A,debug=false) {
     K = [];
@@ -160,6 +161,9 @@ function getK(T,P,A,debug=false) {
 	}
 	else if (A.eqns[i] === 2) {
 	    K[i] = P_Antoine_Alt(T,A.values[i])/P;
+	}
+	else if (A.eqns[i] === 3) {
+	    K[i] = P_Antoine(T,A.values[i])/(760.0*P);
 	}
 	else {
 	    console.log("Error: vce_seperator.getK: unknown saturation pressure equation requested");

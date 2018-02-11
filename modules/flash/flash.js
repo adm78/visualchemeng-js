@@ -215,8 +215,8 @@ function plotCompositionData(flash, debug=false) {
 
 
     var feed_data = [{
-    x: ['z1', 'z2', 'z3'],
-	y: [flash.z[0], flash.z[1], flash.z[2]],
+    x: generateLabels(flash.z,'z'),
+	y: flash.z,
 	type: 'bar',
 	marker: {
 	    color : getColours(sys)
@@ -225,8 +225,8 @@ function plotCompositionData(flash, debug=false) {
     }];
 
     var tops_data = [{
-	x: ['y1', 'y2', 'y3'],
-	y: [flash.y[0], flash.y[1], flash.y[2]],
+	x: generateLabels(flash.y,'y'),
+	y: flash.y,
 	type: 'bar',
 	marker: {
 	    color : getColours(sys)
@@ -235,8 +235,8 @@ function plotCompositionData(flash, debug=false) {
     }];
 
     var bottoms_data = [{
-	x: ['x1', 'x2', 'x3'],
-	y: [flash.x[0], flash.x[1], flash.x[2]],
+	x: generateLabels(flash.x,'x'),
+	y: flash.x,
 	type: 'bar',
 	marker: {
 	    color : getColours(sys)
@@ -422,7 +422,6 @@ var flowrate_bar_chart_layout = jQuery.extend(true, {}, base_bar_chart_layout);
 flowrate_bar_chart_layout.title = 'Flowrate/ kmol/hr';
 var F_range = getRanges(sys).F;
 flowrate_bar_chart_layout.yaxis.range = [F_range.min, F_range.max];
-
 // --------------------------------------------------
 //              flash tank operations
 // --------------------------------------------------

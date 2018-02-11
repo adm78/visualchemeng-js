@@ -63,7 +63,7 @@ function getInitialConditions(sys=1,debug=false) {
 	};	
     }
     else if (sys === 3) {
-	// methanol, ethanol, water
+	// methanol, water, glycerol, methyl-ester (biodiesel), triglyceride
 	// data: http://webbook.nist.gov/cgi/cbook.cgi?ID=C67561&Mask=4&Type=ANTOINE&Plot=on
 	//
 	ic = {
@@ -71,12 +71,15 @@ function getInitialConditions(sys=1,debug=false) {
 	    y : null,
 	    z : [0.53,0.039,0.0980,0.328,0.003012],
 	    P : 0.2,
-	    T : 363.0,
+	    T : 333.0,
 	    A : {
-		 values : [[5.20409,1581.341,-33.50], 
-			   [5.24677,1598.673,-46.424],
-			   [5.0768,1659.793,-45.854]],
-		eqns : [1, 1, 1]
+		values : [[82.718,-6904.5,-8.8622,0.0000074664,2.0], 
+			  [73.649,-7258.2,-7.3037,0.0000041653,2.0],
+			   [99.989,-13808,-10.088,0.0,6.0],
+			   [9.9155,2583.52,-96.15],
+			   [66.438,-5061.7,-8.4912,0.0082326,1.0],
+			  ],
+		eqns : [2, 2, 2, 3, 2]
 	     },
 	    F : 20.0
 	 };	
@@ -154,6 +157,9 @@ function getColours(sys) {
 	// return ['#DF310C', '#ffffff', '#2e8ade'];
 	//return ['#858585', '#ffffff', '#2e8ade'];
 	return ['#BC0CDF','#DFBC0C','#0CDFBC'];
-    };
+    }
+    else if (sys === 3) {
+	return ['#BC0CDF','#DFBC0C','#0CDFBC','#2e8ade','#de912e','#2ede71'];
+    };    
 
 };

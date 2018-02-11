@@ -165,3 +165,19 @@ function resizePlotlyHeight(gd,container_id) {
     svg_container.style.height = (window_height - 25) + 'px';
     Plotly.Plots.resize(gd);
 };
+
+
+function generateLabels(arrx,letter) {
+    
+    // generate a number based label array based on an array length
+    // and a letter
+    //
+    // example: axrr = [1.0,0.0,0.0], letter = 'z'
+    //          => returns ['z1','z2','z3']
+    
+    labels = []
+    for (var i = 0; i < arrx.length; i++) {
+	labels.push(letter + (i + 1));
+    };
+    return labels;
+};
