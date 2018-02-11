@@ -149,13 +149,21 @@ function P_Antoine_Alt(T,coeffs) {
     var D = coeffs[3];
     var E = coeffs[4];
     var exponent = A - (B/T) + C*Math.log(T) + D*Math.pow(T,E);
-    return Math.exp(exponent);   
+    return Math.exp(exponent)/760.0;   
 };
 
 function getK(T,P,A,debug=false) {
     K = [];
-    for (var i = 0; i < A.length; i++) {
-	K[i] = P_Antoine(T,A[i])/P;
+    for (var i = 0; i < A.values.length; i++) {
+	if (A.eqns[i] === 1) {
+	    K[i] = P_Antoine(T,A.values[i])/P;
+	}
+	else if (A.eqns[i] === 2) {
+	    K[i] = P_Antoine_Alt(T,A.values[i])/P;
+	}
+	else {
+	    console.log("Error: vce_seperator.getK: unknown saturation pressure equation requested");
+	};
     };
     if (debug) {console.log("K = ", K)};
     return K;
