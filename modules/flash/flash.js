@@ -38,6 +38,8 @@ var ndraws = 0; // counter for drawing the stream
 var rpart = 1.5; // stream particle radii (float)
 var img_shrink_factor = 0.60; // height of flash svg as fraction of canvas height (float, >0, <=1)
 var paused_log = false; // logical to paused the stream updates
+var resetting_log = false; // logical to indicate a reset is underway
+var chem_sys_changing_log = false; //logical to indicate that chemical system is being changed
 var outlet_freq = 1; // # draws/stream replenish (int)
 var gravity = 0.02;  // what it says on the tin
 var pout = 0.5; // controls number of particle to output at a time
@@ -425,24 +427,27 @@ flowrate_bar_chart_layout.yaxis.range = [F_range.min, F_range.max];
 //              flash tank operations
 // --------------------------------------------------
 function update_pressure() {
-    //console.log("P = ", $( "#k1_slider" ).slider( "value"));
-    flash.updateP($( "#k1_slider" ).slider( "value"));
-    flash.solve_PTZF(debug=debug);
-    plotCompositionData(flash,debug=debug);
+    if (!resetting_log && !chem_sys_changing_log) {
+	flash.updateP($( "#k1_slider" ).slider( "value"));
+	flash.solve_PTZF(debug=debug);
+	plotCompositionData(flash,debug=debug);
+    };
 };
 
 function update_temp() {
-    //console.log("T = ", $( "#k2_slider" ).slider( "value"));
-    flash.updateT($( "#k2_slider" ).slider( "value"));
-    flash.solve_PTZF();
-    plotCompositionData(flash);
+    if (!resetting_log && !chem_sys_changing_log) {
+	flash.updateT($( "#k2_slider" ).slider( "value"));
+	flash.solve_PTZF();
+	plotCompositionData(flash);
+    };
 };
 
 function update_F() {
-    //console.log("F = ", $( "#k3_slider" ).slider( "value"));
-    flash.F = $( "#k3_slider" ).slider( "value");
-    flash.solve_PTZF();
-    plotCompositionData(flash);
+    if (!resetting_log && !chem_sys_changing_log) {
+	flash.F = $( "#k3_slider" ).slider( "value");
+	flash.solve_PTZF();
+	plotCompositionData(flash);
+    };
 };
 
 function update_V() {
@@ -474,9 +479,12 @@ $('#run').click(async function(){
 $('#restart').click(async function(){
 
     // restart button functionality
+    resetting_log = true;
     console.log("You just clicked restart!");
     restartFlash(debug);
     updateAllSliders();
+    resetting_log = false;
+    plotCompositionData(flash, debug=false);
 });
 
 function updateAllSliders() {
@@ -502,6 +510,7 @@ function updatePSlider() {
 	step: (P_range.max-P_range.min)/200.0,
 	value: P_range.min,
 	slide: update_pressure,
+	change: update_pressure
     });
 
     $( "#k1_slider" ).slider( "value", flash.P );
@@ -517,6 +526,7 @@ function updateTSlider() {
 	step: 1.0,
 	value: T_range.min,
 	slide: update_temp,
+	change: update_temp
     });
     $( "#k2_slider" ).slider( "value", flash.T );
 };
@@ -531,6 +541,7 @@ function updateFSlider() {
 	step: (F_range.max-F_range.min)/50.0,
 	value: F_range.min,
 	slide: update_F,
+	change: update_F
     });
     $( "#k3_slider" ).slider( "value", flash.F );
 };
@@ -546,6 +557,7 @@ function updateLSlider() {
 	step: (L_range.max-L_range.min)/20.0,
 	value: L_range.min,
 	slide: update_L,
+	change: update_L,
 	disabled: true
     });
     $( "#k4_slider" ).slider( "value", flash.L );
@@ -608,16 +620,17 @@ $('#fullscreen').on('click', () => {
 
 // chemical system selector
 $('#system_id').on('change', function() {
-
+    
+    chem_sys_changing_log = true;
     console.log("-------potential chemical system change------");
     var old_sys = sys;
     console.log("old sys = ", old_sys);
     sys = Number(this.value) + 1;
     console.log("new sys = ", sys);   
-
     if (old_sys != sys) {
 	restartFlash(debug);
 	plotCompositionData(flash, debug=false);
 	updateAllSliders();
     };
+    chem_sys_changing_log = false;
 })
