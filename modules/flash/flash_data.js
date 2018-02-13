@@ -144,6 +144,30 @@ function getRanges(sys=1) {
 		max: 40.0
 	    }
 	};
+    }
+    else if (sys === 3) {
+	range = {
+	    P: {
+		min: 0.05,
+		max: 0.5
+	    },
+	    T: {
+		min:300.0,
+		max:360.0
+	    },
+	    F: {
+		min: 1.0,
+		max: 40.0
+	    },
+	    V: {
+		min: 0.0,
+		max: 40.0
+	    },
+	    L: {
+		min: 0.0,
+		max: 40.0
+	    }
+	};
     };
     return range;
 };
