@@ -1,11 +1,11 @@
 <html>
   <head>
-    <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/adm78/visualchemeng_js/75fec939213e22c2f2a2f36726d66d5d9ad6a1e9/css/buttons.css">
-    <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/adm78/visualchemeng_js/75fec939213e22c2f2a2f36726d66d5d9ad6a1e9/css/slider.css">
-    <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/adm78/visualchemeng_js/75fec939213e22c2f2a2f36726d66d5d9ad6a1e9/css/vce.css">
-    <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/adm78/visualchemeng_js/75fec939213e22c2f2a2f36726d66d5d9ad6a1e9/css/flash.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/adm78/visualchemeng_js/f431a9f914e7d7f96d17a73a57d5687be02b42a6/css/buttons.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/adm78/visualchemeng_js/f431a9f914e7d7f96d17a73a57d5687be02b42a6/css/slider.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/adm78/visualchemeng_js/f431a9f914e7d7f96d17a73a57d5687be02b42a6/css/vce.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/adm78/visualchemeng_js/f431a9f914e7d7f96d17a73a57d5687be02b42a6/css/flash.css">
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/adm78/visualchemeng_js/75fec939213e22c2f2a2f36726d66d5d9ad6a1e9/css/nice-select.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/adm78/visualchemeng_js/f431a9f914e7d7f96d17a73a57d5687be02b42a6/css/nice-select.css">
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto">
   </head>
   <body style="background-color:white;">
@@ -30,8 +30,9 @@
       </div>
       <div class="box system_id_container" id="system_id_container">
 	<select class="wide" id="system_id">
-	  <option value="0">pentane, hexane, cyclohexane</option>
-	  <option value="1">methanol, ethanol, water</option>
+	  <option value="0">biodiesel methanol recovery</option>
+	  <option value="1">pentane, hexane, cyclohexane</option>
+	  <option value="2">methanol, ethanol, water</option>
 	</select>
 	<select class="wide" id="flash_type">
 	  <option value="0">pT-flash</option>
@@ -53,7 +54,7 @@
 	<div class="k4_slider" id="k4_slider"></div>
 	<div class="k5_slider_text" id="k5">L</div>
 	<div class="k5_slider" id="k5_slider"></div>
-      </div>
+      </div> 
     </div>
     <!-- scripts required for simulations -->
     <script
@@ -61,15 +62,15 @@
        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
        crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/75fec939213e22c2f2a2f36726d66d5d9ad6a1e9/libraries/jquery.nice-select.min.js"></script>
-    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/75fec939213e22c2f2a2f36726d66d5d9ad6a1e9/libraries/p5.min.js"></script>
-    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/75fec939213e22c2f2a2f36726d66d5d9ad6a1e9/libraries/vce_utils.js"></script>
-    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/75fec939213e22c2f2a2f36726d66d5d9ad6a1e9/libraries/screenfull.js"></script>
-    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/75fec939213e22c2f2a2f36726d66d5d9ad6a1e9/libraries/plotly-latest.min.js"></script>
-    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/75fec939213e22c2f2a2f36726d66d5d9ad6a1e9/libraries/vce_separator.js"></script>
-    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/75fec939213e22c2f2a2f36726d66d5d9ad6a1e9/libraries/vce_particle.js"></script>
-    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/75fec939213e22c2f2a2f36726d66d5d9ad6a1e9/libraries/vce_ensemble.js"></script>
-    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/75fec939213e22c2f2a2f36726d66d5d9ad6a1e9/modules/flash/flash_data.js"></script>
-    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/75fec939213e22c2f2a2f36726d66d5d9ad6a1e9/modules/flash/flash.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/f431a9f914e7d7f96d17a73a57d5687be02b42a6/libraries/jquery.nice-select.min.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/f431a9f914e7d7f96d17a73a57d5687be02b42a6/libraries/p5.min.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/f431a9f914e7d7f96d17a73a57d5687be02b42a6/libraries/vce_utils.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/f431a9f914e7d7f96d17a73a57d5687be02b42a6/libraries/screenfull.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/f431a9f914e7d7f96d17a73a57d5687be02b42a6/libraries/plotly-latest.min.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/f431a9f914e7d7f96d17a73a57d5687be02b42a6/libraries/vce_separator.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/f431a9f914e7d7f96d17a73a57d5687be02b42a6/libraries/vce_particle.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/f431a9f914e7d7f96d17a73a57d5687be02b42a6/libraries/vce_ensemble.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/f431a9f914e7d7f96d17a73a57d5687be02b42a6/modules/flash/flash_data.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/f431a9f914e7d7f96d17a73a57d5687be02b42a6/modules/flash/flash.js"></script>
   </body>
 </html>
