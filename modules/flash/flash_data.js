@@ -13,9 +13,9 @@
 // Chemical system index
 //
 // sys:
-// 1 - pentane, hexane, cyclohexane
-// 2 - methanol, ethanol, water
-// 3 - methanol, water, glycerol, methyl-ester (biodiesel), triglyceride
+// 1 - methanol, water, glycerol, methyl-ester (biodiesel), triglyceride
+// 2 - pentane, hexane, cyclohexane
+// 3 - methanol, ethanol, water
 //---------------------------------------------------------
 
 function getInitialConditions(sys=1,debug=false) {
@@ -27,7 +27,7 @@ function getInitialConditions(sys=1,debug=false) {
     // sys - chemical system id
     
     var ic;
-    if (sys === 1) {
+    if (sys === 2) {
 	ic = {
 	    x : null,
 	    y : null,
@@ -43,7 +43,7 @@ function getInitialConditions(sys=1,debug=false) {
 	    F : 20.0
 	};
     }
-    else if (sys === 2) {
+    else if (sys === 3) {
 	// methanol, ethanol, water
 	// data: http://webbook.nist.gov/cgi/cbook.cgi?ID=C67561&Mask=4&Type=ANTOINE&Plot=on
 	//
@@ -62,7 +62,7 @@ function getInitialConditions(sys=1,debug=false) {
 	    F : 20.0
 	};	
     }
-    else if (sys === 3) {
+    else if (sys === 1) {
 	// methanol, water, glycerol, methyl-ester (biodiesel), triglyceride
 	// data: http://webbook.nist.gov/cgi/cbook.cgi?ID=C67561&Mask=4&Type=ANTOINE&Plot=on
 	//
@@ -97,7 +97,7 @@ function getRanges(sys=1) {
     // sys - chemical system id
     
     var range;
-    if (sys === 1) {
+    if (sys === 2) {
 	range = {
 	    P: {
 		min: 4.6,
@@ -121,7 +121,7 @@ function getRanges(sys=1) {
 	    }
 	};
     }
-    else if (sys === 2) {
+    else if (sys === 3) {
 	range = {
 	    P: {
 		min: 0.2,
@@ -145,7 +145,7 @@ function getRanges(sys=1) {
 	    }
 	};
     }
-    else if (sys === 3) {
+    else if (sys === 1) {
 	range = {
 	    P: {
 		min: 0.05,
@@ -174,15 +174,15 @@ function getRanges(sys=1) {
 
 function getColours(sys) {
 
-    if (sys === 1) {
+    if (sys === 2) {
 	return ['#2e8ade','#de912e','#2ede71'];
     }
-    else if (sys === 2) {
+    else if (sys === 3) {
 	// return ['#DF310C', '#ffffff', '#2e8ade'];
 	//return ['#858585', '#ffffff', '#2e8ade'];
 	return ['#BC0CDF','#DFBC0C','#0CDFBC'];
     }
-    else if (sys === 3) {
+    else if (sys === 1) {
 	return ['#BC0CDF','#DFBC0C','#0CDFBC','#2e8ade','#de912e','#2ede71'];
     };    
 
