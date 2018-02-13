@@ -21,7 +21,7 @@ var ymax;
 var sys = 1;
 var ic = getInitialConditions(sys);
 flash = new Separator(ic.x,ic.y,ic.z,ic.L,
-		      ic.V,ic.F,ic.T,ic.P,ic.A,debug);
+		      ic.V,ic.F,ic.T,ic.P,ic.A,ic.components,debug);
 console.log("flash = ", flash);
 var feed_stream = new Ensemble();
 var tops_stream = new Ensemble();
@@ -221,6 +221,7 @@ function plotCompositionData(flash, debug=false) {
 	marker: {
 	    color : getColours(sys)
 	},
+	text: flash.components,
 	width: 0.3
     }];
 
@@ -231,6 +232,7 @@ function plotCompositionData(flash, debug=false) {
 	marker: {
 	    color : getColours(sys)
 	},
+	text: flash.components,
 	width: 0.3
     }];
 
@@ -241,6 +243,7 @@ function plotCompositionData(flash, debug=false) {
 	marker: {
 	    color : getColours(sys)
 	},
+	text: flash.components,
 	width: 0.3
     }];
 
@@ -251,6 +254,7 @@ function plotCompositionData(flash, debug=false) {
 	marker: {
 	    color : '#2e8ade'
 	},
+	text: ['FEED','VAPOUR', 'LIQUID'],
 	width: 0.3
     }];
 
@@ -269,7 +273,7 @@ function restartFlash(debug=false) {
     ic = getInitialConditions(sys,debug);
     if (debug) {console.log("flash.js: restartFlash: initial conditions before solve =", ic)};
     flash = new Separator(ic.x,ic.y,ic.z,ic.L,
-		      ic.V,ic.F,ic.T,ic.P,ic.A,debug);
+			  ic.V,ic.F,ic.T,ic.P,ic.A,ic.components,debug);
     flash.solve_PTZF();
     if (debug) {console.log("flash.js: restartFlash: flash after restart =", flash)};
 

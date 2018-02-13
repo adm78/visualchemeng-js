@@ -40,7 +40,8 @@ function getInitialConditions(sys=1,debug=false) {
 			   [3.93002,1182.774,-52.532]],
 		eqns: [1, 1, 1]
 	    },
-	    F : 20.0
+	    F : 20.0,
+	    components : ['PENTANE','HEXANE','CYCLOHEXANE']
 	};
     }
     else if (sys === 3) {
@@ -59,7 +60,8 @@ function getInitialConditions(sys=1,debug=false) {
 			   [5.0768,1659.793,-45.854]],
 		eqns : [1, 1, 1]
 	     },
-	    F : 20.0
+	    F : 20.0,
+	    components : ['MeOH','EtOH','H2O']
 	};	
     }
     else if (sys === 1) {
@@ -81,7 +83,8 @@ function getInitialConditions(sys=1,debug=false) {
 			  ],
 		eqns : [2, 2, 2, 3, 2]
 	     },
-	    F : 20.0
+	    F : 20.0,
+	    components : ['MeOH','H2O','GLYCEROL','BIODIESEL (METHYL-ESTER)','TRIGLYCERIDE']
 	 };	
     };
     if (debug) {console.log("flash_data.js: getInitialConditions: sys = ", sys, "ic = ", ic)};

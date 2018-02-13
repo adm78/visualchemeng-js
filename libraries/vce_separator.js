@@ -11,7 +11,7 @@
 //----------------------------------------------------------
 
 function Separator(x=null,y=null,z=null,L=null,V=null,F=null,T=null,
-		   P=null,A=null,debug=false) {
+		   P=null,A=null,components=null,debug=false) {
 
     /* Initialise the separator. 
 
@@ -29,6 +29,7 @@ function Separator(x=null,y=null,z=null,L=null,V=null,F=null,T=null,
     this.P = P;
     this.A = A;
     this.K = getK(T,P,A,debug);
+    this.components = components
 
     // Separator methods   
     this.solve_PTZF = function(debug=false) {
