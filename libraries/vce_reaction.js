@@ -4,11 +4,12 @@
 // reaction information.
 //
 // Requires:
-// 
+// vce_constants.js
 //
 // Andrew D. McGuire 2018
 // a.mcguire227@gmail.com
 //----------------------------------------------------------
+let constants = Constants();
 
 function Reaction(A=[],Ea=[],comp=[],debug=false) {
 
@@ -27,7 +28,7 @@ function Reaction(A=[],Ea=[],comp=[],debug=false) {
 
     this.Arrhenius = function(T) {
 	// Compute rate constant k using Arrhenius Eqn.
-	
+	return this.A*Math.exp(-this.Ea/(contsants.R*T))
     }
 };
 
