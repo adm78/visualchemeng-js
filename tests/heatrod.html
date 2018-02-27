@@ -1,0 +1,68 @@
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="../css/buttons.css">
+    <link rel="stylesheet" type="text/css" href="../css/slider.css">
+    <link rel="stylesheet" type="text/css" href="../css/vce.css">
+    <link rel="stylesheet" type="text/css" href="../css/heatrod.css">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" type="text/css" href="../css/nice-select.css">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto">
+  </head>
+  <body style="background-color:white;">
+    <div class="wrapper" id="target">
+      <div class="box flow_chart_container" id="flow_chart_container"></div>
+      <div class="box bar_chart_container" id="bar_chart_container">
+	<div class="bar_chart_1" id="feedplotDiv"></div>
+	<div class="bar_chart_2" id="topsplotDiv"></div>
+	<div class="bar_chart_3" id="bottomsplotDiv"></div>
+      </div>
+      <div class="box sim_container" id="sim_container">
+        <div class="plotly_graph"; id="myDiv"></div>
+      </div>
+      <div class="box vce_info">
+	<a href="http://visualchemeng.com">
+          <img class="vce_logo" src="https://user-images.githubusercontent.com/17439476/31101095-20e39cb4-a7c4-11e7-95b4-1cccde15a8c0.png" />
+	</a>
+	<a href="http://visualchemeng.com"
+	   style="text-decoration:none">
+      	   <p style="display: block; margin-left: auto; margin-right: auto; color:white; text-align: center; font-family:Roboto" >Heat Rod</p>
+	   </a>
+      </div>
+      <div class="box system_id_container" id="num_method_container">
+	<select class="wide" id="num_method_selector">
+	  <option value="0">method 1</option>
+	  <option value="1">method 2</option>
+	</select>
+      </div>
+      <div class="box button_container">
+        <button class="button" id="run" style="width:96%">Pause</button><br/>
+	<button class="button" id="restart" style="width:96%">Reset</button><br/>
+	<button class="button" id="fullscreen" style="width:96%">Fullscreen</button>
+      </div>
+      <div class="box slider_container">
+	<div class="k1_slider_text" id="k1">T1</div>
+	<div class="k1_slider" id="k1_slider"></div>
+	<div class="k2_slider_text" id="k2">TL</div>
+	<div class="k2_slider" id="k2_slider"></div>
+	<div class="k3_slider_text" id="k3">A</div>
+	<div class="k3_slider" id="k3_slider"></div>
+	<div class="k4_slider_text" id="k4">B</div>
+	<div class="k4_slider" id="k4_slider"></div>
+	<div class="k5_slider_text" id="k5">C</div>
+	<div class="k5_slider" id="k5_slider"></div>
+      </div> 
+    </div>
+    <!-- scripts required for simulations -->
+    <script
+       src="https://code.jquery.com/jquery-3.2.1.min.js"
+       integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+       crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="../libraries/jquery.nice-select.min.js"></script>
+    <script src="../libraries/p5.min.js"></script>
+    <script src="../libraries/vce_utils.js"></script>
+    <script src="../libraries/screenfull.js"></script>
+    <script src="../libraries/plotly-latest.min.js"></script>
+    <script src="../modules/heat/heatrod.js"></script>
+  </body>
+</html>
