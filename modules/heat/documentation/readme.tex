@@ -1,0 +1,80 @@
+\documentclass{article}[12pt]
+
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{mathrsfs}
+\usepackage{bm}
+
+\begin{document}
+
+\section*{The Heat Equation}
+We postulate a fixed bar of a single and constant-density material, with length $L$; a uniform cross sectional area $A$ and a diffusivity of $\alpha = \frac{\kappa}{c\rho}$ (a parameter which depends on the rod material and its thermal conductivity/heat capacity). The bar is insulated on the outer surface and we assume at any point $x$ across the bar the temperature of the cross section is constant, but may be different to that of any other cross-section at a different point $x'$:\par
+\begin{align}\label{eq:heateq}
+ \frac{\partial \phi}{\partial t} &= \alpha \frac{\partial^2\phi}{\partial x^2} , &  0\leq x \leq L, &&  t\geq 0
+\end{align}
+We set the Dirichlet boundary conditions and the initial condition:\par
+\begin{align}
+  \phi(0,t) = \phi_0, & & \phi(L,t) = \phi_L, & & \phi(x,0) = f_0(x)
+\end{align}
+This is represented in Fig. \ref{fig:bar_representation}.\par
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale = 0.5]{bar_representation.png}
+  \caption{Graphical representation of bar conditions.}
+  \label{fig:bar_representation}
+\end{figure}
+We will use the Finite Difference (FD) method to solve Eq. \eqref{eq:heateq} numerically with a discrete approximation. We understand that the function $\phi$ and its derivatives $\partial_t\phi$, $\partial_x\phi$ and $\partial_{xx}\phi$ are all continuous in $x$ and $t$.
+\subsection*{Continuous Form}
+We imagine that the entire length of the bar $L$ is split in to a finite number $N$ of mesh points of equal length $\Delta x = L/N$. We then evaluate the heat at the boundary of each of these mesh points given the relevant system boundary conditions to evaluate the entire temperature profile across the whole bar.
+\begin{equation}
+  \lim_{N\rightarrow \infty}\frac{L}{N} \approx\partial x 
+\end{equation}
+So we see:
+\begin{equation}\label{eq:continuous_forward}
+\lim_{\Delta x \rightarrow 0 } \frac{\phi(x+\Delta x) - \phi(x)}{\Delta x} \approx \frac{\partial \phi}{\partial x}
+\end{equation}
+This is a continuous form of the forward-difference numerical approximation for the PDE in $x$. We can see that the FD method is in fact very similar to a forward Euler method for solving non-first-order PDEs. In actuality we may not set $\Delta x = 0$ so a truncation error will exist in this limit. We  control the extent of this error by increasing the number of nodes present on the mesh.\par
+We may also form backward-difference, centre-difference and second order approximations for the solution of this equation. Here, we simply present the first-order forward-difference method.
+\subsection*{Discrete Form}
+We may convert \eqref{eq:continuous_forward} in to a discrete form upon the mesh $(0,L) = (0,N\Delta x)$:
+\begin{equation}\label{eq:discrete_forward_x}
+  \frac{\partial \phi}{\partial x}\bigg\rvert_{x_i} = \lim_{\Delta x \rightarrow 0} \frac{\phi_{i+1} - \phi_i}{\Delta x}
+\end{equation}
+For $\Delta x = \Delta x_i = x_{i+1} - x_i$, given that all nodes on the mesh are equal in length.\par
+Let us now look at the discretised time-derivative of the function $\phi_i^{m+1}$ at a point in time $t_{m+1}$:
+\begin{equation}\label{eq:discrete_forward_t}
+\frac{\partial \phi}{\partial t}\bigg\rvert_{t_{m+1},x_i} = \lim_{\Delta t \rightarrow 0}\frac{\phi_i^{m+1} - \phi_i^{m}}{\Delta t}
+\end{equation}
+For $ \Delta t = \Delta t_{m+1} = t_{m+1}  - t_{m}$ where we uniformly step through time.
+from \eqref{eq:discrete_forward_x} we may now evaluate:
+\begin{equation}\label{eq:discrete_forward_x_2o}
+\frac{\partial^2 \phi}{\partial x^2}\bigg\rvert_{x_i,t_m} = \lim_{\Delta x \rightarrow 0} \frac{\phi_{i+1}^m - 2\phi_{i}^m + \phi_{i-1}^m}{\Delta x^2}
+\end{equation}
+So we now have a generalised forward-time/centred-space discrete form of \eqref{eq:heateq} by substituting \eqref{eq:discrete_forward_t} and \eqref{eq:discrete_forward_x_2o}:
+\begin{equation}
+\phi_i^{m+1} = \phi_i^m + \frac{\alpha\Delta t}{\Delta x^2} \left(\phi_{i+1}^m -2\phi_i^m + \phi_{i-1}^m\right)
+\end{equation}
+Where:
+\begin{equation}
+q = \frac{\alpha\Delta t}{\Delta x ^2}
+\end{equation}
+We may now solve this computationally, given the boundary conditions from \eqref{eq:heateq}, for each discrete point. Alternatively, we may form a matrix of all points.
+\begin{equation}
+\bm{\phi}^m+1 = A \bm{\phi}^{m}
+\end{equation}
+Where:
+\begin{equation}
+  A =
+  \begin{bmatrix}
+    1&0&0&\hdots&0&0\\
+    q&(1-2q)&q&0&\ddots&0\\
+    0&q&(1-2q)&q&\ddots&0\\
+    0&\ddots&\ddots&\ddots&\ddots&0\\
+    0&\ddots&q&(1-2q)&q&0\\
+    0&\ddots&0&q&(1-2q)&q\\
+    0&0&\hdots&0&0&1
+  \end{bmatrix}
+\end{equation}
+So, we may evalute the column vector $\bm{\phi}^{0}$ across the length $L$ at $t=0$ given the intial conditions, and then step forward through time to calculate a general solution for any combination of boundary conditions and physical parameters.
+\end{document}
