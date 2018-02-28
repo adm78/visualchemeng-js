@@ -13,31 +13,38 @@ let constants = Constants();
 
 function Reaction(A=[],Ea=[],comp=[],debug=false) {
 
-    /* Initialise the reactor.  */
+    /* Initialise the reaction   */
  
     // Reactor attributes
-    this.A = A;                   // Arrhenius prefactors (array)
-    this.Ea = input;              // Activation Energies (array)
-    this.comp = comp;             // Component names (array)
-    this.stoich = stoich;         // Stochiometric values (array)
+    this.A = A;                   // Arrhenius prefactor
+    this.Ea = input;              // Activation Energy
+    this.components = components; // Component names (string array)
+    this.stoich = stoich;         // Stochiometric values (float array)
 
     // Reactor methods
     this.stats = function() {
 	console.log(this);
     };
 
-    this.Arrhenius = function(T) {
+    this.k = function(T) {
 	// Compute rate constant k using Arrhenius Eqn.
-	return this.A*Math.exp(-this.Ea/(contsants.R*T))
-    }
+	return this.A*Math.exp(-this.Ea/(constants.R*T))
+    };
+
+    this.Jacobian = function(reac) {
+
+	// returns the Jacobian (dN/dt) inputs: reac - a Reactor
+	// object outputs: Jacobian - an array of float with length =
+	// reac.components.length
+	//
+	// Note: active components in reac are matched by name to
+	// this.components. If a component is present in
+	// this.components but not in reac.components, then it's
+	// concentration is assumed to be 0.  If a product is formed
+	// that is not in reac.components, then a warning is raised,
+	// but we proceed with computing the array elements for those
+	// parameters that are in both arrays.
+    };
 };
 
-function unit_testReactor() {
-
-    /* Reactor unit test */
-    testReac = new Reactor();
-    testReac.stats();
-    test_status = 'Failed';
-    console.log("vce_reactor.unti_testReactor:", test_status);
-};
 	
