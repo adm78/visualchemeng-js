@@ -55,11 +55,30 @@ function draw() {
     
 };
 
-function AnalyticalReactor() {
+function AnalyticalReactor() { 
 
     // The analytical reactor can be used to test a batch reactor with
     // simple reaction, where an analytical expression exists for the
     // temporal concentration evolutions. It inherets from the standard
-    // Reactor class. 
+    // Reactor class.
+
+    // describe the reaction A + B => C
+    var components = ['A','B','C'];
+    var simple_reaction = Reaction();
+    
+    var volume = null;
+    var reactions = [simple_reaction];
+    var c0 = [];
+    var T = 298;
+
+    Reactor.call(this,volume=volume,reactions=reactions,
+		 components=components,c0=c0,T=T,debug=debug);
+
+    this.step = function(dt) {
+	// step the reactor forward in time
+	
+    };
+
+
     
 };
