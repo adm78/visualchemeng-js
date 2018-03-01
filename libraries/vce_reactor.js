@@ -61,6 +61,6 @@ function unit_testReactor() {
     testReac = new Reactor();
     testReac.stats();
     test_status = 'Failed';
-    console.log("vce_reactor.unti_testReactor:", test_status);
+    console.log("vce_reactor.unit_testReactor:", test_status);
 };
 	

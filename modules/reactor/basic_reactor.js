@@ -14,8 +14,9 @@
 //               set-up variables
 // --------------------------------------------------
 var debug = false;
-var xmax
-var ymax
+var xmax;
+var ymax;
+var reac;
 
 // --------------------------------------------------
 //             p5 visualisation functionality
@@ -36,6 +37,9 @@ function setup() {
     //Test the reactor
     unit_testReactor();
 
+    //Build the analytical reactor instance
+    reac = new AnalyticalReactor();
+
 }
 
 function draw() {
@@ -46,11 +50,13 @@ function draw() {
        has completed. Effectively advances time. */
 
 
+    reac.step(0.1);
+    
     background(51);
     textSize(32);
     fill(255, 255, 255);
-    textAlign(CENTER);    
-    text("[INSERT REACTOR HERE]", xmax/2, ymax/2);
+    textAlign(CENTER);
+    text('reac.t = ' + reac.t.toFixed(1)+'s', xmax/2, ymax/2);
     
     
 };
@@ -64,19 +70,21 @@ function AnalyticalReactor() {
 
     // describe the reaction A + B => C
     var components = ['A','B','C'];
-    var simple_reaction = Reaction();
-    
+    var stoich = [1,1,-1]
+    var A = 100.0;
+    var Ea = 1000.0;
+    var simple_reaction = Reaction(A,Ea,components,stoich,debug)
     var volume = null;
     var reactions = [simple_reaction];
     var c0 = [];
     var T = 298;
 
-    Reactor.call(this,volume=volume,reactions=reactions,
-		 components=components,c0=c0,T=T,debug=debug);
+    // call the parent constructor
+    Reactor.call(this,volume,reactions,components,c0,T,debug);
 
     this.step = function(dt) {
-	// step the reactor forward in time
-	
+	// step the reactor forward in time by dt/s
+	this.t = this.t + dt	
     };
 
 

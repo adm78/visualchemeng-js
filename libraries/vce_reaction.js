@@ -11,13 +11,13 @@
 //----------------------------------------------------------
 let constants = Constants();
 
-function Reaction(A=[],Ea=[],comp=[],debug=false) {
+function Reaction(A=0.0,Ea=0.0,components=[],stoich=[],debug=false) {
 
     /* Initialise the reaction   */
  
     // Reactor attributes
     this.A = A;                   // Arrhenius prefactor
-    this.Ea = input;              // Activation Energy
+    this.Ea = Ea;              // Activation Energy/J
     this.components = components; // Component names (string array)
     this.stoich = stoich;         // Stochiometric values (float array)
 
@@ -44,6 +44,8 @@ function Reaction(A=[],Ea=[],comp=[],debug=false) {
 	// that is not in reac.components, then a warning is raised,
 	// but we proceed with computing the array elements for those
 	// parameters that are in both arrays.
+
+	
     };
 };
 
