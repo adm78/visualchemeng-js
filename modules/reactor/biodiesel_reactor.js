@@ -36,6 +36,7 @@ function setup() {
     
     //Test the reactor
     unit_testReactor();
+ //Construct an analytical reactor for testing
 
 }
 
@@ -55,4 +56,6 @@ function draw() {
     
     
 };
+
+
 

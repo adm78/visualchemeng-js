@@ -24,13 +24,12 @@ function Reactor(volume=null,reactions=[],components=[],c0=[],
 
      */
  
-    // Reactor attributes
-    this.tau = tau;                         
+    // Reactor attributes                       
     this.volume = volume;        
     this.reactions = reactions;   
     this.components = components;
     this.conc = c0;
-    this.T = t;
+    this.T = T;
     this.t = 0.0;                // current sim time/s
 
     // Reactor methods
@@ -50,10 +49,11 @@ function Reactor(volume=null,reactions=[],components=[],c0=[],
 
     this.Jacobian = function() {
 	// compute the Jacobian based on all reaction contributions
-	
+	return null
     };
   
 };
+
 
 function unit_testReactor() {
 
