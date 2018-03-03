@@ -9,7 +9,7 @@
 // Andrew D. McGuire 2018
 // a.mcguire227@gmail.com
 //----------------------------------------------------------
-let constants = Constants();
+let constants = new Constants();
 
 function Reaction(A=0.0,Ea=0.0,components=[],stoich=[],debug=false) {
 

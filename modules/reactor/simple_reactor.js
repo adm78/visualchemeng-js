@@ -40,6 +40,7 @@ function setup() {
 
     //Build the analytical reactor instance
     reac = new AnalyticalReactor();
+    reac.stats();
 
 }
 
@@ -52,6 +53,8 @@ function draw() {
 
     if (!(paused_log)) {
 	reac.step(0.1);
+	// reac.step(0.1);
+	// $('#run').click();
     };
     
     background(51);
@@ -59,6 +62,10 @@ function draw() {
     fill(255, 255, 255);
     textAlign(CENTER);
     text('reac.t = ' + reac.t.toFixed(1)+'s', xmax/2, ymax/2);
+    text('Na = ' + reac.conc[0].toFixed(3) +
+	 '  Nb = ' + reac.conc[1].toFixed(3) +  
+	 '  Nc = ' + reac.conc[2].toFixed(3),
+	 xmax/2, 0.65*ymax);
     
     
 };
@@ -73,24 +80,55 @@ function AnalyticalReactor() {
     // simple reaction, where an analytical expression exists for the
     // temporal concentration evolutions. It inherets from the standard
     // Reactor class.
+    // 
+    // Assumptions:
+    // - constant volume
+    // - constant T
 
     // describe the reaction A + B => C
     var components = ['A','B','C'];
     var stoich = [1,1,-1]
-    var A = 100.0;
-    var Ea = 1000.0;
-    var simple_reaction = Reaction(A,Ea,components,stoich,debug)
-    var volume = null;
+    var A = 1.0;
+    var Ea = 10000.0;
+    var simple_reaction = new Reaction(A,Ea,components,stoich,debug)
+    console.log("simple reaction = ", simple_reaction);
     var reactions = [simple_reaction];
-    var c0 = [];
+    var V = 1.0;
+    var c0 = [1.0, 2.0, 0.0];
     var T = 298;
 
     // call the parent constructor
-    Reactor.call(this,volume,reactions,components,c0,T,debug);
+    Reactor.call(this,V,reactions,components,c0,T,debug);
 
     this.step = function(dt) {
+
 	// step the reactor forward in time by dt/s
-	this.t = this.t + dt	
+
+	var Na0 = this.c0[0];
+	var Nb0 = this.c0[1];
+	var Nc0 = this.c0[2];
+	var alpha = Nb0 - Na0;
+	var num = Na0*alpha;
+	var k = this.reactions[0].k(this.T)
+	var exp = Math.exp(+k*alpha*this.t/this.V)
+	var den = Nb0*exp-Na0;
+	var Na = num/den;
+	var Nb = Na + Nb0 - Na0;
+	var Nc = Nc0 + Na0 - Na;
+	
+	if (debug) {
+	    console.log("Na0, Nb0, Nc0 = ", this.c0[0],this.c0[1],this.c0[2]);
+	    console.log("k = ", k);
+	    console.log("exp = ", exp);
+	    console.log("alpha = ", alpha);
+	    console.log("den = ", den);
+	    console.log("num = ", num);
+	    console.log("t = ", this.t);
+	    console.log("[Na, Nb, Nc] = ", [Na, Nb, Nc]);
+	};
+
+	this.conc = [Na, Nb, Nc];
+	this.t = this.t + dt;	
     };
 
     

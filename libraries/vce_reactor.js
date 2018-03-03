@@ -10,12 +10,12 @@
 // a.mcguire227@gmail.com
 //----------------------------------------------------------
 
-function Reactor(volume=null,reactions=[],components=[],c0=[],
+function Reactor(V=null,reactions=[],components=[],c0=[],
 		 T=298,debug=false) {
 
     /* Initialise the reactor  
        
-       volume      - reactor volume/m3 (float)
+       V           - reactor volume/m3 (float)
        reactions   - reactions present (array of reaction objects)
        components  - component names (array of n strings)
        c0          - initial concentrations (array of n floats)
@@ -25,9 +25,10 @@ function Reactor(volume=null,reactions=[],components=[],c0=[],
      */
  
     // Reactor attributes                       
-    this.volume = volume;        
+    this.V = V;        
     this.reactions = reactions;   
     this.components = components;
+    this.c0 = c0;
     this.conc = c0;
     this.T = T;
     this.t = 0.0;                // current sim time/s
