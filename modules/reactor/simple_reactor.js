@@ -5,7 +5,8 @@
 // Requires:
 // - p5.js or p5.min.js
 // - vce_utils.js
-// - 
+// - vce_reaction.js
+//
 //
 // Andrew D. McGuire 2018
 // a.mcguire227@gmail.com
@@ -17,7 +18,7 @@ var debug = false;
 var paused_log = false;
 var xmax;
 var ymax;
-var reac;
+var reac = new AnalyticalReactor();
 
 // --------------------------------------------------
 //             p5 visualisation functionality
@@ -38,9 +39,12 @@ function setup() {
     //Test the reactor
     unit_testReactor();
 
-    //Build the analytical reactor instance
-    reac = new AnalyticalReactor();
+    //Test the analytical reactor instance
     reac.stats();
+
+    //Construct the plotly graph
+    Plotly.newPlot('conc_plot_container',
+		   get_traces(reac),layout);
 
 }
 
@@ -52,9 +56,12 @@ function draw() {
        has completed. Effectively advances time. */
 
     if (!(paused_log)) {
+
 	reac.step(0.1);
-	// reac.step(0.1);
-	// $('#run').click();
+
+	// Update the concentration plot
+	var new_data = unpack_data(reac);
+	Plotly.extendTraces('conc_plot_container', new_data, [0, 1, 2]);
     };
     
     background(51);
@@ -66,6 +73,8 @@ function draw() {
 	 '  Nb = ' + reac.conc[1].toFixed(3) +  
 	 '  Nc = ' + reac.conc[2].toFixed(3),
 	 xmax/2, 0.65*ymax);
+
+
     
     
 };
@@ -127,12 +136,110 @@ function AnalyticalReactor() {
 	    console.log("[Na, Nb, Nc] = ", [Na, Nb, Nc]);
 	};
 
-	this.conc = [Na, Nb, Nc];
+	this.conc = [Na/this.V, Nb/this.V, Nc/this.V];
 	this.t = this.t + dt;	
     };
 
     
 };
+// --------------------------------------------------
+//                 Plotly formatting
+// --------------------------------------------------
+const layout = {
+   margin : {
+	l: 80,
+	r: 50,
+	b: 50,
+	t: 20,
+	pad: 5
+    },
+    //autosize: true,
+    //height: '100%',
+    titlefont: {
+	family: "Railway",
+	color: 'white',
+	size: 24,
+    },
+    legend: {
+	font: {color: 'white'}
+    },
+    hoverlabel: {bordercolor:'#333438'},
+    plot_bgcolor: '#333438',
+    paper_bgcolor: 'black',
+    xaxis: {
+	autorange: false,
+	autoscale: true,
+	showgrid: true,
+	gridcolor: '#44474c',
+	tickmode: 'auto',
+	range: [0,200.0],
+	title: 'time/s',
+	titlefont: {
+	    family: 'Roboto, serif',
+	    size: 18,
+	    color: 'white'
+	},
+	tickfont: {color:'white'}
+    },
+    yaxis: {
+	title: 'concentration/mol/m3',
+	showgrid: true,
+	gridcolor: '#44474c',
+	autorange: false,
+	autoscale: false,
+	range: [0.0, Math.max.apply(Math, reac.conc)*1.1],
+	titlefont: {
+	    family: 'Roboto, serif',
+	    size: 18,
+	    color: 'white'
+	},
+	tickfont: {color:'white'}
+    }
+};
+
+// Plotly routines
+function get_traces(reac) {
+    
+    var trace1 = {
+	type: "scatter",
+	mode: "lines",
+	name: 'A',
+	x: [reac.t],
+	y: [reac.conc[0]],
+	line: {color: '#FF0000'},
+	maxdisplayed: 200/0.1
+    };
+
+    var trace2 = {
+	type: "scatter",
+	mode: "lines",
+	name: 'B',
+	x: [reac.t],
+	y: [reac.conc[1]],
+	line: {color: '#0000FF'},
+	maxdisplayed: 200/0.1
+    };
+
+    var trace3 = {
+	type: "scatter",
+	mode: "lines",
+	name: 'C',
+	x: [reac.t],
+	y: [reac.conc[2]],
+	line: {color: '#00FF00'},
+	maxdisplayed: 200/0.1
+    };
+
+    return [trace1, trace2, trace3];
+};
+
+function unpack_data(reac) {
+    // unpacks storage data to extend plotly graph
+    return{
+	x: [[reac.t], [reac.t], [reac.t]],
+	y: [[reac.conc[0]], [reac.conc[1]], [reac.conc[2]]]
+    };
+}
 
 // --------------------------------------------------
 //                 UI event listners

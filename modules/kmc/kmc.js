@@ -372,7 +372,7 @@ const initial_layout = {
     yaxis: {
 	title: 'concentration',
 	showgrid: true,
-	gridcolor: '#44474c',//'#666a72',
+	gridcolor: '#44474c',
 	autorange: false,
 	autoscale: false,
 	range: [-Math.max.apply(Math, [NA,NB,NC])*0.1,
