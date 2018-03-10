@@ -23,7 +23,6 @@ var sid;
 var tank;
 var imp_array;
 var impeller;
-var frame = 0;
 
 // --------------------------------------------------
 //             p5 visualisation functionality
@@ -54,7 +53,9 @@ function setup() {
     canvas.parent("sim_container");
     sid = getImgScaledDimensions(tank, img_shrink_factor);
     var imp_height = sid.height*0.6297;
-    impeller = new Impeller(imp_array, imp_height, [xmax/2.0,ymax/2.0])
+    impeller = new Impeller(imp_array, imp_height, [xmax/2.0,ymax/2.0], speed=0.2)
+    impeller.updateSpeed(0.1);
+    console.log(impeller);
 }
 
 function draw() {
@@ -69,40 +70,10 @@ function draw() {
     imageMode(CENTER);
     image(tank, xmax/2 , ymax/2, sid.width, sid.height);
     impeller.show();
-    frame = frame + 1;
-    if (!paused_log && (frame % 5 === 0)) {
+    if (!paused_log) {
 	impeller.rotate();
     };
 };
-
-
-function Impeller(img_array,height,loc) {
-    // A test impeller class
-    this.images = img_array;
-    this.stage = 1;
-    this.height = height;
-    this.x = loc[0];
-    this.y = loc[1];
-    
-    
-    this.rotate = function() {
-	// rotate the impeller
-	if (this.stage < this.images.length - 1) {
-	    this.stage = this.stage + 1;
-	}
-	else {
-	    this.stage = 0;
-	};
-	    
-    };
-
-    this.show = function() {
-	var isf = this.height/this.images[this.stage].height;
-	var width = getImgScaledDimensions(this.images[this.stage], isf).width;
-	imageMode(CENTER);
-	image(this.images[this.stage], this.x, this.y, width, this.height);
-    };
-}
 
 
 // run button
