@@ -181,3 +181,14 @@ function generateLabels(arrx,letter) {
     };
     return labels;
 };
+
+function getImgScaledDimensions(img,img_shrink_factor) {
+
+    // return the scaled image dimensions
+    // that maintain the apect ratio.
+    var scaled_height =  ymax*img_shrink_factor;
+    var scaled_width = img.width*scaled_height/img.height;
+    return { width : scaled_width,
+	     height: scaled_height }
+
+};

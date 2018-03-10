@@ -1,0 +1,54 @@
+/* VCE - canvas.css */
+/*
+/* A simple style sheet that can be used for testing p5 features. */
+/*
+/* Andrew D. McGuire 2018 */
+/* ---------------------------------------------------------------------- */	   
+body {
+    margin: 5px;
+    font-family: "Roboto", Arial, Helvetica, sans-serif;
+}
+
+.ploty_graph {
+         height: 100%;
+}
+
+.wrapper {
+    display: grid;
+    grid-gap: 10px;
+        grid-template-columns: 2fr 1fr 2fr;
+        background-color: #fff;
+        color: #444;
+    }
+
+.box {
+    background-color: #444;
+    color: #fff;
+    border-radius: 5px;
+    padding: 10px;
+    font-size: 100%;
+    
+}
+
+.sim_container {
+    grid-column: 1 / 2;
+    grid-row: 1 / 8;
+}
+.vce_info {
+    grid-column: 2 ;
+    grid-row: 1 ;
+}
+.button_container {
+    grid-column: 2 ;
+    grid-row: 2 / 8 ;
+}
+
+.vce_logo {
+    width: 20%;
+    margin: auto;
+    display:block;
+}
+
+select {
+  display: none;
+}
