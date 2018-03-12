@@ -1,12 +1,18 @@
-// VCE Project - biodieseil_reactor.js
+// VCE Project - simple_reactor.js
 //
-// This script facilitates the modelling of a simple CSTR.. 
+// This script facilitates the modelling of a simple batch reactor
+// with the reaction:
+//
+// A + B --> C
+//
+// with rate k*CA*CB*V and k = A*exp(-RT/Ea).
 //
 // Requires:
 // - p5.js or p5.min.js
+// - plotly
 // - vce_utils.js
 // - vce_reaction.js
-//
+// - vce_impeller.js
 //
 // Andrew D. McGuire 2018
 // a.mcguire227@gmail.com
@@ -19,11 +25,25 @@ var paused_log = false;
 var xmax;
 var ymax;
 var reac = new AnalyticalReactor();
-
+var tank;
+var impeller;
 // --------------------------------------------------
 //             p5 visualisation functionality
 // --------------------------------------------------
-function preload() {};
+function preload() {
+    // load the canvas images (tank + impeller)
+    var tank_URL = "../resources/reactor_ni.svg";
+    var imp1_URL = "../resources/imp_0deg.svg";
+    var imp2_URL = "../resources/imp_45deg.svg";
+    var imp3_URL = "../resources/imp_90deg.svg";
+    var imp4_URL = "../resources/imp_135deg.svg";
+    tank = loadImage(tank_URL, pic => print(pic), loadImgErrFix);
+    var imp1 = loadImage(imp1_URL, pic => print(pic), loadImgErrFix);
+    var imp2 = loadImage(imp2_URL, pic => print(pic), loadImgErrFix);
+    var imp3 = loadImage(imp3_URL, pic => print(pic), loadImgErrFix);
+    var imp4 = loadImage(imp4_URL, pic => print(pic), loadImgErrFix);
+    imp_array = [imp1, imp2, imp3, imp4];
+};
 
 function setup() {
 
@@ -36,11 +56,14 @@ function setup() {
     var canvas= createCanvas(xmax, ymax);
     canvas.parent("sim_container");
     
-    //Test the reactor
-    unit_testReactor();
+    //Initialise the reactor
+    reac.stats(); // debug
 
-    //Test the analytical reactor instance
-    reac.stats();
+    //Initialise the impeller
+    var isf = 0.8;
+    sid = getImgScaledDimensions(tank, isf);
+    var imp_height = sid.height*0.6297;
+    impeller = new Impeller(imp_array, imp_height, [xmax/2.0,ymax/2.0], speed=0.3)
 
     //Construct the plotly graph
     Plotly.newPlot('conc_plot_container',
@@ -57,9 +80,10 @@ function draw() {
 
     if (!(paused_log)) {
 
+	// step the reactor
 	reac.step(0.1);
-
-	// Update the concentration plot
+	impeller.rotate();
+	// update the concentration plot
 	var new_data = unpack_data(reac);
 	Plotly.extendTraces('conc_plot_container', new_data, [0, 1, 2]);
     };
@@ -67,15 +91,11 @@ function draw() {
     background(51);
     textSize(32);
     fill(255, 255, 255);
-    textAlign(CENTER);
-    text('reac.t = ' + reac.t.toFixed(1)+'s', xmax/2, ymax/2);
-    text('Na = ' + reac.conc[0].toFixed(3) +
-	 '  Nb = ' + reac.conc[1].toFixed(3) +  
-	 '  Nc = ' + reac.conc[2].toFixed(3),
-	 xmax/2, 0.65*ymax);
-
-
-    
+    textAlign(LEFT);
+    text('reac.t = ' + reac.t.toFixed(1)+'s', xmax*0.02, ymax*0.1);
+    imageMode(CENTER);
+    image(tank, xmax/2 , ymax/2, sid.width, sid.height);
+    impeller.show();
     
 };
 
@@ -154,7 +174,7 @@ const layout = {
 	pad: 5
     },
     //autosize: true,
-    //height: '100%',
+    height: 300,
     titlefont: {
 	family: "Railway",
 	color: 'white',
@@ -165,7 +185,7 @@ const layout = {
     },
     hoverlabel: {bordercolor:'#333438'},
     plot_bgcolor: '#333438',
-    paper_bgcolor: 'black',
+    paper_bgcolor: '#333333',//'black',
     xaxis: {
 	autorange: false,
 	autoscale: true,
@@ -206,7 +226,7 @@ function get_traces(reac) {
 	name: 'A',
 	x: [reac.t],
 	y: [reac.conc[0]],
-	line: {color: '#FF0000'},
+	line: {color: '#008CBA'},
 	maxdisplayed: 200/0.1
     };
 
@@ -216,7 +236,7 @@ function get_traces(reac) {
 	name: 'B',
 	x: [reac.t],
 	y: [reac.conc[1]],
-	line: {color: '#0000FF'},
+	line: {color: '#BC0CDF'},
 	maxdisplayed: 200/0.1
     };
 
