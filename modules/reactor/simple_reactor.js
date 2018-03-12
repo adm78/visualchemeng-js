@@ -24,9 +24,10 @@ var debug = false;
 var paused_log = false;
 var xmax;
 var ymax;
-var reac = new AnalyticalReactor();
+var Reac = new AnalyticalReactor();
 var tank;
-var impeller;
+var Imp;
+//var reac_ensemble = 
 // --------------------------------------------------
 //             p5 visualisation functionality
 // --------------------------------------------------
@@ -57,17 +58,17 @@ function setup() {
     canvas.parent("sim_container");
     
     //Initialise the reactor
-    reac.stats(); // debug
+    Reac.stats(); // debug
 
     //Initialise the impeller
     var isf = 0.8;
     sid = getImgScaledDimensions(tank, isf);
     var imp_height = sid.height*0.6297;
-    impeller = new Impeller(imp_array, imp_height, [xmax/2.0,ymax/2.0], speed=0.3)
+    Imp = new Impeller(imp_array, imp_height, [xmax/2.0,ymax/2.0], speed=0.3)
 
     //Construct the plotly graph
     Plotly.newPlot('conc_plot_container',
-		   get_traces(reac),layout);
+		   get_traces(Reac),layout);
 
 }
 
@@ -81,10 +82,10 @@ function draw() {
     if (!(paused_log)) {
 
 	// step the reactor
-	reac.step(0.1);
-	impeller.rotate();
+	Reac.step(0.1);
+	Imp.rotate();
 	// update the concentration plot
-	var new_data = unpack_data(reac);
+	var new_data = unpack_data(Reac);
 	Plotly.extendTraces('conc_plot_container', new_data, [0, 1, 2]);
     };
     
@@ -92,10 +93,10 @@ function draw() {
     textSize(32);
     fill(255, 255, 255);
     textAlign(LEFT);
-    text('reac.t = ' + reac.t.toFixed(1)+'s', xmax*0.02, ymax*0.1);
+    text(Reac.t.toFixed(1)+'s', xmax*0.02, ymax*0.1);
     imageMode(CENTER);
     image(tank, xmax/2 , ymax/2, sid.width, sid.height);
-    impeller.show();
+    Imp.show();
     
 };
 
@@ -207,7 +208,7 @@ const layout = {
 	gridcolor: '#44474c',
 	autorange: false,
 	autoscale: false,
-	range: [0.0, Math.max.apply(Math, reac.conc)*1.1],
+	range: [0.0, Math.max.apply(Math, Reac.conc)*1.1],
 	titlefont: {
 	    family: 'Roboto, serif',
 	    size: 18,
