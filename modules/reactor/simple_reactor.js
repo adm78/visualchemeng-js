@@ -25,6 +25,8 @@ var paused_log = false;
 var xmax;
 var ymax;
 var Reac = new AnalyticalReactor();
+var n_init = 100;
+var particles;
 var tank;
 var Imp;
 //var reac_ensemble = 
@@ -65,7 +67,11 @@ function setup() {
     sid = getImgScaledDimensions(tank, isf);
     var imp_height = sid.height*0.6297;
     Imp = new Impeller(imp_array, imp_height, [xmax/2.0,ymax/2.0], speed=0.3)
-
+    
+    // Initialise the particles
+    particles = initParticles(Reac,10);
+    console.log("particles = ", particles);
+    
     //Construct the plotly graph
     Plotly.newPlot('conc_plot_container',
 		   get_traces(Reac),layout);
@@ -92,13 +98,45 @@ function draw() {
     background(51);
     textSize(32);
     fill(255, 255, 255);
-    textAlign(LEFT);
-    text(Reac.t.toFixed(1)+'s', xmax*0.02, ymax*0.1);
+    textAlign(LEFT, TOP);
+    text(Reac.t.toFixed(1)+'s', xmax*0.02, ymax*0.02);
+    textAlign(LEFT,BOTTOM);
+    text(frameRate().toFixed(0) + 'fps', xmax*0.02, ymax*0.98);
     imageMode(CENTER);
     image(tank, xmax/2 , ymax/2, sid.width, sid.height);
     Imp.show();
-    
+
+    // show each component
+    for (c = 0; c < particles.length; c++) {
+	 particles[c].show();
+    };
 };
+
+function initParticles(reac, n_init) {
+
+    // Return a list of ensembles, one for each component in the
+    // first reaction.
+
+    myParticles = [];
+    // spacing them out for testing purposes
+    var x = [0.2*xmax, 0.2*xmax, 0.8*xmax];
+    var y = [0.2*ymax, 0.8*ymax, 0.5*ymax];
+    var colour = ['#008CBA','#BC0CDF','#00FF00'];
+    
+    var ncomp = reac.reactions[0].components.length;
+    for (var c = 0; c < ncomp; c++) {
+	var compParticles = new Ensemble();
+	for (i = 0; i < n_init; i++) {
+	    var myPart = new Particle(x[c]+10.0*i,y[c],r=5.0,energy=0.0,
+				      vx=null,vy=null,theta=null,
+				      acc=createVector(0,0),colour[c]);
+	    compParticles.addParticle(myPart);
+	};
+	myParticles.push(compParticles);
+    };
+    return myParticles;
+};
+
 
 // --------------------------------------------------
 //             reactor functionality
