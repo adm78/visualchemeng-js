@@ -69,7 +69,7 @@ function setup() {
     Imp = new Impeller(imp_array, imp_height, [xmax/2.0,ymax/2.0], speed=0.3)
     
     // Initialise the particles
-    particles = initParticles(Reac,10);
+    particles = initParticles(Reac,30);
     console.log("particles = ", particles);
     
     //Construct the plotly graph
@@ -108,7 +108,8 @@ function draw() {
 
     // show each component
     for (c = 0; c < particles.length; c++) {
-	 particles[c].show();
+	particles = initParticles(Reac,30); // slow and dirty...
+	particles[c].show();
     };
 };
 
@@ -121,12 +122,14 @@ function initParticles(reac, n_init) {
     // spacing them out for testing purposes
     var x = [0.2*xmax, 0.2*xmax, 0.7*xmax];
     var y = [0.2*ymax, 0.8*ymax, 0.5*ymax];
-    var colour = ['#008CBA','#BC0CDF','#00FF00'];
-    
     var ncomp = reac.reactions[0].components.length;
+    var colour = ['#008CBA','#BC0CDF','#00FF00']; // should be dynamically pulled from traces?
+    var cT = sum(reac.conc);
+    
     for (var c = 0; c < ncomp; c++) {
 	var compParticles = new Ensemble();
-	for (i = 0; i < n_init; i++) {
+	var comp_n_init = Math.round(reac.conc[c]*n_init/cT);
+	for (i = 0; i < comp_n_init; i++) {
 	    var myPart = new Particle(x[c]+10.0*i,y[c],r=5.0,energy=0.0,
 				      vx=null,vy=null,theta=null,
 				      acc=createVector(0,0),colour[c]);
@@ -136,6 +139,13 @@ function initParticles(reac, n_init) {
     };
     return myParticles;
 };
+
+function updateParticles(reac) {
+    // Update the particle ensemble to relfect the current state of the
+    // reactor.
+
+};
+
 // --------------------------------------------------
 //             reactor functionality
 // --------------------------------------------------

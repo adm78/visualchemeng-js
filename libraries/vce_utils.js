@@ -192,3 +192,16 @@ function getImgScaledDimensions(img,img_shrink_factor) {
 	     height: scaled_height }
 
 };
+
+function add(a,b) {
+    return a + b;
+};
+
+
+function sum(mylist) {
+
+    // I'm here becuase JS doesn't know how to
+    // sum an array of numbers...
+    
+    return mylist.reduce(add,0);
+}
