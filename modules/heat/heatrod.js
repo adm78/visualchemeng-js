@@ -133,16 +133,16 @@ function updateAllSliders() {
     
     // update all sliders at once
     
-    updateT1Slider(); 
     updateTLSlider(); 
-    updateASlider(); 
-    updateBSlider(); 
-    updateCSlider();  
+    updateTRSlider(); 
+    updateT0Slider(); 
+    updateLSlider();
+    updatetSlider();
 
 };
 
 
-function updateT1Slider() {
+function updateTLSlider() {
     
     $( "#k1_slider" ).slider({
 	orientation: "vertical",
@@ -158,7 +158,7 @@ function updateT1Slider() {
     $( "#k1_slider" ).slider( "value", 0.5 );
 };
 
-function updateTLSlider() {
+function updateTRSlider() {
     
     $( "#k2_slider" ).slider({
 	orientation: "vertical",
@@ -174,7 +174,7 @@ function updateTLSlider() {
     $( "#k2_slider" ).slider( "value", 0.5 );
 };
 
-function updateASlider() {
+function updateT0Slider() {
     
     $( "#k3_slider" ).slider({
 	orientation: "vertical",
@@ -185,13 +185,13 @@ function updateASlider() {
 	value: 0.0,
 	slide: update_A,
 	change: update_A,
-	disabled: true
+//	disabled: true
     });
     $( "#k3_slider" ).slider( "value", 0.5 );
 };
 
 
-function updateBSlider() {
+function updateLSlider() {
     
     $( "#k4_slider" ).slider({
 	orientation: "vertical",
@@ -202,13 +202,13 @@ function updateBSlider() {
 	value: 0.0,
 	slide: update_B,
 	change: update_B,
-	disabled: true
+//	disabled: true
     });
     $( "#k4_slider" ).slider( "value", 0.5 );
 };
 
 
-function updateCSlider() {
+function updatetSlider() {
 
     $( "#k5_slider" ).slider({
 	orientation: "vertical",
@@ -219,7 +219,7 @@ function updateCSlider() {
 	value: 0.0,
 	slide: update_C,
 	change: update_C,
-	disabled: true
+//	disabled: true
     });
     $( "#k5_slider" ).slider( "value", 0.5 );
 };
