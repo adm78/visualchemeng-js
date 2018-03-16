@@ -18,11 +18,33 @@ var paused_log = false;
 var restarting_log = false;
 var num_meth_changing = false;
 
+var t= 0.0; //initial time
+var L; // Bar length
+var t_end; //simulation end time 
+
+var debug = false;
+var img;
+var sys = 0;
+var ic = getProperties(sys);
+var sid;
+var chem_sys = 0; // chemical system index
+var myFont;
+var ndraws = 0; // counter for drawing the stream
+
+// visual set-up globals (can be tuned)
+
+var img_shrink_factor = 0.60; // height of flash svg as fraction of canvas height (float, >0, <=1)
+var paused_log = false; // logical to paused the stream updates
+var resetting_log = false; // logical to indicate a reset is underway
+var bar_temp_changing_log = false; //logical to indicate that chemical system is being changed
+var outlet_freq = 1; // # draws/stream replenish (int)
+var fr = 40;    // target frame rate
+
 function preload() {
     // preload the flash tank image and fontan images that are required
 
-    // URL = "../modules/flash/assets/vector/flash.svg";
-    // img = loadImage(URL, pic => print(pic), loadImgErrFix);
+     URL = "../modules/heatrod/assets/vector/heatrod.svg";
+     img = loadImage(URL, pic => print(pic), loadImgErrFix);
 
 };
 
@@ -92,14 +114,48 @@ function updateCanvasText() {
 //--------------------------------------------------------------------
 //                   UI functions
 //--------------------------------------------------------------------
-function update_T1() {};
-function update_TL() {};
-function update_A() {};
-function update_B() {};
-function update_C() {};
+function update_TL() {
+    if (!resetting_log && !chem_sys_changing_log) {
+	flash.updateP($( "#k1_slider" ).slider( "value"));
+	flash.solve_PTZF(debug=debug);
+	plotCompositionData(flash,debug=debug);
+    };
+};
+
+function update_TR() {
+    if (!resetting_log && !chem_sys_changing_log) {
+	flash.updateT($( "#k2_slider" ).slider( "value"));
+	flash.solve_PTZF();
+	plotCompositionData(flash);
+    };
+};
+
+function update_T0() {
+    if (!resetting_log && !chem_sys_changing_log) {
+	flash.updateT($( "#k3_slider" ).slider( "value"));
+	flash.solve_PTZF();
+	plotCompositionData(flash);
+    };
+};
+
+function update_L() {
+    if (!resetting_log && !chem_sys_changing_log) {
+	flash.updateT($( "#k4_slider" ).slider( "value"));
+	flash.solve_PTZF();
+	plotCompositionData(flash);
+    };
+};
+
+function update_t() {
+    if (!resetting_log && !chem_sys_changing_log) {
+	flash.updateT($( "#k5_slider" ).slider( "value"));
+	flash.solve_PTZF();
+	plotCompositionData(flash);
+    };
+};
 
 //--------------------------------------------------------------------
-//                  UI event listners
+//                  UI event listeners
 //--------------------------------------------------------------------
 // run button
 $('#run').click(async function(){
@@ -143,11 +199,12 @@ function updateAllSliders() {
 
 
 function updateTLSlider() {
-    
+    //Left side temperature slider
+    var tl_range = getRanges(sys).tl;
     $( "#k1_slider" ).slider({
 	orientation: "vertical",
 	range: "min",
-	min: 0.0,
+	min: tl_range.min,
 	max: 1.0,
 	step: 1.0/20.0,
 	value: 0.0,
@@ -163,10 +220,10 @@ function updateTRSlider() {
     $( "#k2_slider" ).slider({
 	orientation: "vertical",
 	range: "min",
-	min: 0.0,
-	max: 1.0,
-	step: 1.0/20.0,
-	value: 0.0,
+	min: tl_range.min,
+	max: tl_range.max,
+	step: (t_range.min-tl_range.max) / 20.0,
+	value: tl_range.min,
 	slide: update_TL,
 	change: update_TL
     });

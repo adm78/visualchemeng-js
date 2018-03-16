@@ -15,7 +15,7 @@
 //             visualisation functionality
 // --------------------------------------------------
 var debug = false;
-var img; // fash tank image object used by draw
+var img; 
 var xmax;
 var ymax;
 var sys = 1;
