@@ -92,7 +92,7 @@ function Ensemble(p=[]) {
 
     this.applyBoundary = function(ymax,e_coeff) {
 
-	// bounce articles that hit lower ymax boundary
+	// Bounce articles that hit lower ymax boundary
 	// mutiplying the magnitude of their y-velocity by
 	// a factor e_coag
 	
@@ -103,6 +103,7 @@ function Ensemble(p=[]) {
 	    };
 	};
     };
+
 
 
 } // end of Particle class

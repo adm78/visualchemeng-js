@@ -16,6 +16,11 @@
 //
 // Andrew D. McGuire 2018
 // a.mcguire227@gmail.com
+//
+// To do:
+// - improve ensemble update efficiency
+// - confine particles to the tank
+//
 //----------------------------------------------------------
 // --------------------------------------------------
 //               set-up variables
@@ -25,7 +30,7 @@ var paused_log = false;
 var xmax;
 var ymax;
 var Reac = new AnalyticalReactor();
-var n_init = 100;
+var n_init = 20;
 var particles;
 var tank;
 var Imp;
@@ -69,7 +74,7 @@ function setup() {
     Imp = new Impeller(imp_array, imp_height, [xmax/2.0,ymax/2.0], speed=0.3)
     
     // Initialise the particles
-    particles = initParticles(Reac,30);
+    particles = initParticles(Reac,n_init);
     console.log("particles = ", particles);
     
     //Construct the plotly graph
@@ -108,7 +113,7 @@ function draw() {
 
     // show each component
     for (c = 0; c < particles.length; c++) {
-	particles = initParticles(Reac,30); // slow and dirty...
+//	particles = initParticles(Reac,30); // slow and dirty...
 	particles[c].show();
     };
 };
