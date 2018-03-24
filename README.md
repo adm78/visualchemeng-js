@@ -11,4 +11,9 @@ The vce project aims to deliver chemical engineering principles in a way that st
 
 ![VCE about screenshot](http://visualchemeng.com/wp-content/uploads/2018/02/vce_flash_biodiesel.png)
 
-
+# Credit where credit due
+The VCE modules rely on a number of third-party libraries to create the user interface, render objects to the canvas and simulate the particle physics, letting us get on with the chemical engineering side of things! These include:
+* p5.js - Lauren McCarthy
+* matter.js - Liam Brummitt 
+* screenfull.js - Sindre Sorhus
+* plotly.js - Plotly
