@@ -1,7 +1,8 @@
 // VCE Project - Ensemble class
 //
 // The Ensemble class is intended to hold and manipulate an array of
-// Particles objects (vce_particle.js).
+// Particles objects (vce_particle.js). It is currently being adpapted to
+// be compatible with the PhyEngineParticle class.
 //
 // Requires:
 // - p5.js or p5.min.js
@@ -11,7 +12,7 @@
 // a.mcguire227@gmail.com
 //----------------------------------------------------------
 
-function Ensemble(p=[]) {
+function Ensemble(p=[],world=null) {
 
     /* Initialise the ensemble. 
       

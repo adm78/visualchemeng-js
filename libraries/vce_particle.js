@@ -204,3 +204,49 @@ function Particle(x=0,y=0,r=5.0,energy=1.0,vx=null,vy=null,theta=null,
 
 
 } // end of Particle class
+
+// Adapated from:
+// Daniel Shiffman
+// http://codingtra.in
+// http://patreon.com/codingtrain
+// Code for: https://youtu.be/uITcoKpbQq4
+
+function PhysEngineParticle(world, x, y, r, colour='#2e8ade') {
+
+    // This particle is compatible with both the matter.js
+    // physics engine and the p5 rendering library.
+    
+    var options = {
+	friction: 0,
+	restitution: 0.95
+    }
+    
+    this.body = Bodies.circle(x, y, r, options);
+    this.r = r;
+    World.add(world, this.body);
+
+    this.isOffScreen = function(xmax,ymax) {
+	var pos = this.body.position;
+	return ((pos.y > ymax) || (pos.y < 0) || (pos.x < 0) || (pos.x > xmax));
+    }
+    
+    this.removeFromWorld = function(world) {
+	World.remove(world, this.body);
+    }
+    
+    
+    this.show = function() {
+	var pos = this.body.position;
+	var angle = this.body.angle;
+	push();
+	translate(pos.x, pos.y);
+	rotate(angle);
+	rectMode(CENTER);
+	strokeWeight(1);
+	stroke(255);
+	fill(127);
+	ellipse(0, 0, this.r * 2);
+	pop();
+    }
+    
+}

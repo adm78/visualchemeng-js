@@ -34,7 +34,10 @@ var n_init = 20;
 var particles;
 var tank;
 var Imp;
-//var reac_ensemble = 
+var Engine = Matter.Engine,
+    World = Matter.World,
+    Bodies = Matter.Bodies;
+
 // --------------------------------------------------
 //             p5 visualisation functionality
 // --------------------------------------------------
@@ -72,6 +75,26 @@ function setup() {
     sid = getImgScaledDimensions(tank, isf);
     var imp_height = sid.height*0.6297;
     Imp = new Impeller(imp_array, imp_height, [xmax/2.0,ymax/2.0], speed=0.3)
+
+    // Initialise the physics engine
+    engine = Engine.create();
+    world = engine.world;
+    
+    boundaries.push(new Boundary((xmax-sid.width)/2,
+				 (ymax)/2,
+				 20, sid.height*0.7, 0.0));
+    boundaries.push(new Boundary((xmax+sid.width)/2,
+				 (ymax)/2,
+				 20, sid.height*0.7, 0.0));
+    boundaries.push(new Boundary((xmax)/2,
+				 (ymax+1.0*sid.height)/2,
+				 sid.width, 20, 0.0));
+    boundaries.push(new Boundary((xmax-sid.width*0.7)/2,
+				 (ymax+0.9*sid.height)/2,
+				 0.5*sid.width, 20, 0.7));
+    boundaries.push(new Boundary((xmax+sid.width*0.7)/2,
+				 (ymax+0.9*sid.height)/2,
+				 0.5*sid.width, 20, 2*PI-0.7));
     
     // Initialise the particles
     particles = initParticles(Reac,n_init);
@@ -112,38 +135,37 @@ function draw() {
     Imp.show();
 
     // show each component
-    for (c = 0; c < particles.length; c++) {
-//	particles = initParticles(Reac,30); // slow and dirty...
-	particles[c].show();
-    };
+    // for (c = 0; c < particles.length; c++) {
+    // 	particles[c].show();
+    // };
 };
 
-function initParticles(reac, n_init) {
+// function initParticles(reac, n_init) {
 
-    // Return a list of ensembles, one for each component in the
-    // first reaction.
+//     // Return a list of ensembles, one for each component in the
+//     // first reaction.
 
-    myParticles = [];
-    // spacing them out for testing purposes
-    var x = [0.2*xmax, 0.2*xmax, 0.7*xmax];
-    var y = [0.2*ymax, 0.8*ymax, 0.5*ymax];
-    var ncomp = reac.reactions[0].components.length;
-    var colour = ['#008CBA','#BC0CDF','#00FF00']; // should be dynamically pulled from traces?
-    var cT = sum(reac.conc);
+//     myParticles = [];
+//     // spacing them out for testing purposes
+//     var x = [0.2*xmax, 0.2*xmax, 0.7*xmax];
+//     var y = [0.2*ymax, 0.8*ymax, 0.5*ymax];
+//     var ncomp = reac.reactions[0].components.length;
+//     var colour = ['#008CBA','#BC0CDF','#00FF00']; // should be dynamically pulled from traces?
+//     var cT = sum(reac.conc);
     
-    for (var c = 0; c < ncomp; c++) {
-	var compParticles = new Ensemble();
-	var comp_n_init = Math.round(reac.conc[c]*n_init/cT);
-	for (i = 0; i < comp_n_init; i++) {
-	    var myPart = new Particle(x[c]+10.0*i,y[c],r=5.0,energy=0.0,
-				      vx=null,vy=null,theta=null,
-				      acc=createVector(0,0),colour[c]);
-	    compParticles.addParticle(myPart);
-	};
-	myParticles.push(compParticles);
-    };
-    return myParticles;
-};
+//     for (var c = 0; c < ncomp; c++) {
+// 	var compParticles = new Ensemble();
+// 	var comp_n_init = Math.round(reac.conc[c]*n_init/cT);
+// 	for (i = 0; i < comp_n_init; i++) {
+// 	    var myPart = new Particle(x[c]+10.0*i,y[c],r=5.0,energy=0.0,
+// 				      vx=null,vy=null,theta=null,
+// 				      acc=createVector(0,0),colour[c]);
+// 	    compParticles.addParticle(myPart);
+// 	};
+// 	myParticles.push(compParticles);
+//     };
+//     return myParticles;
+// };
 
 function updateParticles(reac) {
     // Update the particle ensemble to relfect the current state of the
@@ -257,6 +279,10 @@ function unpack_data(reac) {
 // --------------------------------------------------
 //                 UI event listners
 // --------------------------------------------------
+// function mouseDragged() {
+//   particles.push(new Particle(mouseX, mouseY, random(5, 10)));
+// };
+
 // run button
 $('#run').click(async function(){
 
