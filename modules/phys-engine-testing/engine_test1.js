@@ -17,6 +17,7 @@
 //               set-up variables
 // --------------------------------------------------
 var debug = false;
+var show_boundaries = false;
 var paused_log = false;
 var particles = [];
 var boundaries = [];
@@ -85,20 +86,22 @@ function draw() {
     for (var i = 0; i < particles.length; i++) {
 	particles[i].show();
 	if (particles[i].isOffScreen(xmax,ymax)) {
-	    particles[i].removeFromWorld();
+	    particles[i].removeFromWorld(world);
 	    particles.splice(i, 1);
 	    i--;
 	}
     }
-    for (var i = 0; i < boundaries.length; i++) {
-//	boundaries[i].show();
-    }
+    if (show_boundaries) {
+	for (var i = 0; i < boundaries.length; i++) {
+	    boundaries[i].show();
+	}
+    };
 
     //console.log(particles.length, world.bodies.length);
 };
 
 function mouseDragged() {
-  particles.push(new Particle(mouseX, mouseY, random(5, 10)));
+    particles.push(new PhysEngineParticle(world, mouseX, mouseY, random(5, 10)));
 };
 
 // run button
@@ -112,6 +115,20 @@ $('#run').click(async function(){
     }
     else {
 	$("#run").text('Pause');
+    }
+});
+
+// run button
+$('#restart').click(async function(){
+
+    // boundary show hide
+    console.log("You just clicked show boundaries!");
+    show_boundaries = !(show_boundaries);
+    if (!show_boundaries) {
+	$("#restart").text('Show Bounds');
+    }
+    else {
+	$("#restart").text('Hide Bounds');
     }
 });
 

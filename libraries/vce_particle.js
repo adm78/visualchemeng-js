@@ -223,6 +223,7 @@ function PhysEngineParticle(world, x, y, r, colour='#2e8ade') {
     
     this.body = Bodies.circle(x, y, r, options);
     this.radius = r;
+    this.colour = colour;
     World.add(world, this.body);
 
     this.isOffScreen = function(xmax,ymax) {
@@ -255,10 +256,11 @@ function PhysEngineParticle(world, x, y, r, colour='#2e8ade') {
 	push();
 	translate(pos.x, pos.y);
 	rotate(angle);
-	rectMode(CENTER);
-	strokeWeight(1);
-	stroke(255);
-	fill(127);
+	// rectMode(CENTER);
+	// strokeWeight(1);
+	// stroke(255);
+	noStroke();
+	fill(this.colour);
 	ellipse(0, 0, this.radius * 2);
 	pop();
     }
