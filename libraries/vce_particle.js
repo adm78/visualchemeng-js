@@ -222,13 +222,27 @@ function PhysEngineParticle(world, x, y, r, colour='#2e8ade') {
     }
     
     this.body = Bodies.circle(x, y, r, options);
-    this.r = r;
+    this.radius = r;
     World.add(world, this.body);
 
     this.isOffScreen = function(xmax,ymax) {
 	var pos = this.body.position;
 	return ((pos.y > ymax) || (pos.y < 0) || (pos.x < 0) || (pos.x > xmax));
     }
+
+    this.inDomain = function(xmax,ymax) {
+    
+	// check if the part lies completely within
+	// the domain [0, xmax, 0, ymax]
+	var pos = this.body.position;
+	if (0 < pos.x - this.radius
+	    && pos.x + this.radiusadius < xmax
+	    && 0 < pos.y - this.radius
+	    && pos.y+ this.radius < ymax) {
+	    return true
+	};
+	return false;
+    };
     
     this.removeFromWorld = function(world) {
 	World.remove(world, this.body);
@@ -245,8 +259,25 @@ function PhysEngineParticle(world, x, y, r, colour='#2e8ade') {
 	strokeWeight(1);
 	stroke(255);
 	fill(127);
-	ellipse(0, 0, this.r * 2);
+	ellipse(0, 0, this.radius * 2);
 	pop();
     }
+
+    this.highlight = function() {
+
+	// Highlight the particle red.
+	var pos = this.body.position;
+	var angle = this.body.angle;
+	push();
+	translate(pos.x, pos.y);
+	rotate(angle);
+	fill(256,1,1);
+	noStroke();
+	ellipse(pos.x,pos.y,2.0*this.radius);
+	pop();
+	
+    }
+
+    
     
 }

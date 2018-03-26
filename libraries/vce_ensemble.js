@@ -7,6 +7,8 @@
 // Requires:
 // - p5.js or p5.min.js
 // - vce_particle.js
+// - matter.js (if PhysEngineParticle instances are passed or world is
+//   not null
 //
 // Andrew D. McGuire 2017
 // a.mcguire227@gmail.com
@@ -17,7 +19,10 @@ function Ensemble(p=[],world=null) {
     /* Initialise the ensemble. 
       
        args:
-       particles - an array of Particle objects
+       particles - an array of vce_particle.Particle or
+       vce_particles.PhysEngineParticle objects.
+       world - a Matter.World object (required PhysEngineParticles
+       are passed).
 
     */
  
@@ -25,19 +30,22 @@ function Ensemble(p=[],world=null) {
     this.particles = p;
     this.outlier_removed = false; // at least one outlier has been removed
     this.outliers = 0;
+    this.world = world;
+    this.engine_mode = isEngineMode(world);
     
-    // Ensemble methods
+    // Ensemble methods for both vce_particle.Particle and
+    // vce_particles.PhysEngineParticle based ensembles
+    function isEngineMode(world) {
+
+	// Check if the ensemble is being used in conjunction with the
+	// matter.js physics engine.
+	if (world != null) { this.engine_mode = true}
+	else {this.engine_mode = false};
+    };
+    
     this.addParticle = function(p,n=1) {
 	for (var i = 0; i < n; i++) {
 	    this.particles.push(p);
-	};
-    };
-    
-    this.update = function(dt) {
-	
-	//move all the particles forward in time by dt
-	for (i = 0; i < this.particles.length; i++) {
-	    this.particles[i].update(dt);
 	};
     };
 
@@ -60,22 +68,14 @@ function Ensemble(p=[],world=null) {
 	};
     }
 
-    
-    this.perturb = function(xmax,ymax) {
-
-	// randomly perturb all particle positions
-	// by [0-xmax] in the x-direction and
-	// by [0-ymax] in the y-direction.
-	for (i = 0; i < this.particles.length; i++) {
-	    this.particles[i].perturb(xmax,ymax);
-	};
-    };
-
     this.removeOutliers = function(xmax,ymax) {
 
 	// remove any particles that lie outwith the simualtion domain
 	for (i = 0; i < this.particles.length; i++) {
 	    if (!this.particles[i].inDomain(xmax,ymax)) {
+		if (this.engine_mode) {
+		    particle[i].removeFromWorld(this.world);
+		};
 		this.particles.splice(i,1);
 		i = i - 1;
 		this.updateOutliers();
@@ -91,20 +91,41 @@ function Ensemble(p=[],world=null) {
 	
     };
 
-    this.applyBoundary = function(ymax,e_coeff) {
-
-	// Bounce articles that hit lower ymax boundary
-	// mutiplying the magnitude of their y-velocity by
-	// a factor e_coag
+    // vce_particle.Particle-based ensemble specific methods
+    if (this.engine_mode) {
 	
-	for (i = 0; i < this.particles.length; i++) {
-	    if (!this.particles[i].inDomain(100*ymax,ymax)) {
-		this.particles[i].reflect_top();
-		this.particles[i].vel.y = this.particles[i].vel.y*e_coeff;
+	this.update = function(dt) {
+
+	    //move all the particles forward in time by dt
+	    for (i = 0; i < this.particles.length; i++) {
+		this.particles[i].update(dt);
 	    };
 	};
-    };
 
+	this.perturb = function(xmax,ymax) {
 
+	    // randomly perturb all particle positions
+	    // by [0-xmax] in the x-direction and
+	    // by [0-ymax] in the y-direction.
+	    for (i = 0; i < this.particles.length; i++) {
+		this.particles[i].perturb(xmax,ymax);
+	    };
+	};
+	
+	this.applyBoundary = function(ymax,e_coeff) {
+
+	    // Bounce articles that hit lower ymax boundary
+	    // mutiplying the magnitude of their y-velocity by
+	    // a factor e_coag
+	
+	    for (i = 0; i < this.particles.length; i++) {
+		if (!this.particles[i].inDomain(100*ymax,ymax)) {
+		    this.particles[i].reflect_top();
+		    this.particles[i].vel.y = this.particles[i].vel.y*e_coeff;
+		};
+	    };
+	};
+
+    };    
 
 } // end of Particle class
