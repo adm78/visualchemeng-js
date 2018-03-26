@@ -237,7 +237,7 @@ function PhysEngineParticle(world, x, y, r, colour='#2e8ade') {
 	// the domain [0, xmax, 0, ymax]
 	var pos = this.body.position;
 	if (0 < pos.x - this.radius
-	    && pos.x + this.radiusadius < xmax
+	    && pos.x + this.radius < xmax
 	    && 0 < pos.y - this.radius
 	    && pos.y+ this.radius < ymax) {
 	    return true

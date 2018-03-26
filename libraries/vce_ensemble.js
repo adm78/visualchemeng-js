@@ -39,8 +39,8 @@ function Ensemble(p=[],world=null) {
 
 	// Check if the ensemble is being used in conjunction with the
 	// matter.js physics engine.
-	if (world != null) { this.engine_mode = true}
-	else {this.engine_mode = false};
+	if (world != null) { return true}
+	else { return false};
     };
     
     this.addParticle = function(p,n=1) {
@@ -74,7 +74,7 @@ function Ensemble(p=[],world=null) {
 	for (i = 0; i < this.particles.length; i++) {
 	    if (!this.particles[i].inDomain(xmax,ymax)) {
 		if (this.engine_mode) {
-		    particle[i].removeFromWorld(this.world);
+		    this.particles[i].removeFromWorld(this.world);
 		};
 		this.particles.splice(i,1);
 		i = i - 1;

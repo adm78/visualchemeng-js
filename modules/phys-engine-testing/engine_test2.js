@@ -1,14 +1,18 @@
-// VCE Project - engine_test1.js
+// VCE Project - engine_test2.js
 //
 // A test of the matter.js physics engine in conjunction with p5.js
 // A lot of this is based on Dan Shiffman's nature of code tutorial
 // https://github.com/CodingTrain/website/blob/master/Courses/natureofcode/5.17_matter_intro/sketch.js
 // https://github.com/CodingTrain/website/tree/master/Courses/natureofcode/5.18_matter_intro/*.js
+// This specific script is aimed at testing support for vce_particle.PhysEngineParticle based
+// ensembles within the vce_ensemble.Ensemble class.
 //
 // Requires:
 // - p5.js or p5.min.js
 // - matter.js
 // - vce_utils.js
+// - vce_particle.js
+// - vce_ensemble.js
 //
 // Andrew D. McGuire 2018
 // a.mcguire227@gmail.com
@@ -17,14 +21,14 @@
 //               set-up variables
 // --------------------------------------------------
 var debug = false;
-var show_boundaries = false;
 var paused_log = false;
-var particles = [];
+var ensemble;
 var boundaries = [];
 var Engine = Matter.Engine,
     World = Matter.World,
     Bodies = Matter.Bodies;
 var sid;
+var show_boundaries = false;
 
 // --------------------------------------------------
 //             Visualisation functionality
@@ -50,6 +54,9 @@ function setup() {
     // set-up the physics engine
     engine = Engine.create();
     world = engine.world;
+
+    // initialise the ensemble
+    ensemble = new Ensemble([],world);
     
     boundaries.push(new Boundary((xmax-sid.width)/2,
 				 (ymax)/2,
@@ -66,7 +73,7 @@ function setup() {
     boundaries.push(new Boundary((xmax+sid.width*0.7)/2,
 				 (ymax+0.9*sid.height)/2,
 				 0.5*sid.width, 20, 2*PI-0.7));
-    // boundaries.push(new Boundary(250, 300, xmax * 0.6, 20, -0.3));
+
     
 };
 
@@ -82,26 +89,20 @@ function draw() {
     image(tank, xmax/2 , ymax/2, sid.width, sid.height);
     if (!paused_log) {
 	Engine.update(engine);
+	ensemble.removeOutliers(xmax,ymax);
     };
-    for (var i = 0; i < particles.length; i++) {
-	particles[i].show();
-	if (particles[i].isOffScreen(xmax,ymax)) {
-	    particles[i].removeFromWorld(world);
-	    particles.splice(i, 1);
-	    i--;
-	}
-    }
+    ensemble.show();
     if (show_boundaries) {
-	for (var i = 0; i < boundaries.length; i++) {
-	    boundaries[i].show();
-	}
+	    for (var i = 0; i < boundaries.length; i++) {
+		boundaries[i].show();
+	    };
     };
-
-    //console.log(particles.length, world.bodies.length);
+    console.log(ensemble.particles.length, world.bodies.length);
 };
 
 function mouseDragged() {
-    particles.push(new PhysEngineParticle(world, mouseX, mouseY, random(5, 10)));
+    ensemble.addParticle(new PhysEngineParticle(world, mouseX, mouseY, random(5, 10)));
+    console.log(ensemble);
 };
 
 // run button
@@ -131,5 +132,3 @@ $('#restart').click(async function(){
 	$("#restart").text('Hide Bounds');
     }
 });
-
-
