@@ -8,6 +8,7 @@
 //
 // Fraser M. Baigent, Andrew D. McGuire 2018
 // a.mcguire227@gmail.com
+// fraserbaigent@gmail.com
 //----------------------------------------------------------
 
 // --------------------------------------------------
