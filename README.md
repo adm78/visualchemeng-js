@@ -1,4 +1,4 @@
-# visualchemeng_js
+# visualchemeng-js
 
 <p align="center">
 <img src="http://visualchemeng.com/wp-content/uploads/2018/01/stack.png" width="50%" margin="auto" display="block">
