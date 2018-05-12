@@ -92,7 +92,7 @@ function Ensemble(p=[],world=null) {
     };
 
     // vce_particle.Particle-based ensemble specific methods
-    if (this.engine_mode) {
+    if (~this.engine_mode) {
 	
 	this.update = function(dt) {
 
