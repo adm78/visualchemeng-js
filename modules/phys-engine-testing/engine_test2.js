@@ -49,7 +49,7 @@ function setup() {
     ymax = 400;//dimensions.ymax;
     var canvas= createCanvas(xmax, ymax);
     canvas.parent("sim_container");
-    sid = getImgScaledDimensions(tank, 0.6);
+    sid = getImgScaledDimensions(tank, 0.6, ymax);
     
     // set-up the physics engine
     engine = Engine.create();
@@ -60,19 +60,19 @@ function setup() {
     
     boundaries.push(new Boundary((xmax-sid.width)/2,
 				 (ymax)/2,
-				 20, sid.height*0.7, 0.0));
+				 20, sid.height*0.7, 0.0, world));
     boundaries.push(new Boundary((xmax+sid.width)/2,
 				 (ymax)/2,
-				 20, sid.height*0.7, 0.0));
+				 20, sid.height*0.7, 0.0, world));
     boundaries.push(new Boundary((xmax)/2,
 				 (ymax+1.0*sid.height)/2,
-				 sid.width, 20, 0.0));
+				 sid.width, 20, 0.0, world));
     boundaries.push(new Boundary((xmax-sid.width*0.7)/2,
 				 (ymax+0.9*sid.height)/2,
-				 0.5*sid.width, 20, 0.7));
+				 0.5*sid.width, 20, 0.7, world));
     boundaries.push(new Boundary((xmax+sid.width*0.7)/2,
 				 (ymax+0.9*sid.height)/2,
-				 0.5*sid.width, 20, 2*PI-0.7));
+				 0.5*sid.width, 20, 2*PI-0.7, world));
 
     
 };

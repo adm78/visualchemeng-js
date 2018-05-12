@@ -51,9 +51,9 @@ function setup() {
     ymax = dimensions.ymax;
     var canvas= createCanvas(xmax, ymax);
     canvas.parent("sim_container");
-    sid = getImgScaledDimensions(tank, img_shrink_factor);
+    sid = getImgScaledDimensions(tank, img_shrink_factor, ymax);
     var imp_height = sid.height*0.6297;
-    impeller = new Impeller(imp_array, imp_height, [xmax/2.0,ymax/2.0], speed=0.2)
+    impeller = new Impeller(imp_array, imp_height, ymax, [xmax/2.0,ymax/2.0], speed=0.2)
     impeller.updateSpeed(0.1);
     console.log(impeller);
 }
