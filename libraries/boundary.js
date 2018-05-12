@@ -3,7 +3,7 @@
 // http://patreon.com/codingtrain
 // Code for: https://youtu.be/uITcoKpbQq4
 
-function Boundary(x, y, w, h, a) {
+function Boundary(x, y, w, h, a, world) {
   var options = {
     friction: 0,
     restitution: 0.95,

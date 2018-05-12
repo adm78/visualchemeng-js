@@ -10,7 +10,7 @@
 // a.mcguire227@gmail.com
 //----------------------------------------------------------
 
-function Impeller(img_array,height,loc,speed=1.0,stage=0) {
+function Impeller(img_array,height,ymax,loc,speed=1.0,stage=0) {
       
     // Impeller attributes
     this.images = img_array; // An array of image objects (it is
@@ -20,7 +20,8 @@ function Impeller(img_array,height,loc,speed=1.0,stage=0) {
     this.height = height;    // Impeller height (total)
     this.x = loc[0];         // Canvas x loaction (image centre)
     this.y = loc[1];         // Canvas y location (image centre)
-    this.speed = speed;       // Speed as updates per frame (max = 1, min = 0)
+    this.ymax = ymax;        // The canvas height
+    this.speed = speed;      // Speed as updates per frame (max = 1, min = 0)
     
     // Private attributes
     this._calls = 0; // number of rotate calls since last stage update
@@ -56,7 +57,7 @@ function Impeller(img_array,height,loc,speed=1.0,stage=0) {
 	// recomputed on-the-fly.
 	
 	var isf = this.height/this.images[this.stage].height;
-	var width = getImgScaledDimensions(this.images[this.stage], isf).width;
+	var width = getImgScaledDimensions(this.images[this.stage], isf, this.ymax).width;
 	imageMode(CENTER);
 	image(this.images[this.stage], this.x, this.y, width, this.height);
     };

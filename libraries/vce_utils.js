@@ -182,7 +182,7 @@ function generateLabels(arrx,letter) {
     return labels;
 };
 
-function getImgScaledDimensions(img,img_shrink_factor) {
+function getImgScaledDimensions(img,img_shrink_factor,ymax) {
 
     // return the scaled image dimensions
     // that maintain the apect ratio.
