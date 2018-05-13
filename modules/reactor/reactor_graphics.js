@@ -1,4 +1,4 @@
-// VCE Project - graphical_reactor.js
+// VCE Project - reactor_graphics.js
 //
 // This class is intented to provide a graphical represntation of a
 // reactive system.  Its primary attribute is a list of
@@ -27,7 +27,7 @@ var Engine = Matter.Engine,
     World = Matter.World,
     Bodies = Matter.Bodies;
 
-function GraphicalReactor(canvas, BackendReac, n_init, Tank, imp_array=[], isf=0.8, debug) {
+function ReactorGraphics(canvas, BackendReac, n_init, Tank, imp_array=[], isf=0.8, debug) {
     /*
       
     Args:
