@@ -211,15 +211,19 @@ function Particle(x=0,y=0,r=5.0,energy=1.0,vx=null,vy=null,theta=null,
 // http://patreon.com/codingtrain
 // Code for: https://youtu.be/uITcoKpbQq4
 
-function PhysEngineParticle(world, x, y, r, colour='#2e8ade') {
+function PhysEngineParticle(world, x, y, r, colour='#2e8ade', options = undefined) {
 
     // This particle is compatible with both the matter.js
     // physics engine and the p5 rendering library.
-    
-    var options = {
-	friction: 0,
-	restitution: 0.95
-    }
+
+    // set some defult options
+    if (typeof options == 'undefined') {
+	options = {
+	    friction: 0,
+	    restitution: 0.95
+	};
+    };
+
     
     this.body = Bodies.circle(x, y, r, options);
     this.radius = r;

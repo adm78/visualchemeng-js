@@ -29,7 +29,7 @@ var debug = false, paused_log = false,
     canvas, 
     Reac = new AnalyticalReactor(),
     Graphics,
-    n_init = 20,
+    n_init = 80,
     tank, imp_array
 
 
@@ -64,7 +64,7 @@ function setup() {
     Reac.stats(); // debug
 
     // Initialise the graphical reactor
-    Graphics = new GraphicalReactor(canvas, Reac, n_init, tank, imp_array, 0.8, debug);
+    Graphics = new ReactorGraphics(canvas, Reac, n_init, tank, imp_array, 0.8, debug);
     console.log(Graphics);
 
     //Construct the plotly graph

@@ -27,24 +27,26 @@ var Engine = Matter.Engine,
     World = Matter.World,
     Bodies = Matter.Bodies;
 
-function ReactorGraphics(canvas, BackendReac, n_init, Tank, imp_array=[], isf=0.8, debug) {
+function ReactorGraphics(canvas, Reac, n_init, Tank, imp_array=[], isf=0.8, debug) {
     /*
       
     Args:
-        BackendReac (vce.reactor) : 
+        Reac (vce_reactor.Reactor) : 
         n_init (init) : 
+	Tank (Image) : 
+	imp_array (Image array) :
+	isf (float) :
+	debug (boolean) : 
 
-
-    Returns:
 
     */
 
-    // build the class
+    // Set the main class attributes
     this.canvas = canvas;
     this.xmax = canvas.width;
     this.ymax = canvas.height;
     this.isf = isf;
-    this.BackendReac = BackendReac;
+    this.Reac = Reac;
     this.engine = Engine.create();
     this.world = this.engine.world;
     this.Tank = Tank;
@@ -53,35 +55,23 @@ function ReactorGraphics(canvas, BackendReac, n_init, Tank, imp_array=[], isf=0.
     this.debug = debug;
 
 
-    var ensemble1 = new Ensemble([],this.world)
-    this.Ensembles = [ensemble1];
+    // Build the ensemble array
+    this.Ensembles = [];
+    var colour = ['#008CBA','#BC0CDF','#00FF00'];
+    var inlet_x = 0.5*this.xmax; 
+    var inlet_y = (this.ymax)/2;
+    for (i = 0; i < Reac.components.length; i++) {
+	var component_ensemble = new Ensemble([],this.world);
+	var cT = sum(this.Reac.conc);
+	var component_n_init = Math.round(this.Reac.conc[i]*n_init/cT);
+	for (j = 0; j < component_n_init; j++) {
+	    var Part = new PhysEngineParticle(this.world, inlet_x, inlet_y, random(5, 10), colour[i]);
+	    component_ensemble.addParticle(Part);
+	};
+	this.Ensembles.push(component_ensemble);
+    };
+    console.log(this.Ensembles[0]);
 
-// 	function initParticles(reac, n_init) {
-
-//     // Return a list of ensembles, one for each component in the
-//     // first reaction.
-
-//     myParticles = [];
-//     // spacing them out for testing purposes
-//     var x = [0.2*xmax, 0.2*xmax, 0.7*xmax];
-//     var y = [0.2*ymax, 0.8*ymax, 0.5*ymax];
-//     var ncomp = reac.reactions[0].components.length;
-//     var colour = ['#008CBA','#BC0CDF','#00FF00']; // should be dynamically pulled from traces?
-//     var cT = sum(reac.conc);
-    
-//     for (var c = 0; c < ncomp; c++) {
-// 	var compParticles = new Ensemble();
-// 	var comp_n_init = Math.round(reac.conc[c]*n_init/cT);
-// 	for (i = 0; i < comp_n_init; i++) {
-// 	    var myPart = new Particle(x[c]+10.0*i,y[c],r=5.0,energy=0.0,
-// 				      vx=null,vy=null,theta=null,
-// 				      acc=createVector(0,0),colour[c]);
-// 	    compParticles.addParticle(myPart);
-// 	};
-// 	myParticles.push(compParticles);
-//     };
-//     return myParticles;
-    // };
 
     // Build the boundaries
     this.Boundaries = []; 
@@ -170,7 +160,7 @@ function ReactorGraphics(canvas, BackendReac, n_init, Tank, imp_array=[], isf=0.
 	textSize(32);
 	fill(255, 255, 255);
 	textAlign(LEFT, TOP);
-	text(this.BackendReac.t.toFixed(1)+'s', this.canvas.width*0.02, this.canvas.height*0.02);
+	text(this.Reac.t.toFixed(1)+'s', this.canvas.width*0.02, this.canvas.height*0.02);
 	pop()
 	push()
 	textAlign(LEFT,BOTTOM);
