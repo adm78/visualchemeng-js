@@ -91,17 +91,7 @@ function draw() {
     };
 
     // draw some custom text to the screen
-    background(51);
-    push()
-    textSize(32);
-    fill(255, 255, 255);
-    textAlign(LEFT, TOP);
-    text(Reac.t.toFixed(1)+'s', canvas.width*0.02, canvas.height*0.02);
-    pop()
-    push()
-    textAlign(LEFT,BOTTOM);
-    text(frameRate().toFixed(0) + 'fps', canvas.width*0.02, canvas.height*0.98);
-    pop()
+
 
     // show all the other graphics
     Graphics.show()
@@ -220,6 +210,11 @@ function unpack_data(reac) {
 // function mouseDragged() {
 //   particles.push(new Particle(mouseX, mouseY, random(5, 10)));
 // };
+function mouseDragged() {
+    Graphics.Ensembles[0].addParticle(new PhysEngineParticle(Graphics.world, mouseX, mouseY, random(5, 10)))
+//    ensemble.addParticle(new PhysEngineParticle(world, mouseX, mouseY, random(5, 10)));
+    console.log(Graphics.Ensembles[0]);
+};
 
 // run button
 $('#run').click(async function(){
@@ -248,3 +243,5 @@ $('#bounds').click(async function(){
 	$("#bounds").text('Hide Bounds');
     }
 });
+
+

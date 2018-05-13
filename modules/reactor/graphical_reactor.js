@@ -14,6 +14,8 @@
 // vce_utils.js
 // p5.min.js
 // boundary.js
+// vce_ensemble.Ensemble
+// vce_particle.PhysEngineParticle
 //
 // Andrew D. McGuire 2018
 // a.mcguire227@gmail.com
@@ -51,7 +53,8 @@ function GraphicalReactor(canvas, BackendReac, n_init, Tank, imp_array=[], isf=0
     this.debug = debug;
 
 
-    this.Ensembles = [];
+    var ensemble1 = new Ensemble([],this.world)
+    this.Ensembles = [ensemble1];
 
 // 	function initParticles(reac, n_init) {
 
@@ -120,30 +123,34 @@ function GraphicalReactor(canvas, BackendReac, n_init, Tank, imp_array=[], isf=0
 	
     };
 
-    this.update_ensemble = function() {};
+    this.update_ensemble = function() {
+	Engine.update(this.engine);
+	for (var i = 0; i < this.Ensembles.lenght; i++) {
+	    this.Ensembles[i].removeOutliers(this.xmax,this.ymax);
+	};
+    };
 
 
     this.show = function() {
-	// render all the neccessary pieces to the canvas
 
+	// render all the neccessary pieces to the canvas
+	background(51);
+	this.show_timer();
 	this.show_tank();
-	this.Impeller.show();
 	this.show_boundaries();
 	this.show_particles();
+	this.Impeller.show();
 	    
     };
 
     this.show_tank = function() {
-
 	push();
 	imageMode(CENTER);
 	image(this.Tank, this.xmax/2 , this.ymax/2, this.sid.width, this.sid.height);
-	pop();
-	
+	pop();	
     };
 
     this.show_boundaries = function() {
-
 	if (this.show_boundaries_log) {
 	    for (var i = 0; i < this.Boundaries.length; i++) {
 		this.Boundaries[i].show();
@@ -151,7 +158,25 @@ function GraphicalReactor(canvas, BackendReac, n_init, Tank, imp_array=[], isf=0
 	};
     };
 
-    this.show_particles = function() {};
+    this.show_particles = function() {
+	for (var i = 0; i < this.Ensembles.length; i++) {
+	    this.Ensembles[i].show();
+	};
+    };
+
+
+    this.show_timer = function() {
+	push()
+	textSize(32);
+	fill(255, 255, 255);
+	textAlign(LEFT, TOP);
+	text(this.BackendReac.t.toFixed(1)+'s', this.canvas.width*0.02, this.canvas.height*0.02);
+	pop()
+	push()
+	textAlign(LEFT,BOTTOM);
+	text(frameRate().toFixed(0) + 'fps', this.canvas.width*0.02, this.canvas.height*0.98);
+	pop()
+    };
 
 
 };
