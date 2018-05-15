@@ -91,6 +91,26 @@ function Ensemble(p=[],world=null) {
 	
     };
 
+    this.removeRandom = function(n) {
+
+	// randomly remove n particles from the ensemble
+	for (var i = 0; i < n; i ++) {
+	    if (this.particles.length > 0) {
+		var index = Math.ceil(Math.random()*this.particles.length)-1;
+		console.log("vce_ensemble.Ensemble.removeRandom: index = ", index);
+		if (this.engine_mode) {
+		    this.particles[index].removeFromWorld(this.world);
+		};
+		this.particles.splice(index,1);
+	    }
+	    else {
+		break;
+	    };
+	};
+	
+    };
+    
+
     // vce_particle.Particle-based ensemble specific methods
     if (~this.engine_mode) {
 	

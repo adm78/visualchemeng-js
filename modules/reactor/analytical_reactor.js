@@ -31,6 +31,7 @@ function AnalyticalReactor() {
     var V = 1.0;
     var c0 = [1.0, 2.0, 0.0];
     var T = 298;
+   
 
     // call the parent constructor
     Reactor.call(this,V,reactions,components,c0,T,debug);
@@ -39,9 +40,9 @@ function AnalyticalReactor() {
 
 	// step the reactor forward in time by dt/s
 
-	var Na0 = this.c0[0];
-	var Nb0 = this.c0[1];
-	var Nc0 = this.c0[2];
+	var Na0 = this.c0[0]*this.V;
+	var Nb0 = this.c0[1]*this.V;
+	var Nc0 = this.c0[2]*this.V;
 	var alpha = Nb0 - Na0;
 	var num = Na0*alpha;
 	var k = this.reactions[0].k(this.T)
@@ -62,6 +63,7 @@ function AnalyticalReactor() {
 	    console.log("[Na, Nb, Nc] = ", [Na, Nb, Nc]);
 	};
 
+	this.conc_prev_step = this.conc
 	this.conc = [Na/this.V, Nb/this.V, Nc/this.V];
 	this.t = this.t + dt;	
     };

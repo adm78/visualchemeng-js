@@ -1,3 +1,4 @@
+
 // VCE Project - reactor_graphics.js
 //
 // This class is intented to provide a graphical represntation of a
@@ -55,14 +56,14 @@ function ReactorGraphics(canvas, Reac, n_init, Tank, imp_array=[], isf=0.8, debu
     this.debug = debug;
 
 
-    // Build the ensemble array
+    // Build the ensemble array (one ensemble for each component)
     this.Ensembles = [];
     var colour = ['#008CBA','#BC0CDF','#00FF00'];
     var inlet_x = 0.5*this.xmax; 
     var inlet_y = (this.ymax)/2;
+    var cT = sum(this.Reac.conc);
     for (i = 0; i < Reac.components.length; i++) {
 	var component_ensemble = new Ensemble([],this.world);
-	var cT = sum(this.Reac.conc);
 	var component_n_init = Math.round(this.Reac.conc[i]*n_init/cT);
 	for (j = 0; j < component_n_init; j++) {
 	    var Part = new PhysEngineParticle(this.world, inlet_x, inlet_y, random(5, 10), colour[i]);
@@ -70,10 +71,12 @@ function ReactorGraphics(canvas, Reac, n_init, Tank, imp_array=[], isf=0.8, debu
 	};
 	this.Ensembles.push(component_ensemble);
     };
-    console.log(this.Ensembles[0]);
+
+    var component_n_init_0 = Math.round(this.Reac.conc[0]*n_init/cT);
+    this.k = component_n_init_0/(this.Reac.conc[0]*this.Reac.V);
 
 
-    // Build the boundaries
+    // Build the boundaries (ideally these co-ordinates should be loaded from file...)
     this.Boundaries = []; 
     this.Boundaries.push(new Boundary((this.xmax-this.sid.width)/2,
 				      (this.ymax)/2,
@@ -104,7 +107,7 @@ function ReactorGraphics(canvas, Reac, n_init, Tank, imp_array=[], isf=0.8, debu
 				 [this.xmax/2.0,this.ymax/2.0],
 				 speed=0.3);
 
-
+    
     // Class Methods
     this.update = function() {
 
@@ -115,9 +118,45 @@ function ReactorGraphics(canvas, Reac, n_init, Tank, imp_array=[], isf=0.8, debu
 
     this.update_ensemble = function() {
 	Engine.update(this.engine);
-	for (var i = 0; i < this.Ensembles.lenght; i++) {
+	var colour = ['#008CBA','#BC0CDF','#00FF00'];
+	var inlet_x = 0.5*this.xmax; 
+	var inlet_y = (this.ymax)/2;
+	for (var i = 0; i < this.Ensembles.length; i++) {
+	    var dN = this.get_dN_int(i);
+	    console.log("dN = ", dN);
+	    if (dN < 0) {
+		this.Ensembles[i].removeRandom(-dN);
+	    }
+	    else if (dN > 0) {
+		for (var j=0; j < dN; j++) {
+		    var Part = new PhysEngineParticle(this.world, inlet_x, inlet_y, random(5, 10), colour[i]);
+		    this.Ensembles[i].addParticle(Part);
+		};
+	    }
 	    this.Ensembles[i].removeOutliers(this.xmax,this.ymax);
 	};
+
+	
+	
+    };
+
+    this.get_dN_int = function(i) {
+
+	var target_Ni = this.k*this.Reac.conc[i]*this.Reac.V;
+	var actual_Ni = this.Ensembles[i].particles.length;
+	dNi = target_Ni - actual_Ni;
+	if (dNi >= 0.0) {
+	    var sign = +1;
+	}
+	else {
+	    var sign = -1
+	};
+	dNi_abs = Math.abs(dNi);
+	dNi_abs_int = Math.floor(dNi_abs);
+	dNi_int = Math.round(sign*dNi_abs_int);
+	return dNi_int
+	
+
     };
 
 
@@ -126,6 +165,7 @@ function ReactorGraphics(canvas, Reac, n_init, Tank, imp_array=[], isf=0.8, debu
 	// render all the neccessary pieces to the canvas
 	background(51);
 	this.show_timer();
+	this.show_fps();
 	this.show_tank();
 	this.show_boundaries();
 	this.show_particles();
@@ -162,6 +202,10 @@ function ReactorGraphics(canvas, Reac, n_init, Tank, imp_array=[], isf=0.8, debu
 	textAlign(LEFT, TOP);
 	text(this.Reac.t.toFixed(1)+'s', this.canvas.width*0.02, this.canvas.height*0.02);
 	pop()
+    };
+
+    
+    this.show_fps = function() {
 	push()
 	textAlign(LEFT,BOTTOM);
 	text(frameRate().toFixed(0) + 'fps', this.canvas.width*0.02, this.canvas.height*0.98);
