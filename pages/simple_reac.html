@@ -1,0 +1,61 @@
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/adm78/visualchemeng_js/8fb440c4c9622de88fa4f059b906a4a2d1bb5cd5/css/buttons.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/adm78/visualchemeng_js/8fb440c4c9622de88fa4f059b906a4a2d1bb5cd5/css/slider.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/adm78/visualchemeng_js/8fb440c4c9622de88fa4f059b906a4a2d1bb5cd5/css/vce.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/adm78/visualchemeng_js/8fb440c4c9622de88fa4f059b906a4a2d1bb5cd5/css/reac.css">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/adm78/visualchemeng_js/8fb440c4c9622de88fa4f059b906a4a2d1bb5cd5/css/nice-select.css">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto">
+  </head>
+  <body style="background-color:white;">
+    <div class="wrapper" id="target">
+      <div class="box flow_chart_container" id="flow_chart_container"></div>
+      <div class="box placeholder_container" id="placeholder_container"></div>
+      <div class="box conc_plot_container" id="conc_plot_container"></div>
+      <div class="box sim_container" id="sim_container">
+      </div>
+      <div class="box vce_info">
+	<a href="http://visualchemeng.com">
+          <img class="vce_logo" src="https://user-images.githubusercontent.com/17439476/31101095-20e39cb4-a7c4-11e7-95b4-1cccde15a8c0.png" />
+	</a>
+	<a href="http://visualchemeng.com"
+	   style="text-decoration:none">
+      	   <p style="display: block; margin-left: auto; margin-right: auto; color:white; text-align: center; font-family:Roboto" >Simple reactor</p>
+	   </a>
+      </div>
+      <div class="box system_id_container" id="system_id_container">
+      </div>
+      <div class="box button_container">
+        <button class="button" id="run" style="width:96%">Pause</button><br/>
+	<button class="button" id="restart" style="width:96%">Reset</button><br/>
+	<button class="button" id="fullscreen" style="width:96%">Fullscreen</button>
+	<button class="button" id="bounds" style="width:96%">Show Bounds</button><br/>
+      </div>
+      <div class="box slider_container">
+      </div> 
+    </div>
+    <!-- scripts required for simulations -->
+    <script
+       src="https://code.jquery.com/jquery-3.2.1.min.js"
+       integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+       crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/8fb440c4c9622de88fa4f059b906a4a2d1bb5cd5/libraries/jquery.nice-select.min.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/8fb440c4c9622de88fa4f059b906a4a2d1bb5cd5/libraries/p5.min.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/8fb440c4c9622de88fa4f059b906a4a2d1bb5cd5/libraries/matter.min.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/8fb440c4c9622de88fa4f059b906a4a2d1bb5cd5/libraries/boundary.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/8fb440c4c9622de88fa4f059b906a4a2d1bb5cd5/libraries/screenfull.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/8fb440c4c9622de88fa4f059b906a4a2d1bb5cd5/libraries/plotly-latest.min.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/8fb440c4c9622de88fa4f059b906a4a2d1bb5cd5/libraries/vce_utils.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/8fb440c4c9622de88fa4f059b906a4a2d1bb5cd5/libraries/vce_impeller.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/8fb440c4c9622de88fa4f059b906a4a2d1bb5cd5/libraries/vce_constants.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/8fb440c4c9622de88fa4f059b906a4a2d1bb5cd5/libraries/vce_reaction.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/8fb440c4c9622de88fa4f059b906a4a2d1bb5cd5/libraries/vce_reactor.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/8fb440c4c9622de88fa4f059b906a4a2d1bb5cd5/libraries/vce_particle.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/8fb440c4c9622de88fa4f059b906a4a2d1bb5cd5/libraries/vce_ensemble.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/8fb440c4c9622de88fa4f059b906a4a2d1bb5cd5/modules/reactor/analytical_reactor.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/8fb440c4c9622de88fa4f059b906a4a2d1bb5cd5/modules/reactor/reactor_graphics.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/8fb440c4c9622de88fa4f059b906a4a2d1bb5cd5/modules/reactor/simple_reactor_frontend.js"></script>
+  </body>
+</html>
