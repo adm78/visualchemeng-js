@@ -59,13 +59,16 @@ function ReactorGraphics(canvas, Reac, n_init, Tank, imp_array=[], isf=0.8, debu
 
     // Build the ensemble array (one ensemble for each component)
     this.Ensembles = [];
-    var inlet_x = 0.5*this.xmax; 
-    var inlet_y = (this.ymax)/2;
+    // var inlet_x = 0.5*this.xmax; 
+    // var inlet_y = (this.ymax)/2;
+
     var cT = sum(this.Reac.conc);
     for (i = 0; i < Reac.components.length; i++) {
 	var component_ensemble = new Ensemble([],this.world);
 	var component_n_init = Math.round(this.Reac.conc[i]*n_init/cT);
 	for (j = 0; j < component_n_init; j++) {
+	    var inlet_x = 0.5*(this.xmax + 0.8*getRandomSigned()*this.sid.width); 
+	    var inlet_y = (this.ymax)*0.7 + 0.2*getRandomSigned()*this.sid.height;
 	    var Part = new PhysEngineParticle(this.world, inlet_x, inlet_y, this.psize[i], this.pcolour[i]);
 	    component_ensemble.addParticle(Part);
 	};
