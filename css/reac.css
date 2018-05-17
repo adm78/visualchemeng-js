@@ -22,6 +22,11 @@
     grid-row: 1 / 4   
 }
 
+.placeholder_container {
+    grid-column: 1 ;
+    grid-row: 4 / 5  
+}
+
 .conc_plot_container {
     grid-column: 2 / 3;
     grid-row: 4 / 5;    

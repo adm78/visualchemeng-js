@@ -29,7 +29,7 @@ var debug = false, paused_log = false,
     canvas, 
     Reac = new AnalyticalReactor(),
     Graphics,
-    n_init = 80,
+    n_init = 150,
     tank, imp_array
 
 

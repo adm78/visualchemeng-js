@@ -54,11 +54,12 @@ function ReactorGraphics(canvas, Reac, n_init, Tank, imp_array=[], isf=0.8, debu
     this.sid = getImgScaledDimensions(this.Tank, this.isf, this.ymax);
     this.show_boundaries_log = false;
     this.debug = debug;
+    this.pcolour = ['#008CBA','#BC0CDF','#00FF00']
+    this.psize = [10, 5, Math.pow(Math.pow(5,3)+Math.pow(10,3),1.0/3.0)]
 
 
     // Build the ensemble array (one ensemble for each component)
     this.Ensembles = [];
-    var colour = ['#008CBA','#BC0CDF','#00FF00'];
     var inlet_x = 0.5*this.xmax; 
     var inlet_y = (this.ymax)/2;
     var cT = sum(this.Reac.conc);
@@ -66,12 +67,13 @@ function ReactorGraphics(canvas, Reac, n_init, Tank, imp_array=[], isf=0.8, debu
 	var component_ensemble = new Ensemble([],this.world);
 	var component_n_init = Math.round(this.Reac.conc[i]*n_init/cT);
 	for (j = 0; j < component_n_init; j++) {
-	    var Part = new PhysEngineParticle(this.world, inlet_x, inlet_y, random(5, 10), colour[i]);
+	    var Part = new PhysEngineParticle(this.world, inlet_x, inlet_y, this.psize[i], this.pcolour[i]);
 	    component_ensemble.addParticle(Part);
 	};
 	this.Ensembles.push(component_ensemble);
     };
 
+    // Compute the ratio between graphical particles to 'real' particles. 
     var component_n_init_0 = Math.round(this.Reac.conc[0]*n_init/cT);
     this.k = component_n_init_0/(this.Reac.conc[0]*this.Reac.V);
 
@@ -117,19 +119,21 @@ function ReactorGraphics(canvas, Reac, n_init, Tank, imp_array=[], isf=0.8, debu
     };
 
     this.update_ensemble = function() {
+	/* Update the graphical particles in time by updating the
+	 * physics engine and adding/deleting particles to handle
+	 * outliers and reactor concentration changes. */
+	
 	Engine.update(this.engine);
-	var colour = ['#008CBA','#BC0CDF','#00FF00'];
-	var inlet_x = 0.5*this.xmax; 
-	var inlet_y = (this.ymax)/2;
+	var inlet_x = 0.5*(this.xmax + 0.8*getRandomSigned()*this.sid.width); 
+	var inlet_y = (this.ymax)*0.7 + 0.2*getRandomSigned()*this.sid.height;
 	for (var i = 0; i < this.Ensembles.length; i++) {
 	    var dN = this.get_dN_int(i);
-	    console.log("dN = ", dN);
 	    if (dN < 0) {
 		this.Ensembles[i].removeRandom(-dN);
 	    }
 	    else if (dN > 0) {
 		for (var j=0; j < dN; j++) {
-		    var Part = new PhysEngineParticle(this.world, inlet_x, inlet_y, random(5, 10), colour[i]);
+		    var Part = new PhysEngineParticle(this.world, inlet_x, inlet_y, this.psize[i], this.pcolour[i]);
 		    this.Ensembles[i].addParticle(Part);
 		};
 	    }
@@ -141,19 +145,28 @@ function ReactorGraphics(canvas, Reac, n_init, Tank, imp_array=[], isf=0.8, debu
     };
 
     this.get_dN_int = function(i) {
-
+	/* Compute the change in the number of grahical particles
+	   associated with reactor component with index i, based on
+	   the current reactor compoisition. Will always return an
+	   int. */
+	
 	var target_Ni = this.k*this.Reac.conc[i]*this.Reac.V;
 	var actual_Ni = this.Ensembles[i].particles.length;
-	dNi = target_Ni - actual_Ni;
+	if (Math.round(target_Ni) === 0.0) {
+	    var dNi_int = -actual_Ni;
+	    return dNi_int
+	};	    
+	
+	var dNi = target_Ni - actual_Ni;
 	if (dNi >= 0.0) {
 	    var sign = +1;
 	}
 	else {
 	    var sign = -1
 	};
-	dNi_abs = Math.abs(dNi);
-	dNi_abs_int = Math.floor(dNi_abs);
-	dNi_int = Math.round(sign*dNi_abs_int);
+	var dNi_abs = Math.abs(dNi);
+	var dNi_abs_int = Math.floor(dNi_abs);
+	var dNi_int = Math.round(sign*dNi_abs_int);
 	return dNi_int
 	
 
