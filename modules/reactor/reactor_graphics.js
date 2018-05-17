@@ -1,7 +1,6 @@
-
 // VCE Project - reactor_graphics.js
 //
-// This class is intented to provide a graphical represntation of a
+// This class is intended to provide a graphical representation of a
 // reactive system.  Its primary attribute is a list of
 // vce_ensemble.Ensemble objects. Each ensemble object in this list
 // represents a component in the main reaction. THIS CLASS IS UNDER
@@ -80,26 +79,35 @@ function ReactorGraphics(canvas, Reac, n_init, Tank, imp_array=[], isf=0.8, debu
 
     // Build the boundaries (ideally these co-ordinates should be loaded from file...)
     this.Boundaries = []; 
-    this.Boundaries.push(new Boundary((this.xmax-this.sid.width)/2,
+    this.Boundaries.push(new Boundary((this.xmax-this.sid.width)/2-30,
 				      (this.ymax)/2,
-				      20, this.sid.height*0.7, 0.0,
+				      72, this.sid.height*0.7, 0.0,
 				      this.world));
-    this.Boundaries.push(new Boundary((this.xmax+this.sid.width)/2,
+    this.Boundaries.push(new Boundary((this.xmax+this.sid.width)/2+30,
 				      (this.ymax)/2,
-				      20, this.sid.height*0.7, 0.0,
+				      72, this.sid.height*0.7, 0.0,
 				      this.world));
     this.Boundaries.push(new Boundary((this.xmax)/2,
-				      (this.ymax+1.0*this.sid.height)/2,
-				      this.sid.width, 20, 0.0,
+				      (this.ymax+1.25*this.sid.height)/2,
+				      this.sid.width, 72, 0.0,
 				      this.world));
     this.Boundaries.push(new Boundary((this.xmax-this.sid.width*0.7)/2,
-				      (this.ymax+0.9*this.sid.height)/2,
-				      0.5*this.sid.width, 20, 0.7,
+				      (this.ymax+1.12*this.sid.height)/2,
+				      0.8*this.sid.width, 72, 0.5,
 				      this.world));
     this.Boundaries.push(new Boundary((this.xmax+this.sid.width*0.7)/2,
-				      (this.ymax+0.9*this.sid.height)/2,
-				      0.5*this.sid.width, 20, 2*PI-0.7,
+				      (this.ymax+1.12*this.sid.height)/2,
+				      0.8*this.sid.width, 72, 2*PI-0.5,
 				      this.world));
+    this.Boundaries.push(new Boundary((this.xmax-this.sid.width*0.96)/2,
+				      (this.ymax+1.0*this.sid.height)/2,
+				      0.8*this.sid.width, 72, 1.0,
+				      this.world));
+    this.Boundaries.push(new Boundary((this.xmax+this.sid.width*0.96)/2,
+				      (this.ymax+1.0*this.sid.height)/2,
+				      0.8*this.sid.width, 72, 2*PI-1.0,
+				      this.world));
+
     
 
     

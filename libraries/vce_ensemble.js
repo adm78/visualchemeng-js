@@ -97,7 +97,6 @@ function Ensemble(p=[],world=null) {
 	for (var i = 0; i < n; i ++) {
 	    if (this.particles.length > 0) {
 		var index = Math.ceil(Math.random()*this.particles.length)-1;
-		console.log("vce_ensemble.Ensemble.removeRandom: index = ", index);
 		if (this.engine_mode) {
 		    this.particles[index].removeFromWorld(this.world);
 		};
