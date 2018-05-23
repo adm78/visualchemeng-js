@@ -96,35 +96,12 @@ function draw() {
     //console.log(ensemble.particles.length, world.bodies.length);
 };
 
-function DiatomicParticle(world, x, y, bl, theta, colours) {
-    // First attempt at a diamtomic particle. A wrapper around
-    // vce-particle.MultiBodyParticle.
-    //
-    // Args:
-    
-    // get particle positions
-    dx = 0.5*bl*Math.cos(theta)
-    dy = 0.5*bl*Math.sin(theta)
-    var p1 = new PhysEngineParticle(world, x+dx, y+dy, 5.0, colours[0]);
-    var p2 = new PhysEngineParticle(world, x-dx, y-dy, 10.0, colours[1]);
-    var bond = Constraint.create({
-        // pointA: { x: 280, y: 120 },
-	bodyA: p1.body,
-        bodyB: p2.body,
-        // pointB: { x: -10, y: -7 },
-        stiffness: 1.0
-    });
-    World.add(world, [bond]);
-    var diatomic = new MultiBodyParticle([p1,p2],[bond])
-    return diatomic
-};
-
 
 //================================================
 // Interactivity
 //================================================
 function mousePressed() {
-    ensemble.addParticle(new DiatomicParticle(world, mouseX, mouseY, 20.0, 0.0, ['#008CBA','#BC0CDF']));
+    ensemble.addParticle(new DiatomicParticle(world, mouseX, mouseY, 20.0, 0.0, ['#008CBA','#BC0CDF'], '#BAACDF'));
     console.log(ensemble);
 };
 
