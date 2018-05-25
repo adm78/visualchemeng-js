@@ -101,7 +101,11 @@ function draw() {
 // Interactivity
 //================================================
 function mousePressed() {
-    ensemble.addParticle(new DiatomicParticle(world, mouseX, mouseY, 20.0, 0.0, ['#008CBA','#BC0CDF'], '#BAACDF'));
+    var two_part_options = TwoBodyParticleDefaults();
+    two_part_options.world = world;
+    two_part_options.x = mouseX;
+    two_part_options.y = mouseY;
+    ensemble.addParticle(new TwoBodyParticle(two_part_options));
     console.log(ensemble);
 };
 
