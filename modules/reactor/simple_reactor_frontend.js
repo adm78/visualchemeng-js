@@ -106,10 +106,6 @@ function draw() {
 // --------------------------------------------------
 //                 UI event listners
 // --------------------------------------------------
-function mouseDragged() {
-    Graphics.Ensembles[0].addParticle(new PhysEngineParticle(Graphics.world, mouseX, mouseY, random(5, 10)))
-};
-
 // run button
 $('#run').click(async function(){
 
@@ -139,3 +135,21 @@ $('#bounds').click(async function(){
 });
 
 
+// reset button
+$('#restart').click(async function(){
+
+    // boundary show hide
+    console.log("You just clicked reset!");
+    Reac = new AnalyticalReactor();
+    setup();
+});
+
+
+// fullscreen functionality
+const target = $('#target')[0]; // Get DOM element from jQuery collection
+$('#fullscreen').on('click', () => {
+    console.log("Fullscreen requested.");
+    if (screenfull.enabled) {
+	screenfull.toggle(target);
+    }
+});
