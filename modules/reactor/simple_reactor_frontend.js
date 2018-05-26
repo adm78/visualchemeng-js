@@ -56,7 +56,7 @@ function preload() {
 function setup() {
 
     /* This function is called upon entry to create the
-       simulation canvas which we draw onto  */
+       simulation canvas which we draw onto.  */
 
     var dimensions = getSimBoxDimensions();
     var canvas= createCanvas(dimensions.xmax, dimensions.ymax);
@@ -70,8 +70,8 @@ function setup() {
     console.log(Graphics);
 
     //Construct the plotly graph
-    Plotly.newPlot('conc_plot_container',
-		   get_traces(Reac),layout);
+    const layout = plotly_layout(Reac);
+    Plotly.newPlot('conc_plot_container', get_traces(Reac),layout);
 
 }
 
@@ -96,8 +96,6 @@ function draw() {
 	if (update_counter > 5000) {update_counter = 0;};
     };
 
-    // draw some custom text to the screen
-
 
     // show all the other graphics
     Graphics.show()
@@ -105,121 +103,11 @@ function draw() {
 };
 
 
-function updateParticles(reac) {
-    // Update the particle ensemble to relfect the current state of the
-    // reactor.
-
-};
-
-// --------------------------------------------------
-//                 Plotly formatting
-// --------------------------------------------------
-const layout = {
-   margin : {
-	l: 80,
-	r: 50,
-	b: 50,
-	t: 20,
-	pad: 5
-    },
-    //autosize: true,
-    height: 300,
-    titlefont: {
-	family: "Railway",
-	color: 'white',
-	size: 24,
-    },
-    legend: {
-	font: {color: 'white'}
-    },
-    hoverlabel: {bordercolor:'#333438'},
-    plot_bgcolor: '#333438',
-    paper_bgcolor: '#333333',//'black',
-    xaxis: {
-	autorange: false,
-	autoscale: true,
-	showgrid: true,
-	gridcolor: '#44474c',
-	tickmode: 'auto',
-	range: [0,200.0],
-	title: 'time/s',
-	titlefont: {
-	    family: 'Roboto, serif',
-	    size: 18,
-	    color: 'white'
-	},
-	tickfont: {color:'white'}
-    },
-    yaxis: {
-	title: 'concentration/mol/m3',
-	showgrid: true,
-	gridcolor: '#44474c',
-	autorange: false,
-	autoscale: false,
-	range: [0.0, Math.max.apply(Math, Reac.conc)*1.1],
-	titlefont: {
-	    family: 'Roboto, serif',
-	    size: 18,
-	    color: 'white'
-	},
-	tickfont: {color:'white'}
-    }
-};
-
-// Plotly routines
-function get_traces(reac) {
-    
-    var trace1 = {
-	type: "scatter",
-	mode: "lines",
-	name: 'A',
-	x: [reac.t],
-	y: [reac.conc[0]],
-	line: {color: '#008CBA'},
-	maxdisplayed: 200/0.1
-    };
-
-    var trace2 = {
-	type: "scatter",
-	mode: "lines",
-	name: 'B',
-	x: [reac.t],
-	y: [reac.conc[1]],
-	line: {color: '#BC0CDF'},
-	maxdisplayed: 200/0.1
-    };
-
-    var trace3 = {
-	type: "scatter",
-	mode: "lines",
-	name: 'C',
-	x: [reac.t],
-	y: [reac.conc[2]],
-	line: {color: '#00FF00'},
-	maxdisplayed: 200/0.1
-    };
-
-    return [trace1, trace2, trace3];
-};
-
-function unpack_data(reac) {
-    // unpacks storage data to extend plotly graph
-    return{
-	x: [[reac.t], [reac.t], [reac.t]],
-	y: [[reac.conc[0]], [reac.conc[1]], [reac.conc[2]]]
-    };
-}
-
 // --------------------------------------------------
 //                 UI event listners
 // --------------------------------------------------
-// function mouseDragged() {
-//   particles.push(new Particle(mouseX, mouseY, random(5, 10)));
-// };
 function mouseDragged() {
     Graphics.Ensembles[0].addParticle(new PhysEngineParticle(Graphics.world, mouseX, mouseY, random(5, 10)))
-//    ensemble.addParticle(new PhysEngineParticle(world, mouseX, mouseY, random(5, 10)));
-    console.log(Graphics.Ensembles[0]);
 };
 
 // run button
