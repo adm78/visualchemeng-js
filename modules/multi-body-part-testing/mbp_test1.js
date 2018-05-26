@@ -101,7 +101,7 @@ function draw() {
 // Interactivity
 //================================================
 function mousePressed() {
-    var two_part_options = TwoBodyParticleDefaults();
+    var two_part_options = TBP_defaultOptions();
     two_part_options.world = world;
     two_part_options.x = mouseX;
     two_part_options.y = mouseY;

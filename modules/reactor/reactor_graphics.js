@@ -25,7 +25,8 @@
 //----------------------------------------------------------
 var Engine = Matter.Engine,
     World = Matter.World,
-    Bodies = Matter.Bodies;
+    Bodies = Matter.Bodies,
+    Constraint = Matter.Constraint;
 
 function ReactorGraphics(canvas, Reac, n_init, Tank, imp_array=[], isf=0.8, debug) {
     /*
@@ -54,14 +55,12 @@ function ReactorGraphics(canvas, Reac, n_init, Tank, imp_array=[], isf=0.8, debu
     this.show_boundaries_log = false;
     this.debug = debug;
     this.pcolour = ['#008CBA','#BC0CDF','#00FF00']
+    this.shapes = [{type:'polygon', sides:6}, {type:'circle'}]
     this.psize = [10, 5, Math.pow(Math.pow(5,3)+Math.pow(10,3),1.0/3.0)]
-
+    
 
     // Build the ensemble array (one ensemble for each component)
     this.Ensembles = [];
-    // var inlet_x = 0.5*this.xmax; 
-    // var inlet_y = (this.ymax)/2;
-
     var cT = sum(this.Reac.conc);
     for (i = 0; i < Reac.components.length; i++) {
 	var component_ensemble = new Ensemble([],this.world);
@@ -69,7 +68,20 @@ function ReactorGraphics(canvas, Reac, n_init, Tank, imp_array=[], isf=0.8, debu
 	for (j = 0; j < component_n_init; j++) {
 	    var inlet_x = 0.5*(this.xmax + 0.8*getRandomSigned()*this.sid.width); 
 	    var inlet_y = (this.ymax)*0.7 + 0.2*getRandomSigned()*this.sid.height;
-	    var Part = new PhysEngineParticle(this.world, inlet_x, inlet_y, this.psize[i], this.pcolour[i]);
+	    if (i < 2) {
+		var Part = new PhysEngineParticle(this.world, inlet_x, inlet_y,
+						  this.psize[i], this.pcolour[i],
+						  this.shapes[i]);
+	    }
+	    else {
+		var prod_part_options = TBP_defaultOptions();
+		prod_part_options.world = this.world;
+		prod_part_options.particles[0].colour = this.pcolour[2]
+		prod_part_options.particles[1].colour = this.pcolour[2]
+		prod_part_options.x = inlet_x;
+		prod_part_options.y = inlet_y;
+		var Part = new TwoBodyParticle(prod_part_options);
+	    }
 	    component_ensemble.addParticle(Part);
 	};
 	this.Ensembles.push(component_ensemble);
@@ -144,7 +156,18 @@ function ReactorGraphics(canvas, Reac, n_init, Tank, imp_array=[], isf=0.8, debu
 	    }
 	    else if (dN > 0) {
 		for (var j=0; j < dN; j++) {
-		    var Part = new PhysEngineParticle(this.world, inlet_x, inlet_y, this.psize[i], this.pcolour[i]);
+		    if (i < 2) {
+			var Part = new PhysEngineParticle(this.world, inlet_x, inlet_y, this.psize[i], this.pcolour[i]);
+		    }
+		    else {
+			var prod_part_options = TBP_defaultOptions();
+			prod_part_options.world = this.world;
+			prod_part_options.particles[0].colour = this.pcolour[2]
+			prod_part_options.particles[1].colour = this.pcolour[2]
+			prod_part_options.x = inlet_x;
+			prod_part_options.y = inlet_y;
+			var Part = new TwoBodyParticle(prod_part_options);
+		    };
 		    this.Ensembles[i].addParticle(Part);
 		};
 	    }
