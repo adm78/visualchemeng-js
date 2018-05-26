@@ -30,7 +30,9 @@ var debug = false, paused_log = false,
     Reac = new AnalyticalReactor(),
     Graphics,
     n_init = 150,
-    tank, imp_array
+    tank, imp_array,
+    update_counter = 0;
+    
 
 
 // --------------------------------------------------
@@ -86,8 +88,12 @@ function draw() {
 	Reac.step(0.1);
 	Graphics.update();
 	// update the concentration plot
-	var new_data = unpack_data(Reac);
-	Plotly.extendTraces('conc_plot_container', new_data, [0, 1, 2]);
+	if (Reac.t < 200.0 && update_counter % 5 == 0) {
+	    var new_data = unpack_data(Reac);
+	    Plotly.extendTraces('conc_plot_container', new_data, [0, 1, 2]);
+	};
+	update_counter += 1;
+	if (update_counter > 5000) {update_counter = 0;};
     };
 
     // draw some custom text to the screen

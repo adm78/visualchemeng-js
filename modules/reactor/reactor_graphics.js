@@ -213,6 +213,7 @@ function ReactorGraphics(canvas, Reac, n_init, Tank, imp_array=[], isf=0.8, debu
 	background(51);
 	this.show_timer();
 	this.show_fps();
+	this.show_pcount();
 	this.show_tank();
 	this.show_boundaries();
 	this.show_particles();
@@ -259,5 +260,20 @@ function ReactorGraphics(canvas, Reac, n_init, Tank, imp_array=[], isf=0.8, debu
 	pop()
     };
 
+
+    this.show_pcount = function() {
+	push()
+	textAlign(LEFT,BOTTOM);
+	text(this.get_pcount() + ' particles', this.canvas.width*0.07, this.canvas.height*0.98);
+	pop()
+    };
+
+    this.get_pcount = function() {
+	var p_count = 0;
+	for (i = 0; i < this.Ensembles.length; i ++) {
+	    p_count += this.Ensembles[i].particles.length;
+	};
+	return p_count; 
+    };
 
 };
