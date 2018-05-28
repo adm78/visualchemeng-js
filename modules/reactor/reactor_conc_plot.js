@@ -51,7 +51,7 @@ function plotly_layout(reac) {
 	    tickfont: {color:'white'}
 	},
 	yaxis: {
-	    title: 'concentration/mol/m3',
+	    title: 'concentration/kmol/m3',
 	    showgrid: true,
 	    gridcolor: '#44474c',
 	    autorange: false,
@@ -78,7 +78,8 @@ function get_traces(reac) {
 	x: [reac.t],
 	y: [reac.conc[0]],
 	line: {color: '#008CBA'},
-	maxdisplayed: 200/0.1
+	maxdisplayed: 200/0.1,
+	fill : 'tozeroy'
     };
 
     var trace2 = {
@@ -88,7 +89,8 @@ function get_traces(reac) {
 	x: [reac.t],
 	y: [reac.conc[1]],
 	line: {color: '#BC0CDF'},
-	maxdisplayed: 200/0.1
+	maxdisplayed: 200/0.1,
+	fill : 'tonexty'
     };
 
     var trace3 = {
@@ -98,7 +100,8 @@ function get_traces(reac) {
 	x: [reac.t],
 	y: [reac.conc[2]],
 	line: {color: '#00FF00'},
-	maxdisplayed: 200/0.1
+	maxdisplayed: 200/0.1,
+	fill : 'tozeroy'
     };
 
     return [trace1, trace2, trace3];
@@ -106,8 +109,10 @@ function get_traces(reac) {
 
 function unpack_data(reac) {
     // unpacks storage data to extend plotly graph
-    return{
-	x: [[reac.t], [reac.t], [reac.t]],
-	y: [[reac.conc[0]], [reac.conc[1]], [reac.conc[2]]]
+    var x = [], y = [];
+    for (var i = 0; i < reac.conc.length; i++) {
+	x.push([reac.t]);
+	y.push([reac.conc[i]]);
     };
+    return{ x : x, y : y };
 }

@@ -102,6 +102,22 @@ function draw() {
     
 };
 
+function update_labels() {
+    // Update the UI labels so that they are conistant wit the
+    // application state.
+    update_bounds_button_label();
+};
+
+
+function update_bounds_button_label() {
+    // update bounds button label
+    if (!Graphics.show_boundaries_log) {
+	$("#bounds").text('Show Bounds');
+    }
+    else {
+	$("#bounds").text('Hide Bounds');
+    }    
+};
 
 // --------------------------------------------------
 //                 UI event listners
@@ -126,12 +142,7 @@ $('#bounds').click(async function(){
     // boundary show hide
     console.log("You just clicked show boundaries!");
     Graphics.show_boundaries_log = !(Graphics.show_boundaries_log);
-    if (!Graphics.show_boundaries_log) {
-	$("#bounds").text('Show Bounds');
-    }
-    else {
-	$("#bounds").text('Hide Bounds');
-    }
+    update_bounds_button_label();
 });
 
 
@@ -142,6 +153,8 @@ $('#restart').click(async function(){
     console.log("You just clicked reset!");
     Reac = new AnalyticalReactor();
     setup();
+    update_labels();
+    
 });
 
 

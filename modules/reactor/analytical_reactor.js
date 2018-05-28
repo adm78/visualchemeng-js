@@ -29,7 +29,7 @@ function AnalyticalReactor() {
     console.log("simple reaction = ", simple_reaction);
     var reactions = [simple_reaction];
     var V = 1.0;
-    var c0 = [1.0, 2.0, 0.0];
+    var c0 = [1.0, 2.0, 0.0]; //kmol/m3
     var T = 298;
    
 

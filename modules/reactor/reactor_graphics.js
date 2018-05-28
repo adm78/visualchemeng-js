@@ -122,7 +122,10 @@ function ReactorGraphics(canvas, Reac, n_init, Tank, imp_array=[], isf=0.8, debu
 				      (this.ymax+1.0*this.sid.height)/2,
 				      0.8*this.sid.width, 72, 2*PI-1.0,
 				      this.world));
-
+    this.Boundaries.push(new Boundary(0.5*this.xmax,
+				      0.5*(this.ymax-0.87*this.sid.height),
+				      1.3*this.sid.width, 72, 0.0,
+				      this.world));
     
 
     
