@@ -80,6 +80,7 @@ function ReactorGraphics(canvas, Reac, n_init, Tank, imp_array=[], isf=0.8, debu
 		prod_part_options.particles[1].colour = this.pcolour[2]
 		prod_part_options.x = inlet_x;
 		prod_part_options.y = inlet_y;
+		prod_part_options.bond.angle = Math.random()*2.0*PI;
 		var Part = new TwoBodyParticle(prod_part_options);
 	    }
 	    component_ensemble.addParticle(Part);
@@ -169,6 +170,7 @@ function ReactorGraphics(canvas, Reac, n_init, Tank, imp_array=[], isf=0.8, debu
 			prod_part_options.particles[1].colour = this.pcolour[2]
 			prod_part_options.x = inlet_x;
 			prod_part_options.y = inlet_y;
+			prod_part_options.bond.angle = Math.random()*2.0*PI;
 			var Part = new TwoBodyParticle(prod_part_options);
 		    };
 		    this.Ensembles[i].addParticle(Part);
