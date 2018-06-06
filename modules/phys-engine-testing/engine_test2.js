@@ -101,7 +101,7 @@ function draw() {
 };
 
 function mouseDragged() {
-    ensemble.addParticle(new PhysEngineParticle(world, mouseX, mouseY, random(5, 10)));
+    ensemble.addParticle(new PhysEngineParticle(world, mouseX, mouseY, {radius: random(5, 10)}));
     console.log(ensemble);
 };
 
