@@ -21,6 +21,7 @@
 // a.mcguire227@gmail.com
 //
 // To do:
+// - generalise particle production so that arbibtraty combinations of physical particles can be generated.
 //
 //----------------------------------------------------------
 var Engine = Matter.Engine,
@@ -54,9 +55,9 @@ function ReactorGraphics(canvas, Reac, n_init, Tank, imp_array=[], isf=0.8, debu
     this.sid = getImgScaledDimensions(this.Tank, this.isf, this.ymax);
     this.show_boundaries_log = false;
     this.debug = debug;
-    this.pcolour = ['#008CBA','#BC0CDF','#00FF00']
-    this.shapes = [{type:'polygon', sides:6}, {type:'circle'}]
-    this.psize = [10, 5, Math.pow(Math.pow(5,3)+Math.pow(10,3),1.0/3.0)]
+    this.pcolour = settings.component_colours;
+    this.shapes = settings.component_shapes;
+    this.psize = settings.particle_sizes;
     
 
     // Build the ensemble array (one ensemble for each component)

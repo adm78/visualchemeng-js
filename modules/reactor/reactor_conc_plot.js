@@ -88,7 +88,7 @@ function get_traces(reac) {
 	    name: reac.components[i],
 	    x: [reac.t],
 	    y: [reac.conc[i]],
-	    line: {color: component_colours[i]},
+	    line: {color: settings.component_colours[i]},
 	    maxdisplayed: 200/0.1,
 //	    fill : get_fill(i)
 	};
