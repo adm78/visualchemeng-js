@@ -3,7 +3,8 @@
 // Routines to support plotly reaction concentration evolution figure.
 //
 // Requires:
-// - plotly
+// - plotly.js
+// - appropprioate *_settings.js file to define plot colours
 //
 //
 // Andrew D. McGuire 2018
@@ -68,44 +69,34 @@ function plotly_layout(reac) {
     return layout
 };
 
+function get_fill(i) {
+    if (i == 0) {
+	return 'tozeroy';
+    }
+    else {
+	return 'tonexty'
+    };
+};
 
 function get_traces(reac) {
-    
-    var trace1 = {
-	type: "scatter",
-	mode: "lines",
-	name: 'A',
-	x: [reac.t],
-	y: [reac.conc[0]],
-	line: {color: '#008CBA'},
-	maxdisplayed: 200/0.1,
-	fill : 'tozeroy'
-    };
 
-    var trace2 = {
-	type: "scatter",
-	mode: "lines",
-	name: 'B',
-	x: [reac.t],
-	y: [reac.conc[1]],
-	line: {color: '#BC0CDF'},
-	maxdisplayed: 200/0.1,
-	fill : 'tonexty'
+    var all_traces = [];
+    for (var i = 0; i < reac.components.length; i++) {
+	var trace = {
+	    type: "scatter",
+	    mode: "lines",
+	    name: reac.components[i],
+	    x: [reac.t],
+	    y: [reac.conc[i]],
+	    line: {color: component_colours[i]},
+	    maxdisplayed: 200/0.1,
+//	    fill : get_fill(i)
+	};
+	all_traces.push(trace);
     };
-
-    var trace3 = {
-	type: "scatter",
-	mode: "lines",
-	name: 'C',
-	x: [reac.t],
-	y: [reac.conc[2]],
-	line: {color: '#00FF00'},
-	maxdisplayed: 200/0.1,
-	fill : 'tozeroy'
-    };
-
-    return [trace1, trace2, trace3];
+    return all_traces;
 };
+
 
 function unpack_data(reac) {
     // unpacks storage data to extend plotly graph
