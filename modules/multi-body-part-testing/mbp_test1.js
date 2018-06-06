@@ -101,11 +101,7 @@ function draw() {
 // Interactivity
 //================================================
 function mousePressed() {
-    var two_part_options = TBP_defaultOptions();
-    two_part_options.world = world;
-    two_part_options.x = mouseX;
-    two_part_options.y = mouseY;
-    ensemble.addParticle(new TwoBodyParticle(two_part_options));
+    ensemble.addParticle(new TwoBodyParticle(world, mouseX, mouseY, TBP_defaultOptions()));
     console.log(ensemble);
 };
 

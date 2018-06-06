@@ -103,8 +103,12 @@ function draw() {
 // Interactivity
 //================================================
 function mousePressed() {
-    var shape = {'type' : 'polygon', 'sides' : 6};
-    ensemble.addParticle(new PhysEngineParticle(world, mouseX, mouseY, 15.0, '#008CBA', shape));
+    var options = {
+	shape : {'type' : 'polygon', 'sides' : 6},
+	radius : 15.0,
+	colour : '#008CBA'
+    };
+    ensemble.addParticle(new PhysEngineParticle(world, mouseX, mouseY, options));
     //ensemble.addParticle(new DiatomicParticle(world, mouseX, mouseY, 20.0, 0.0, ['#008CBA','#BC0CDF'], '#BAACDF'));
     console.log(ensemble);
 };
