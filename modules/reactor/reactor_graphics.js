@@ -14,14 +14,17 @@
 // vce_utils.js
 // p5.min.js
 // boundary.js
-// vce_ensemble.Ensemble
-// vce_particle.PhysEngineParticle
+// vce_ensemble.js
+// vce_particle.js
+// vce_multibody.js
+// settings.js
 //
 // Andrew D. McGuire 2018
 // a.mcguire227@gmail.com
 //
 // To do:
-// - generalise particle production so that arbibtraty combinations of physical particles can be generated.
+// - generalise particle production so that arbibtraty combinations of
+// - physical particles can be generated.
 //
 //----------------------------------------------------------
 var Engine = Matter.Engine,
@@ -55,7 +58,7 @@ function ReactorGraphics(canvas, Reac, n_init, Tank, imp_array=[], isf=0.8, debu
     this.sid = getImgScaledDimensions(this.Tank, this.isf, this.ymax);
     this.show_boundaries_log = false;
     this.debug = debug;
-    this.pcolour = settings.component_colours;
+    this.pcolour = settings.component_colours; // these need to be removed
     this.shapes = settings.component_shapes;
     this.psize = settings.particle_sizes;
     
@@ -70,19 +73,19 @@ function ReactorGraphics(canvas, Reac, n_init, Tank, imp_array=[], isf=0.8, debu
 	    var inlet_x = 0.5*(this.xmax + 0.8*getRandomSigned()*this.sid.width); 
 	    var inlet_y = (this.ymax)*0.7 + 0.2*getRandomSigned()*this.sid.height;
 	    if (i < 2) {
-		var Part = new PhysEngineParticle(this.world, inlet_x, inlet_y,
-						  this.psize[i], this.pcolour[i],
-						  this.shapes[i]);
+		var options = {
+		    shape : this.shapes[i],
+		    radius : this.psize[i],
+		    colour : this.pcolour[i]
+		};
+		var Part = new PhysEngineParticle(this.world, inlet_x, inlet_y, options);
 	    }
 	    else {
 		var prod_part_options = TBP_defaultOptions();
-		prod_part_options.world = this.world;
 		prod_part_options.particles[0].colour = this.pcolour[2]
 		prod_part_options.particles[1].colour = this.pcolour[2]
-		prod_part_options.x = inlet_x;
-		prod_part_options.y = inlet_y;
 		prod_part_options.bond.angle = Math.random()*2.0*PI;
-		var Part = new TwoBodyParticle(prod_part_options);
+		var Part = new TwoBodyParticle(this.world, inlet_x, inlet_y, prod_part_options);
 	    }
 	    component_ensemble.addParticle(Part);
 	};
@@ -162,17 +165,19 @@ function ReactorGraphics(canvas, Reac, n_init, Tank, imp_array=[], isf=0.8, debu
 	    else if (dN > 0) {
 		for (var j=0; j < dN; j++) {
 		    if (i < 2) {
-			var Part = new PhysEngineParticle(this.world, inlet_x, inlet_y, this.psize[i], this.pcolour[i]);
+			var options = {
+			    shape : this.shapes[i],
+			    radius : this.psize[i],
+			    colour : this.pcolour[i]
+			};
+			var Part = new PhysEngineParticle(this.world, inlet_x, inlet_y, options);
 		    }
 		    else {
 			var prod_part_options = TBP_defaultOptions();
-			prod_part_options.world = this.world;
 			prod_part_options.particles[0].colour = this.pcolour[2]
 			prod_part_options.particles[1].colour = this.pcolour[2]
-			prod_part_options.x = inlet_x;
-			prod_part_options.y = inlet_y;
 			prod_part_options.bond.angle = Math.random()*2.0*PI;
-			var Part = new TwoBodyParticle(prod_part_options);
+			var Part = new TwoBodyParticle(this.world, inlet_x, inlet_y, prod_part_options);
 		    };
 		    this.Ensembles[i].addParticle(Part);
 		};
