@@ -15,6 +15,42 @@
 //----------------------------------------------------------
 var settings = {
     component_colours : ['#008CBA','#BC0CDF','#00FF00'],
-    component_shapes : [{type:'polygon', sides:6}, {type:'circle'}],
-    particle_sizes : [10, 5, Math.pow(Math.pow(5,3)+Math.pow(10,3),1.0/3.0)],
+    particle_options : [
+	{
+	    type: 'single-body',
+	    shape : {type:'polygon', sides:6},
+	    radius : 10,
+	    colour : '#008CBA'
+	},
+	{
+	    type: 'single-body',
+	    shape : {type:'circle'},
+	    radius : 5,
+	    colour : '#BC0CDF'
+	},
+	{
+	    type : 'two-body',
+	    particles : [
+		{
+		    colour : '#00FF00',
+		    radius : 5.0,
+		    shape : { type : 'circle'}
+		},
+		{
+		    colour : '#00FF00',
+		    radius : 10.0,
+		    shape : {
+			type : 'polygon',
+			sides : 6
+		    }
+		}   
+	    ],
+	    bond : {
+		length : 20.0,
+		width : 2.0,
+		colour : '#BAACDF',
+		angle : 0.0
+	    }
+	}
+    ]
 };

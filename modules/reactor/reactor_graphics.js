@@ -58,35 +58,26 @@ function ReactorGraphics(canvas, Reac, n_init, Tank, imp_array=[], isf=0.8, debu
     this.sid = getImgScaledDimensions(this.Tank, this.isf, this.ymax);
     this.show_boundaries_log = false;
     this.debug = debug;
-    this.pcolour = settings.component_colours; // these need to be removed
-    this.shapes = settings.component_shapes;
-    this.psize = settings.particle_sizes;
     
 
     // Build the ensemble array (one ensemble for each component)
     this.Ensembles = [];
     var cT = sum(this.Reac.conc);
-    for (i = 0; i < Reac.components.length; i++) {
+    for (var i = 0; i < Reac.components.length; i++) {
 	var component_ensemble = new Ensemble([],this.world);
 	var component_n_init = Math.round(this.Reac.conc[i]*n_init/cT);
 	for (j = 0; j < component_n_init; j++) {
 	    var inlet_x = 0.5*(this.xmax + 0.8*getRandomSigned()*this.sid.width); 
 	    var inlet_y = (this.ymax)*0.7 + 0.2*getRandomSigned()*this.sid.height;
-	    if (i < 2) {
-		var options = {
-		    shape : this.shapes[i],
-		    radius : this.psize[i],
-		    colour : this.pcolour[i]
-		};
-		var Part = new PhysEngineParticle(this.world, inlet_x, inlet_y, options);
+	    if (settings.particle_options[i].type === 'single-body') {
+		var Part = new PhysEngineParticle(this.world, inlet_x, inlet_y, settings.particle_options[i]) ;
+	    }
+	    else if (settings.particle_options[i].type === 'two-body') {
+		var Part = new TwoBodyParticle(this.world, inlet_x, inlet_y, settings.particle_options[i]);
 	    }
 	    else {
-		var prod_part_options = TBP_defaultOptions();
-		prod_part_options.particles[0].colour = this.pcolour[2]
-		prod_part_options.particles[1].colour = this.pcolour[2]
-		prod_part_options.bond.angle = Math.random()*2.0*PI;
-		var Part = new TwoBodyParticle(this.world, inlet_x, inlet_y, prod_part_options);
-	    }
+		throw new RangeError("Unsupported particle 'type' ", settings.particle_options[i].type, "encountred particle.settings");
+	    };
 	    component_ensemble.addParticle(Part);
 	};
 	this.Ensembles.push(component_ensemble);
@@ -164,20 +155,14 @@ function ReactorGraphics(canvas, Reac, n_init, Tank, imp_array=[], isf=0.8, debu
 	    }
 	    else if (dN > 0) {
 		for (var j=0; j < dN; j++) {
-		    if (i < 2) {
-			var options = {
-			    shape : this.shapes[i],
-			    radius : this.psize[i],
-			    colour : this.pcolour[i]
-			};
-			var Part = new PhysEngineParticle(this.world, inlet_x, inlet_y, options);
+		    if (settings.particle_options[i].type === 'single-body') {
+			var Part = new PhysEngineParticle(this.world, inlet_x, inlet_y, settings.particle_options[i]);
+		    }
+		    else if (settings.particle_options[i].type === 'two-body') {
+			var Part = new TwoBodyParticle(this.world, inlet_x, inlet_y, settings.particle_options[i]);
 		    }
 		    else {
-			var prod_part_options = TBP_defaultOptions();
-			prod_part_options.particles[0].colour = this.pcolour[2]
-			prod_part_options.particles[1].colour = this.pcolour[2]
-			prod_part_options.bond.angle = Math.random()*2.0*PI;
-			var Part = new TwoBodyParticle(this.world, inlet_x, inlet_y, prod_part_options);
+			throw new RangeError("Unsupported particle 'type' ", settings.particle_options[i].type, "encountred particle.settings");
 		    };
 		    this.Ensembles[i].addParticle(Part);
 		};
