@@ -53,7 +53,7 @@ function preload() {
     imp_array = [imp1, imp2, imp3, imp4];
 };
 
-function setup() {
+function setup(first_time=true) {
 
     /* This function is called upon entry to create the
        simulation canvas which we draw onto.  */
@@ -62,16 +62,19 @@ function setup() {
     var canvas= createCanvas(dimensions.xmax, dimensions.ymax);
     canvas.parent("sim_container");
     
-    //Show the state of the backend reactor
+    // Show the state of the backend reactor
     Reac.stats(); // debug
 
     // Initialise the graphical reactor
     Graphics = new ReactorGraphics(canvas, Reac, n_init, tank, imp_array, 0.8, debug);
     console.log(Graphics);
 
-    //Construct the plotly graph
+    // Construct the plotly graph
     const layout = plotly_layout(Reac);
     Plotly.newPlot('conc_plot_container', get_traces(Reac),layout);
+
+    // Initialise the sliders
+    if (first_time) { update_T_slider()};
 
 }
 
@@ -118,6 +121,29 @@ function update_bounds_button_label() {
 	$("#bounds").text('Hide Bounds');
     }    
 };
+
+// --------------------------------------------------
+//                 Slider UI
+// ----------------------------------------------
+function update_T_slider() {
+    $( "#k2_slider" ).slider({
+	orientation: "vertical",
+	range: "min",
+	min: settings.sliders.T.min,
+	max: settings.sliders.T.max,
+	step: settings.sliders.T.step,
+	value: settings.sliders.T.start,
+	slide: update_temp,
+	change: update_temp
+    });
+    $( "#k2_slider" ).slider( "value", settings.sliders.T.start);
+};
+function update_temp() {
+    Reac = new AnalyticalReactor();
+    Reac.T = $( "#k2_slider" ).slider("value");
+    setup(first_time=false);        
+};
+
 
 // --------------------------------------------------
 //                 UI event listners

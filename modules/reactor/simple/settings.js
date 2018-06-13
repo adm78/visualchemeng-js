@@ -1,6 +1,16 @@
-// VCE Project - settings.js
+// VCE Project - settings.js (simple reactor)
 //
-// A setting object to specific thing that are unique to the current system being modelled
+// A settings object to specify things that are unique to the current
+// system being modelled. You must ensure that there are a sufficient
+// number of elements for each property (e.g. there are at least as
+// many elements in component_colours as the number of componentns in
+// the reactive system etc.).
+//
+// The properties defined in this file are:
+// - plot colouring options
+// - particle styling options
+// - slider settings
+//
 //
 // Requires:
 // - nothing!
@@ -52,5 +62,13 @@ var settings = {
 		angle : 0.0
 	    }
 	}
-    ]
+    ],
+    sliders : {
+	T : {
+	    min : 250.0,
+	    max : 350.0,
+	    start : 298.0,
+	    step : 1.0
+	}
+    }
 };
