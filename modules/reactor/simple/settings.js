@@ -4,9 +4,12 @@
 // system being modelled. You must ensure that there are a sufficient
 // number of elements for each property (e.g. there are at least as
 // many elements in component_colours as the number of componentns in
-// the reactive system etc.).
+// the reactive system etc.). For now the physical params are coupled
+// with the graphical params, which isn't ideal. This may be changed
+// at a later date.
 //
 // The properties defined in this file are:
+// - particle physical properties
 // - plot colouring options
 // - particle styling options
 // - slider settings
@@ -24,6 +27,28 @@
 //
 //----------------------------------------------------------
 var settings = {
+    
+    // physical properties 
+    components : [
+	{
+	    name : 'A',
+	    h : 100.0,
+	    h_unit : 'J/mol'
+	},
+	{
+	    name : 'B',
+	    h : 200.0,
+	    h_unit : 'J/mol'
+	},
+	{
+	    name : 'C',
+	    h: 400.0,
+	    h_unit : 'J/mol'
+	}
+
+    ],
+    
+    // graphical params 
     component_colours : ['#008CBA','#BC0CDF','#00FF00'],
     particle_options : [
 	{
@@ -63,12 +88,14 @@ var settings = {
 	    }
 	}
     ],
+    
+    // slider definitions
     sliders : {
 	T : {
 	    min : 250.0,
 	    max : 350.0,
 	    start : 298.0,
 	    step : 1.0
-	}
+	},
     }
 };

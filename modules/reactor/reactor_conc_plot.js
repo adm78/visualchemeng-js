@@ -4,7 +4,7 @@
 //
 // Requires:
 // - plotly.js
-// - appropprioate *_settings.js file to define plot colours
+// - appropprioate settings.js file to define plot colours etc.
 //
 //
 // Andrew D. McGuire 2018
@@ -85,7 +85,7 @@ function get_traces(reac) {
 	var trace = {
 	    type: "scatter",
 	    mode: "lines",
-	    name: reac.components[i],
+	    name: reac.components[i].name,
 	    x: [reac.t],
 	    y: [reac.conc[i]],
 	    line: {color: settings.component_colours[i]},

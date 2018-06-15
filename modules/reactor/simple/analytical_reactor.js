@@ -14,23 +14,24 @@
 // Andrew D. McGuire 2018
 // a.mcguire227@gmail.com
 //----------------------------------------------------------
-function AnalyticalReactor() { 
+function AnalyticalReactor(T=298.0, c0 = [1.0, 2.0, 0.0], Ea=10000.0) { 
 
+    // Args:
+    // 	- T (float) : Reactor temperature [K].
+    //     - c0 (float array) : Intial concentrations [kmol/m3].
+    // 	- Ea (float) : Reaction activation energy [J/mol].
+	
     // Assumptions:
-    // - constant volume
-    // - constant T
+    // 	- constant volume
+    // 	- constant T
 
-    // describe the reaction A + B => C
-    var components = ['A','B','C'];
-    var stoich = [1,1,-1]
-    var A = 1.0;
-    var Ea = 10000.0;
+    // describe the reaction A + B => C 
+    components = settings.components
+    stoich = [1,1,-1]
+    A = 1.0;
     var simple_reaction = new Reaction(A,Ea,components,stoich,debug)
-    console.log("simple reaction = ", simple_reaction);
     var reactions = [simple_reaction];
     var V = 1.0;
-    var c0 = [1.0, 2.0, 0.0]; //kmol/m3
-    var T = 298;
    
 
     // call the parent constructor
@@ -63,8 +64,10 @@ function AnalyticalReactor() {
 	    console.log("[Na, Nb, Nc] = ", [Na, Nb, Nc]);
 	};
 
-	this.conc_prev_step = this.conc
+	// perform the property updates
+	this.conc_prev = this.conc
 	this.conc = [Na/this.V, Nb/this.V, Nc/this.V];
+	this.t_prev = this.t;
 	this.t = this.t + dt;	
     };
 

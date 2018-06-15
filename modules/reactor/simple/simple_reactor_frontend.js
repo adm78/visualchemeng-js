@@ -74,7 +74,7 @@ function setup(first_time=true) {
     Plotly.newPlot('conc_plot_container', get_traces(Reac),layout);
 
     // Initialise the sliders
-    if (first_time) { update_T_slider()};
+    if (first_time) { update_sliders()};
 
 }
 
@@ -125,8 +125,13 @@ function update_bounds_button_label() {
 // --------------------------------------------------
 //                 Slider UI
 // ----------------------------------------------
+function update_sliders() {
+    update_T_slider();
+};
+
+
 function update_T_slider() {
-    $( "#k2_slider" ).slider({
+    $( "#k1_slider" ).slider({
 	orientation: "vertical",
 	range: "min",
 	min: settings.sliders.T.min,
@@ -136,13 +141,14 @@ function update_T_slider() {
 	slide: update_temp,
 	change: update_temp
     });
-    $( "#k2_slider" ).slider( "value", settings.sliders.T.start);
+    $( "#k1_slider" ).slider( "value", settings.sliders.T.start);
 };
 function update_temp() {
     Reac = new AnalyticalReactor();
-    Reac.T = $( "#k2_slider" ).slider("value");
+    Reac.T = $( "#k1_slider" ).slider("value");
     setup(first_time=false);        
 };
+
 
 
 // --------------------------------------------------
