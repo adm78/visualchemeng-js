@@ -208,6 +208,7 @@ function ReactorGraphics(canvas, Reac, n_init, Tank, imp_array=[], isf=0.8, debu
 	// render all the neccessary pieces to the canvas
 	background(51);
 	this.show_timer();
+	this.show_duty();
 	this.show_fps();
 	this.show_pcount();
 	this.show_tank();
@@ -245,6 +246,16 @@ function ReactorGraphics(canvas, Reac, n_init, Tank, imp_array=[], isf=0.8, debu
 	fill(255, 255, 255);
 	textAlign(LEFT, TOP);
 	text(this.Reac.t.toFixed(1)+'s', this.canvas.width*0.02, this.canvas.height*0.02);
+	pop()
+    };
+
+    
+    this.show_duty = function() {
+	push()
+	textSize(32);
+	fill(255, 255, 255);
+	textAlign(LEFT, TOP);
+	text(this.Reac.Q().toFixed(1)+'kW', this.canvas.width*0.02, this.canvas.height*0.13);
 	pop()
     };
 
