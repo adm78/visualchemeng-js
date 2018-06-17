@@ -83,6 +83,36 @@ function AnalyticalReactor(T=298.0, c0 = [1.0, 2.0, 0.0], Ea=10000.0) {
 	return Q;
     };
 
+    this.conversion = function() {
+	// compute the conversion as a fraction
+	var lci = this.get_limiting_component_index();
+	return 1.0 - (this.conc[lci]/this.c0[lci])
+    };
+
+    
+    this.get_limiting_component_index = function() {
+	// Get the array index of the limiting reactant species.
+	//
+	// Note: this is probably not general enough to be expanded to
+	// other systems... be careful if you copy it!
+	var lci = null;
+	var min_nq = null;
+	for (var i = 0; i < this.components.length; i++) {
+	    var stoich_i = this.reactions[0].stoich[i];
+	    if (stoich_i > 0) {
+		// we have a reactant
+		var normalised_quant = this.c0[i]/stoich_i;
+		if (min_nq == null || normalised_quant < min_nq) {
+		    min_nq = normalised_quant;
+		    lci = i;
+		};
+	    };
+	}
+	if (lci == null) {
+	    throw new Error("Limiting reactive component could not be found!")
+	}
+	return lci;
+    };
     
 };
 
