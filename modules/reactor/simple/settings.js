@@ -27,6 +27,9 @@
 //
 //----------------------------------------------------------
 var settings = {
+
+    // identifier
+    id : 'simple_reac',
     
     // physical properties 
     components : [
@@ -97,5 +100,23 @@ var settings = {
 	    start : 298.0,
 	    step : 1.0
 	},
-    }
+	CA0 : {
+	    min : 0.0,
+	    max : 3.0,
+	    start : 1.0,
+	    step : 0.05
+	},
+	CB0 : {
+	    min : 0.0,
+	    max : 3.0,
+	    start : 2.0,
+	    step : 0.05
+	},
+	CC0 : {
+	    min : 0.0,
+	    max : 3.0,
+	    start : 0.0,
+	    step : 0.05
+	}
+    },
 };

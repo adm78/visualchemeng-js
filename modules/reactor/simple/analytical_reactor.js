@@ -14,28 +14,34 @@
 // Andrew D. McGuire 2018
 // a.mcguire227@gmail.com
 //----------------------------------------------------------
-function AnalyticalReactor(T=298.0, c0 = [1.0, 2.0, 0.0], Ea=10000.0) { 
+function AnalyticalReactor(options) { 
 
     // Args:
-    // 	- T (float) : Reactor temperature [K].
-    //     - c0 (float array) : Intial concentrations [kmol/m3].
-    // 	- Ea (float) : Reaction activation energy [J/mol].
-	
+    // 	- options (JSON object) : Descriptions of the reactor.
+    // Required attributes are:
+    //    - A (float) : Arrhenius prefactor [mol.m^3/s]
+    //    - Ea (float) : Activation energy [J/mol]
+    //    - components (str array) : List of component names.
+    //    - T (float) : The reactor temperature [K].
+    //    - c0 (float array) : List of intial concentrations.
+    //    - debug (bool) : Set the run mode.
+    //
     // Assumptions:
     // 	- constant volume
     // 	- constant T
 
-    // describe the reaction A + B => C 
-    components = settings.components
-    stoich = [1,1,-1]
-    A = 1.0;
-    var simple_reaction = new Reaction(A,Ea,components,stoich,debug)
+    // describe the reaction A + B => C
+    var stoich = [1,1,-1] // hard coded to match 'step' until it's generalised
+    var simple_reaction = new Reaction(options.A,options.Ea,
+				       options.components,
+				       stoich,options.debug)
     var reactions = [simple_reaction];
     var V = 1.0;
    
 
     // call the parent constructor
-    Reactor.call(this,V,reactions,components,c0,T,debug);
+    Reactor.call(this, V, reactions, options.components,
+		 options.c0, options.T, options.debug);
 
     this.step = function(dt) {
 
@@ -86,7 +92,13 @@ function AnalyticalReactor(T=298.0, c0 = [1.0, 2.0, 0.0], Ea=10000.0) {
     this.conversion = function() {
 	// compute the conversion as a fraction
 	var lci = this.get_limiting_component_index();
-	return 1.0 - (this.conc[lci]/this.c0[lci])
+	if (this.c0[lci] == 0) {
+	    var conv = 0.0;
+	}
+	else {
+	    var conv = 1.0 - (this.conc[lci]/this.c0[lci]);
+	};
+	return conv;
     };
 
     

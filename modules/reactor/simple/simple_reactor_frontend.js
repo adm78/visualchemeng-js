@@ -21,18 +21,29 @@
 // - improve ensemble update efficiency
 // - confine particles to the tank
 //
-//----------------------------------------------------------
+//
 // --------------------------------------------------
 //               set-up variables
 // --------------------------------------------------
 var debug = false, paused_log = false,
-    canvas, 
-    Reac = new AnalyticalReactor(),
+    canvas,
+    Reac,
     Graphics,
     n_init = 150,
     tank, imp_array,
     update_counter = 0;
-    
+
+const default_reactor_options = {
+    components : settings.components,
+    c0 : [settings.sliders.CA0.start,
+	  settings.sliders.CB0.start,
+	  settings.sliders.CC0.start],
+    T : settings.sliders.T.start,
+    A : 1.0,
+    Ea : 10000.0,
+    debug : debug
+};
+var reactor_options = deep_copy(default_reactor_options);
 
 
 // --------------------------------------------------
@@ -58,6 +69,10 @@ function setup(first_time=true) {
     /* This function is called upon entry to create the
        simulation canvas which we draw onto.  */
 
+    // Intialise the backend reactor
+    Reac = new AnalyticalReactor(reactor_options);
+
+    // Create the canvas
     var dimensions = getSimBoxDimensions();
     var canvas= createCanvas(dimensions.xmax, dimensions.ymax);
     canvas.parent("sim_container");
@@ -127,6 +142,9 @@ function update_bounds_button_label() {
 // ----------------------------------------------
 function update_sliders() {
     update_T_slider();
+    update_CA0_slider();
+    update_CB0_slider();
+    update_CC0_slider();
 };
 
 
@@ -144,11 +162,66 @@ function update_T_slider() {
     $( "#k1_slider" ).slider( "value", settings.sliders.T.start);
 };
 function update_temp() {
-    Reac = new AnalyticalReactor();
-    Reac.T = $( "#k1_slider" ).slider("value");
+    reactor_options.T = $( "#k1_slider" ).slider("value");
     setup(first_time=false);        
 };
 
+
+function update_CA0_slider() {
+    $( "#k2_slider" ).slider({
+	orientation: "vertical",
+	range: "min",
+	min: settings.sliders.CA0.min,
+	max: settings.sliders.CA0.max,
+	step: settings.sliders.CA0.step,
+	value: settings.sliders.CA0.start,
+	slide: update_CA0,
+	change: update_CA0
+    });
+    $( "#k2_slider" ).slider( "value", settings.sliders.CA0.start);
+};
+function update_CA0() {
+    reactor_options.c0[0] = $( "#k2_slider" ).slider("value");
+    setup(first_time=false);        
+};
+
+
+function update_CB0_slider() {
+    $( "#k3_slider" ).slider({
+	orientation: "vertical",
+	range: "min",
+	min: settings.sliders.CB0.min,
+	max: settings.sliders.CB0.max,
+	step: settings.sliders.CB0.step,
+	value: settings.sliders.CB0.start,
+	slide: update_CB0,
+	change: update_CB0
+    });
+    $( "#k3_slider" ).slider( "value", settings.sliders.CB0.start);
+};
+function update_CB0() {
+    reactor_options.c0[1] = $( "#k3_slider" ).slider("value");
+    setup(first_time=false);        
+};
+
+
+function update_CC0_slider() {
+    $( "#k4_slider" ).slider({
+	orientation: "vertical",
+	range: "min",
+	min: settings.sliders.CC0.min,
+	max: settings.sliders.CC0.max,
+	step: settings.sliders.CC0.step,
+	value: settings.sliders.CC0.start,
+	slide: update_CC0,
+	change: update_CC0
+    });
+    $( "#k4_slider" ).slider( "value", settings.sliders.CC0.start);
+};
+function update_CC0() {
+    reactor_options.c0[2] = $( "#k4_slider" ).slider("value");
+    setup(first_time=false);        
+};
 
 
 // --------------------------------------------------
@@ -183,7 +256,7 @@ $('#restart').click(async function(){
 
     // boundary show hide
     console.log("You just clicked reset!");
-    Reac = new AnalyticalReactor();
+    reactor_options = deep_copy(default_reactor_options);
     setup();
     update_labels();
     
