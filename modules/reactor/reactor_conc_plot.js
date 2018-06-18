@@ -55,7 +55,7 @@ function plotly_layout(reac) {
 	    title: 'concentration/kmol/m3',
 	    showgrid: true,
 	    gridcolor: '#44474c',
-	    autorange: false,
+	    autorange: true,
 	    autoscale: false,
 	    range: [0.0, Math.max.apply(Math, reac.conc)*1.1],
 	    titlefont: {
@@ -96,6 +96,29 @@ function get_traces(reac) {
     };
     return all_traces;
 };
+
+
+function get_saved_traces(savedData, reac) {
+    // constuct traces from a previous save
+    var all_traces = [];
+    for (var i = 0; i < savedData.data.length; i++) {
+	var trace = {
+	    type: "scatter",
+	    mode: "lines",
+	    name: reac.components[i].name + " reference",
+	    x: savedData.data[i].x,
+	    y: savedData.data[i].y,
+	    line: {
+		color: settings.component_colours[i],
+		dash: 'dot'
+	    },
+	    maxdisplayed: 200/0.1,
+	};
+	all_traces.push(trace);
+    };
+    return all_traces;    
+    
+}
 
 
 function unpack_data(reac) {

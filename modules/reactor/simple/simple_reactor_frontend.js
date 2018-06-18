@@ -31,7 +31,8 @@ var debug = false, paused_log = false,
     Graphics,
     n_init = 150,
     tank, imp_array,
-    update_counter = 0;
+    update_counter = 0,
+    savedData = null;
 
 const default_reactor_options = {
     components : settings.components,
@@ -77,17 +78,19 @@ function setup(first_time=true) {
     var canvas= createCanvas(dimensions.xmax, dimensions.ymax);
     canvas.parent("sim_container");
     
-    // Show the state of the backend reactor
-    Reac.stats(); // debug
-
     // Initialise the graphical reactor
     Graphics = new ReactorGraphics(canvas, Reac, n_init, tank, imp_array, 0.8, debug);
-    console.log(Graphics);
 
     // Construct the plotly graph
     const layout = plotly_layout(Reac);
     Plotly.newPlot('conc_plot_container', get_traces(Reac),layout);
 
+    // Plot any saved data
+    if (savedData != null) {
+	Plotly.addTraces('conc_plot_container', get_saved_traces(savedData, Reac));
+    };
+    console.log(savedData);
+    
     // Initialise the sliders
     if (first_time) { update_sliders()};
 
@@ -119,7 +122,23 @@ function draw() {
     Graphics.show()
     
 };
+// --------------------------------------------------
+//                 Saving functionality
+// --------------------------------------------------
+function save_data(Reac) {
+    // Save concentration time-series and stats for the current
+    // simulations.
+    var myplot = document.getElementById('conc_plot_container');
+    savedData = {
+	T : Reac.T,
+	c0 : Reac.c0,
+	data : myplot.data
+    };
+};
 
+// --------------------------------------------------
+//                 Styling updaters
+// --------------------------------------------------
 function update_labels() {
     // Update the UI labels so that they are conistant wit the
     // application state.
@@ -240,6 +259,16 @@ $('#run').click(async function(){
 	$("#run").text('Pause');
     }
 });
+
+// save button
+$('#save').click(async function(){
+
+    // run/pause button functionality
+    console.log("You just clicked save!");
+    save_data(Reac);
+    console.log(savedData);
+});
+
 
 // show boundaries button
 $('#bounds').click(async function(){
