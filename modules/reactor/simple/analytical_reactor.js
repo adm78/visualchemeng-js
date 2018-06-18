@@ -80,11 +80,13 @@ function AnalyticalReactor(options) {
     this.Q = function() {
 	// Computre the duty of this batch system.
 	// Assumed that the olume has remained constant.
-	var Q = 0.0;
-	for (var i = 0; i < this.components.length; i++) {
-	    var dc = this.conc[i] - this.conc_prev[i];
-	    var dt = this.t - this.t_prev;
-	    Q = Q + (dc/dt)*this.components[i].h*this.V;
+	var Q = 0.0;	
+	if (this.t_prev != null) {
+	    for (var i = 0; i < this.components.length; i++) {
+		var dc = this.conc[i] - this.conc_prev[i];
+		var dt = this.t - this.t_prev;
+		Q = Q + (dc/dt)*this.components[i].h*this.V;
+	    };
 	};
 	return Q;
     };
