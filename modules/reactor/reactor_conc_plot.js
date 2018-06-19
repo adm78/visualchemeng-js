@@ -90,6 +90,7 @@ function get_traces(reac) {
 	    y: [reac.conc[i]],
 	    line: {color: settings.component_colours[i]},
 	    maxdisplayed: 200/0.1,
+	    text : get_hover_text(reac),
 //	    fill : get_fill(i)
 	};
 	all_traces.push(trace);
@@ -105,7 +106,7 @@ function get_saved_traces(savedData, reac) {
 	var trace = {
 	    type: "scatter",
 	    mode: "lines",
-	    name: reac.components[i].name + " reference",
+	    name: reac.components[i].name + " saved",
 	    x: savedData.data[i].x,
 	    y: savedData.data[i].y,
 	    line: {
@@ -113,12 +114,33 @@ function get_saved_traces(savedData, reac) {
 		dash: 'dot'
 	    },
 	    maxdisplayed: 200/0.1,
+	    text : get_saved_hover_text(savedData, reac),
 	};
 	all_traces.push(trace);
     };
     return all_traces;    
     
 }
+
+function get_hover_text(reac) {
+    // Format the hover text on the current data traces.
+    var text = 'T = ' + reac.T.toString() + 'K';
+    for (var i = 0; i < reac.components.length; i++) {
+	text = text + ', C' + reac.components[i].name + '0 = ';
+	text = text + reac.c0[i].toString();
+    };
+    return text
+};
+
+function get_saved_hover_text(savedData, reac) {
+    // Format the hover text on the saved data traces.
+    var text = 'T = ' + savedData.T.toString() + 'K';
+    for (var i = 0; i < reac.components.length; i++) {
+	text = text + ', C' + reac.components[i].name + '0 = ';
+	text = text + savedData.c0[i].toString();
+    };
+    return text
+};
 
 
 function unpack_data(reac) {
