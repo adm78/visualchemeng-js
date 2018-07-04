@@ -85,6 +85,9 @@ function setup(first_time=true) {
     const layout = plotly_layout(Reac);
     Plotly.newPlot('conc_plot_container', get_traces(Reac),layout);
 
+    // Render the bar plots
+    Plotly.newPlot('flow_chart_container', get_conversion_trace(Reac), plotly_conversion_layout());
+
     // Plot any saved data
     if (savedData != null) {
 	Plotly.addTraces('conc_plot_container', get_saved_traces(savedData, Reac));
@@ -108,10 +111,11 @@ function draw() {
 	// step the reactor
 	Reac.step(0.1);
 	Graphics.update();
-	// update the concentration plot
+	// update the plots
 	if (Reac.t < 200.0 && update_counter % 5 == 0) {
 	    var new_data = unpack_data(Reac);
 	    Plotly.extendTraces('conc_plot_container', new_data, [0, 1, 2]);
+	    Plotly.newPlot('flow_chart_container', get_conversion_trace(Reac), plotly_conversion_layout());
 	};
 	update_counter += 1;
 	if (update_counter > 5000) {update_counter = 0;};
