@@ -208,7 +208,6 @@ function ReactorGraphics(canvas, Reac, n_init, Tank, imp_array=[], isf=0.8, debu
 	this.show_timer();
 	this.show_duty();
 	this.show_temp();
-	this.show_conversion();
 	this.show_fps();
 	this.show_pcount();
 	this.show_tank();
