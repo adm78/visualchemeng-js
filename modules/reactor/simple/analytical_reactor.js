@@ -13,6 +13,9 @@
 //
 // Andrew D. McGuire 2018
 // a.mcguire227@gmail.com
+//
+// To do: adapt AnalyticalReactor.step routine to support arbitrary
+// stoich array
 //----------------------------------------------------------
 function AnalyticalReactor(options) { 
 
@@ -22,6 +25,7 @@ function AnalyticalReactor(options) {
     //    - A (float) : Arrhenius prefactor [mol.m^3/s]
     //    - Ea (float) : Activation energy [J/mol]
     //    - components (str array) : List of component names.
+    //    - stoich (float array) : List of stochiometric factors.
     //    - T (float) : The reactor temperature [K].
     //    - c0 (float array) : List of intial concentrations.
     //    - debug (bool) : Set the run mode.
@@ -31,10 +35,10 @@ function AnalyticalReactor(options) {
     // 	- constant T
 
     // describe the reaction A + B => C
-    var stoich = [1,1,-1] // hard coded to match 'step' until it's generalised
     var simple_reaction = new Reaction(options.A,options.Ea,
 				       options.components,
-				       stoich,options.debug)
+				       options.stoich,
+				       options.debug)
     var reactions = [simple_reaction];
     var V = 1.0;
    
@@ -46,6 +50,7 @@ function AnalyticalReactor(options) {
     this.step = function(dt) {
 
 	// step the reactor forward in time by dt/s
+	// Note: this assumes a stoich array of [1, 1, -1].
 
 	var Na0 = this.c0[0]*this.V;
 	var Nb0 = this.c0[1]*this.V;
@@ -79,7 +84,7 @@ function AnalyticalReactor(options) {
 
     this.Q = function() {
 	// Computre the duty of this batch system.
-	// Assumed that the olume has remained constant.
+	// Assumed that the volume has remained constant.
 	var Q = 0.0;	
 	if (this.t_prev != null) {
 	    for (var i = 0; i < this.components.length; i++) {

@@ -210,6 +210,7 @@ function ReactorGraphics(canvas, Reac, n_init, Tank, imp_array=[], isf=0.8, debu
 	this.show_temp();
 	this.show_fps();
 	this.show_pcount();
+	this.show_reaction_description();
 	this.show_tank();
 	this.show_boundaries();
 	this.show_particles();
@@ -275,6 +276,35 @@ function ReactorGraphics(canvas, Reac, n_init, Tank, imp_array=[], isf=0.8, debu
 	fill(255, 255, 255);
 	textAlign(LEFT, TOP);
 	text((this.Reac.conversion()*100.0).toFixed(1)+'%', this.canvas.width*0.02, this.canvas.height*0.35);
+	pop()
+    };
+
+    this.show_reaction_description = function() {
+	push()
+	noStroke();
+	fill('#676c75')
+	rect(this.canvas.width*0.7, this.canvas.height*0.02, this.canvas.width*0.28, this.canvas.height*0.2);
+	pop()
+	push()
+	for (i = 0; i < this.Reac.components.length; i++) {
+	    var x =  (0.7 + 0.05 + (0.28-0.02)*i/(this.Reac.components.length))*this.canvas.width;
+	    var y = (0.02 + 0.3*0.2)*this.canvas.height;
+	    var particle_options = merge_options(settings.particle_options[i], {isStatic :  true});
+	    if (settings.particle_options[i].type === 'single-body') {
+		var Part = new PhysEngineParticle(null, x, y, particle_options);
+	    }
+	    else if (settings.particle_options[i].type === 'two-body') {
+		var Part = new TwoBodyParticle(null, x, y, particle_options);
+	    }
+	    else {
+		throw new RangeError("Unsupported particle 'type' ", settings.particle_options[i].type, "encountred particle.settings");
+	    };
+	    Part.show();
+	    textSize(20);
+	    fill(255, 255, 255);
+	    textAlign(CENTER);
+	    text(this.Reac.components[i].name, x, y + 40);
+	};
 	pop()
     };
 

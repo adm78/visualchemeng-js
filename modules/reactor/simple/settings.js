@@ -30,6 +30,9 @@ var settings = {
 
     // identifier
     id : 'simple_reac',
+
+    // debug bool
+    debug : false,
     
     // physical properties 
     components : [
@@ -50,6 +53,14 @@ var settings = {
 	}
 
     ],
+
+    // reaction definition
+    reaction : {
+	Ea : 10000.0,
+	A : 1.0,
+	stoich: [1, 1, -1]
+    },
+    
     
     // graphical params 
     component_colours : ['#008CBA','#BC0CDF','#00FF00'],

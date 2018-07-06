@@ -13,6 +13,7 @@
 // - vce_utils.js
 // - vce_reaction.js
 // - vce_impeller.js
+// - settings.js
 //
 // Andrew D. McGuire 2018
 // a.mcguire227@gmail.com
@@ -25,7 +26,8 @@
 // --------------------------------------------------
 //               set-up variables
 // --------------------------------------------------
-var debug = false, paused_log = false,
+var debug = settings.debug,
+    paused_log = false,
     canvas,
     Reac,
     Graphics,
@@ -40,9 +42,10 @@ const default_reactor_options = {
 	  settings.sliders.CB0.start,
 	  settings.sliders.CC0.start],
     T : settings.sliders.T.start,
-    A : 1.0,
-    Ea : 10000.0,
-    debug : debug
+    A : settings.reaction.A,
+    Ea : settings.reaction.Ea,
+    stoich : settings.reaction.stoich,
+    debug : settings.debug
 };
 var reactor_options = deep_copy(default_reactor_options);
 
