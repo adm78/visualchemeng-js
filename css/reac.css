@@ -17,14 +17,14 @@
 }
 
 
-.flow_chart_container {
+.conversion_plot_container {
     grid-column: 1 ;
-    grid-row: 1 / 5   
+    grid-row: 4 / 5   
 }
 
-.placeholder_container {
+.duty_plot_container {
     grid-column: 1 ;
-    grid-row: 4 / 5  
+    grid-row: 1 / 4  
 }
 
 .conc_plot_container {

@@ -289,12 +289,11 @@ function ReactorGraphics(canvas, Reac, n_init, Tank, imp_array=[], isf=0.8, debu
 	for (i = 0; i < this.Reac.components.length; i++) {
 	    var x =  (0.7 + 0.05 + (0.28-0.02)*i/(this.Reac.components.length))*this.canvas.width;
 	    var y = (0.02 + 0.3*0.2)*this.canvas.height;
-	    var particle_options = merge_options(settings.particle_options[i], {isStatic :  true});
 	    if (settings.particle_options[i].type === 'single-body') {
-		var Part = new PhysEngineParticle(null, x, y, particle_options);
+		var Part = new PhysEngineParticle(null, x, y, settings.particle_options[i]);
 	    }
 	    else if (settings.particle_options[i].type === 'two-body') {
-		var Part = new TwoBodyParticle(null, x, y, particle_options);
+		var Part = new TwoBodyParticle(null, x, y, settings.particle_options[i]);
 	    }
 	    else {
 		throw new RangeError("Unsupported particle 'type' ", settings.particle_options[i].type, "encountred particle.settings");

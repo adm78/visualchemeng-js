@@ -10,6 +10,7 @@
 // Requires:
 // - p5.js or p5.min.js
 // - plotly
+// - jquery
 // - vce_utils.js
 // - vce_reaction.js
 // - vce_impeller.js
@@ -88,8 +89,11 @@ function setup(first_time=true) {
     const layout = plotly_layout(Reac);
     Plotly.newPlot('conc_plot_container', get_traces(Reac),layout);
 
-    // Render the bar plots
-    Plotly.newPlot('flow_chart_container', get_conversion_trace(Reac), plotly_conversion_layout());
+    // Render the conversion plot
+    Plotly.newPlot('conversion_plot_container', get_conversion_trace(Reac), plotly_conversion_layout());
+
+    // Render the duty plot
+    Plotly.newPlot('duty_plot_container', get_duty_trace(Reac), plotly_duty_layout());
 
     // Plot any saved data
     if (savedData != null) {
@@ -100,6 +104,9 @@ function setup(first_time=true) {
     // Initialise the sliders
     if (first_time) { update_sliders()};
 
+    // Re-size plots where required
+    resizePlotly('duty_plot_container');
+    resizePlotly('conversion_plot_container');
 }
 
 function draw() {
@@ -118,7 +125,8 @@ function draw() {
 	if (Reac.t < 200.0 && update_counter % 5 == 0) {
 	    var new_data = unpack_data(Reac);
 	    Plotly.extendTraces('conc_plot_container', new_data, [0, 1, 2]);
-	    Plotly.newPlot('flow_chart_container', get_conversion_trace(Reac), plotly_conversion_layout());
+	    Plotly.extendTraces('duty_plot_container', unpack_duty_data(Reac), [0]);
+	    Plotly.newPlot('conversion_plot_container', get_conversion_trace(Reac), plotly_conversion_layout());
 	};
 	update_counter += 1;
 	if (update_counter > 5000) {update_counter = 0;};
@@ -253,10 +261,8 @@ function update_CC0() {
 // --------------------------------------------------
 //                 UI event listners
 // --------------------------------------------------
-// run button
+// run/pause button
 $('#run').click(async function(){
-
-    // run/pause button functionality
     console.log("You just clicked stream/pause!");
     paused_log = !(paused_log);
     if (paused_log) {
@@ -269,8 +275,6 @@ $('#run').click(async function(){
 
 // save button
 $('#save').click(async function(){
-
-    // run/pause button functionality
     console.log("You just clicked save!");
     save_data(Reac);
     console.log(savedData);
@@ -289,13 +293,10 @@ $('#bounds').click(async function(){
 
 // reset button
 $('#restart').click(async function(){
-
-    // boundary show hide
     console.log("You just clicked reset!");
     reactor_options = deep_copy(default_reactor_options);
     setup();
     update_labels();
-    
 });
 
 
@@ -306,4 +307,16 @@ $('#fullscreen').on('click', () => {
     if (screenfull.enabled) {
 	screenfull.toggle(target);
     }
+});
+
+
+// page resize actions
+window.onresize = function() {
+    resizePlotly('duty_plot_container');
+    resizePlotly('conversion_plot_container');
+};
+
+// page full load actions
+$(document).ready(function () {
+
 });
