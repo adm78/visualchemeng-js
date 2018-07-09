@@ -60,7 +60,8 @@ function get_conversion_trace(reac) {
 	x : [' '],
 	y : [reac.conversion()*100.0],
 	type : 'bar',
-	width : 0.3
+	width : 0.3,
+	hoverinfo : 'none'
     };
     return [conversion_trace];
 };

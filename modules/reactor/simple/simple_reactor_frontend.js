@@ -107,6 +107,7 @@ function setup(first_time=true) {
     // Re-size plots where required
     resizePlotly('duty_plot_container');
     resizePlotly('conversion_plot_container');
+    
 }
 
 function draw() {
