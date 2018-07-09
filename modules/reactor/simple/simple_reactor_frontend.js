@@ -99,7 +99,6 @@ function setup(first_time=true) {
     if (savedData != null) {
 	Plotly.addTraces('conc_plot_container', get_saved_traces(savedData, Reac));
     };
-    console.log(savedData);
     
     // Initialise the sliders
     if (first_time) { update_sliders()};
@@ -307,12 +306,6 @@ $('#fullscreen').on('click', () => {
     console.log("Fullscreen requested.");
     if (screenfull.enabled) {
 	screenfull.toggle(target);
-	if (!screenfull.isFullscreen) {
-	    $("#fullscreen").text('Exit Fullscreen');
-	}
-	else {
-	    $("#fullscreen").text('Fullscreen');
-	};
     };
 });
 
