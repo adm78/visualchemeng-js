@@ -67,15 +67,7 @@ function ReactorGraphics(canvas, Reac, n_init, Tank, imp_array=[], isf=0.8, debu
 	for (j = 0; j < component_n_init; j++) {
 	    var inlet_x = 0.5*(this.xmax + 0.8*getRandomSigned()*this.sid.width); 
 	    var inlet_y = (this.ymax)*0.7 + 0.2*getRandomSigned()*this.sid.height;
-	    if (settings.particle_options[i].type === 'single-body') {
-		var Part = new PhysEngineParticle(this.world, inlet_x, inlet_y, settings.particle_options[i]) ;
-	    }
-	    else if (settings.particle_options[i].type === 'two-body') {
-		var Part = new TwoBodyParticle(this.world, inlet_x, inlet_y, settings.particle_options[i]);
-	    }
-	    else {
-		throw new RangeError("Unsupported particle 'type' ", settings.particle_options[i].type, "encountred particle.settings");
-	    };
+	    var Part = ParticleFactory(this.world, inlet_x, inlet_y, settings.particle_options[i]);
 	    component_ensemble.addParticle(Part);
 	};
 	this.Ensembles.push(component_ensemble);
@@ -153,15 +145,7 @@ function ReactorGraphics(canvas, Reac, n_init, Tank, imp_array=[], isf=0.8, debu
 	    }
 	    else if (dN > 0) {
 		for (var j=0; j < dN; j++) {
-		    if (settings.particle_options[i].type === 'single-body') {
-			var Part = new PhysEngineParticle(this.world, inlet_x, inlet_y, settings.particle_options[i]);
-		    }
-		    else if (settings.particle_options[i].type === 'two-body') {
-			var Part = new TwoBodyParticle(this.world, inlet_x, inlet_y, settings.particle_options[i]);
-		    }
-		    else {
-			throw new RangeError("Unsupported particle 'type' ", settings.particle_options[i].type, "encountred particle.settings");
-		    };
+		    var Part = ParticleFactory(this.world, inlet_x, inlet_y, settings.particle_options[i]);
 		    this.Ensembles[i].addParticle(Part);
 		};
 	    }
@@ -284,15 +268,7 @@ function ReactorGraphics(canvas, Reac, n_init, Tank, imp_array=[], isf=0.8, debu
 	for (i = 0; i < this.Reac.components.length; i++) {
 	    var x =  (0.70 + 0.05 + (0.28-0.02)*j/(this.Reac.components.length*2 - 1))*this.canvas.width;
 	    var y = (0.02 + 0.3*0.2)*this.canvas.height;
-	    if (settings.particle_options[i].type === 'single-body') {
-		var Part = new PhysEngineParticle(null, x, y, settings.particle_options[i]);
-	    }
-	    else if (settings.particle_options[i].type === 'two-body') {
-		var Part = new TwoBodyParticle(null, x, y, settings.particle_options[i]);
-	    }
-	    else {
-		throw new RangeError("Unsupported particle 'type' ", settings.particle_options[i].type, "encountred particle.settings");
-	    };
+	    var Part = ParticleFactory(null, x, y, settings.particle_options[i]);
 	    Part.show();
 	    push();
 	    textSize(20);
