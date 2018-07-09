@@ -39,9 +39,9 @@ var debug = settings.debug,
 
 const default_reactor_options = {
     components : settings.components,
-    c0 : [settings.sliders.CA0.start,
-	  settings.sliders.CB0.start,
-	  settings.sliders.CC0.start],
+    c0 : [settings.sliders.Ca0.start,
+	  settings.sliders.Cb0.start,
+	  settings.sliders.Cc0.start],
     T : settings.sliders.T.start,
     A : settings.reaction.A,
     Ea : settings.reaction.Ea,
@@ -177,9 +177,9 @@ function update_bounds_button_label() {
 // ----------------------------------------------
 function update_sliders() {
     update_T_slider();
-    update_CA0_slider();
-    update_CB0_slider();
-    update_CC0_slider();
+    update_Ca0_slider();
+    update_Cb0_slider();
+    update_Cc0_slider();
 };
 
 
@@ -202,58 +202,58 @@ function update_temp() {
 };
 
 
-function update_CA0_slider() {
+function update_Ca0_slider() {
     $( "#k2_slider" ).slider({
 	orientation: "vertical",
 	range: "min",
-	min: settings.sliders.CA0.min,
-	max: settings.sliders.CA0.max,
-	step: settings.sliders.CA0.step,
-	value: settings.sliders.CA0.start,
-	slide: update_CA0,
-	change: update_CA0
+	min: settings.sliders.Ca0.min,
+	max: settings.sliders.Ca0.max,
+	step: settings.sliders.Ca0.step,
+	value: settings.sliders.Ca0.start,
+	slide: update_Ca0,
+	change: update_Ca0
     });
-    $( "#k2_slider" ).slider( "value", settings.sliders.CA0.start);
+    $( "#k2_slider" ).slider( "value", settings.sliders.Ca0.start);
 };
-function update_CA0() {
+function update_Ca0() {
     reactor_options.c0[0] = $( "#k2_slider" ).slider("value");
     setup(first_time=false);        
 };
 
 
-function update_CB0_slider() {
+function update_Cb0_slider() {
     $( "#k3_slider" ).slider({
 	orientation: "vertical",
 	range: "min",
-	min: settings.sliders.CB0.min,
-	max: settings.sliders.CB0.max,
-	step: settings.sliders.CB0.step,
-	value: settings.sliders.CB0.start,
-	slide: update_CB0,
-	change: update_CB0
+	min: settings.sliders.Cb0.min,
+	max: settings.sliders.Cb0.max,
+	step: settings.sliders.Cb0.step,
+	value: settings.sliders.Cb0.start,
+	slide: update_Cb0,
+	change: update_Cb0
     });
-    $( "#k3_slider" ).slider( "value", settings.sliders.CB0.start);
+    $( "#k3_slider" ).slider( "value", settings.sliders.Cb0.start);
 };
-function update_CB0() {
+function update_Cb0() {
     reactor_options.c0[1] = $( "#k3_slider" ).slider("value");
     setup(first_time=false);        
 };
 
 
-function update_CC0_slider() {
+function update_Cc0_slider() {
     $( "#k4_slider" ).slider({
 	orientation: "vertical",
 	range: "min",
-	min: settings.sliders.CC0.min,
-	max: settings.sliders.CC0.max,
-	step: settings.sliders.CC0.step,
-	value: settings.sliders.CC0.start,
-	slide: update_CC0,
-	change: update_CC0
+	min: settings.sliders.Cc0.min,
+	max: settings.sliders.Cc0.max,
+	step: settings.sliders.Cc0.step,
+	value: settings.sliders.Cc0.start,
+	slide: update_Cc0,
+	change: update_Cc0
     });
-    $( "#k4_slider" ).slider( "value", settings.sliders.CC0.start);
+    $( "#k4_slider" ).slider( "value", settings.sliders.Cc0.start);
 };
-function update_CC0() {
+function update_Cc0() {
     reactor_options.c0[2] = $( "#k4_slider" ).slider("value");
     setup(first_time=false);        
 };
@@ -307,7 +307,13 @@ $('#fullscreen').on('click', () => {
     console.log("Fullscreen requested.");
     if (screenfull.enabled) {
 	screenfull.toggle(target);
-    }
+	if (!screenfull.isFullscreen) {
+	    $("#fullscreen").text('Exit Fullscreen');
+	}
+	else {
+	    $("#fullscreen").text('Fullscreen');
+	};
+    };
 });
 
 

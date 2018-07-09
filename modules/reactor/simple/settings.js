@@ -37,17 +37,17 @@ var settings = {
     // physical properties 
     components : [
 	{
-	    name : 'A',
+	    name : 'a',
 	    h : 100.0,
 	    h_unit : 'J/mol'
 	},
 	{
-	    name : 'B',
+	    name : 'b',
 	    h : 200.0,
 	    h_unit : 'J/mol'
 	},
 	{
-	    name : 'C',
+	    name : 'c',
 	    h: 400.0,
 	    h_unit : 'J/mol'
 	}
@@ -58,7 +58,9 @@ var settings = {
     reaction : {
 	Ea : 10000.0,
 	A : 1.0,
-	stoich: [1, 1, -1]
+	stoich: [1, 1, -1],
+	rate_expression : 'r(Ca,Cb,T) = k(T).Ca.Cb',
+	rate_constant_expression: 'k(T) = A.exp(-Ea/R.T)'
     },
     
     
@@ -111,19 +113,19 @@ var settings = {
 	    start : 298.0,
 	    step : 1.0
 	},
-	CA0 : {
+	Ca0 : {
 	    min : 0.0,
 	    max : 3.0,
 	    start : 1.0,
 	    step : 0.05
 	},
-	CB0 : {
+	Cb0 : {
 	    min : 0.0,
 	    max : 3.0,
 	    start : 2.0,
 	    step : 0.05
 	},
-	CC0 : {
+	Cc0 : {
 	    min : 0.0,
 	    max : 3.0,
 	    start : 0.0,

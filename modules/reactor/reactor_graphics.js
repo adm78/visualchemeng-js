@@ -23,6 +23,8 @@
 // a.mcguire227@gmail.com
 //
 // To do:
+// - generalise the show_reaction_stoich so that it can handle
+//   multiple and reversible reactions.
 //
 //----------------------------------------------------------
 var Engine = Matter.Engine,
@@ -193,7 +195,9 @@ function ReactorGraphics(canvas, Reac, n_init, Tank, imp_array=[], isf=0.8, debu
 	this.show_temp();
 	this.show_fps();
 	this.show_pcount();
-	this.show_reaction_description();
+	this.show_reaction_stoich();
+	this.show_rate_expression();
+	this.show_rate_constant_expression();
 	this.show_tank();
 	this.show_boundaries();
 	this.show_particles();
@@ -262,7 +266,7 @@ function ReactorGraphics(canvas, Reac, n_init, Tank, imp_array=[], isf=0.8, debu
 	pop()
     };
 
-    this.show_reaction_description = function() {
+    this.show_reaction_stoich = function() {
 	push()
 	var j = 0;
 	for (i = 0; i < this.Reac.components.length; i++) {
@@ -296,6 +300,32 @@ function ReactorGraphics(canvas, Reac, n_init, Tank, imp_array=[], isf=0.8, debu
 	};
 	pop()
     };
+
+    
+    this.show_rate_expression = function() {
+	push();
+	textStyle(ITALIC);
+	textSize(20);
+	fill(255, 255, 255);
+	textAlign(RIGHT, CENTER);
+	var x = 0.98*this.canvas.width;
+	var y = (0.35)*this.canvas.height;
+	text(settings.reaction.rate_expression, x, y);
+	pop();
+    };
+
+    
+    this.show_rate_constant_expression = function() {
+	push();
+	textStyle(ITALIC);
+	textSize(20);
+	fill(255, 255, 255);
+	textAlign(RIGHT, CENTER);
+	var x = 0.98*this.canvas.width;
+	var y = (0.45)*this.canvas.height;
+	text(settings.reaction.rate_constant_expression, x, y);
+	pop();
+    }; 
 
     
     this.show_fps = function() {
