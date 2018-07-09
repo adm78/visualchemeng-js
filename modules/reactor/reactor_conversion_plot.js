@@ -14,6 +14,7 @@
 //----------------------------------------------------------
 function plotly_conversion_layout() {
     layout = {
+	static: true,
 	title: 'conversion',
 	titlefont: {
 	    family: 'Roboto, serif',
@@ -61,7 +62,14 @@ function get_conversion_trace(reac) {
 	y : [reac.conversion()*100.0],
 	type : 'bar',
 	width : 0.3,
-	hoverinfo : 'none'
+	hoverinfo : 'none',
+	marker: {
+	    color : 'rgba(31,119,180,0.5)',
+	    line : {
+		color: 'rgba(31,119,180,1.0)',
+		width : 1.5,
+	    },
+	}
     };
     return [conversion_trace];
 };
