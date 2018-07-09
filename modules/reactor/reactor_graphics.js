@@ -280,13 +280,9 @@ function ReactorGraphics(canvas, Reac, n_init, Tank, imp_array=[], isf=0.8, debu
 
     this.show_reaction_description = function() {
 	push()
-	noStroke();
-	fill('#676c75')
-	rect(this.canvas.width*0.7, this.canvas.height*0.02, this.canvas.width*0.28, this.canvas.height*0.2);
-	pop()
-	push()
+	var j = 0;
 	for (i = 0; i < this.Reac.components.length; i++) {
-	    var x =  (0.7 + 0.05 + (0.28-0.02)*i/(this.Reac.components.length))*this.canvas.width;
+	    var x =  (0.70 + 0.05 + (0.28-0.02)*j/(this.Reac.components.length*2 - 1))*this.canvas.width;
 	    var y = (0.02 + 0.3*0.2)*this.canvas.height;
 	    if (settings.particle_options[i].type === 'single-body') {
 		var Part = new PhysEngineParticle(null, x, y, settings.particle_options[i]);
@@ -298,10 +294,29 @@ function ReactorGraphics(canvas, Reac, n_init, Tank, imp_array=[], isf=0.8, debu
 		throw new RangeError("Unsupported particle 'type' ", settings.particle_options[i].type, "encountred particle.settings");
 	    };
 	    Part.show();
+	    push();
 	    textSize(20);
 	    fill(255, 255, 255);
-	    textAlign(CENTER);
+	    textAlign(CENTER, CENTER);
 	    text(this.Reac.components[i].name, x, y + 40);
+	    pop();
+	    j = j + 1;
+	    var x =  (0.70 + 0.05 + (0.28-0.02)*j/(this.Reac.components.length*2 - 1))*this.canvas.width;
+	    var y = (0.02 + 0.3*0.2)*this.canvas.height;
+	    if (i < this.Reac.components.length - 1) {
+		j = j + 1;
+		push();
+		textSize(20);
+		fill(255, 255, 255);
+		textAlign(CENTER, CENTER);
+		if (this.Reac.reactions[0].stoich[i]*this.Reac.reactions[0].stoich[i+1] < 0) {
+		    text('\u2192', x, y);
+		}
+		else {
+		    text('+', x, y);
+		}
+		pop();
+	    };
 	};
 	pop()
     };
