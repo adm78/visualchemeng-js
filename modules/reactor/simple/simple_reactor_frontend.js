@@ -322,3 +322,10 @@ window.onresize = function() {
 $(document).ready(function () {
 
 });
+
+// on-click functionality
+function mousePressed() {
+    if (is_on_canvas(mouseX, mouseY, canvas)) {
+	$('#run').click();
+    };
+};
