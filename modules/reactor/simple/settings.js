@@ -59,8 +59,8 @@ var settings = {
 	Ea : 10000.0,
 	A : 1.0,
 	stoich: [1, 1, -1],
-	rate_expression : 'r(Ca,Cb,T) = k(T).Ca.Cb',
-	rate_constant_expression: 'k(T) = A.exp(-Ea/R.T)'
+	rate_expression : 'r = k.Ca.Cb',
+	rate_constant_expression: 'k = A.exp(-Ea/R.T)'
     },
     
     

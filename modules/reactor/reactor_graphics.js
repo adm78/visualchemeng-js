@@ -191,6 +191,10 @@ function ReactorGraphics(canvas, Reac, n_init, Tank, imp_array=[], isf=0.8, debu
 
 	// render all the neccessary pieces to the canvas
 	background(51);
+	this.show_tank();
+	this.show_boundaries();
+	this.show_particles();
+	this.Impeller.show();
 	this.show_timer();
 	this.show_temp();
 	this.show_fps();
@@ -198,11 +202,7 @@ function ReactorGraphics(canvas, Reac, n_init, Tank, imp_array=[], isf=0.8, debu
 	this.show_reaction_stoich();
 	this.show_rate_expression();
 	this.show_rate_constant_expression();
-	this.show_tank();
-	this.show_boundaries();
-	this.show_particles();
-	this.Impeller.show();
-	    
+	
     };
 
     this.show_tank = function() {
