@@ -10,7 +10,9 @@ JavaScript, HTML and CSS code for the simulation modules of the [Visual Chemical
 ## About the VCE project 
 The vce project aims to deliver chemical engineering principles in a way that sticks. We place you in control of common unit operations with dynamic, graphics-driven feedback. Under the bonnet, vce is powered by years of chemical engineering knowledge, brought to you through the power of [p5.js](https://p5js.org/), [Plotly](https://plot.ly/) and more.
 
-## 🎬Live interactive demo (click the image) 
+## 🎬Live interactive demos (click the images!) 
+[![VCE about screenshot](http://visualchemeng.com/wp-content/uploads/2018/07/2018-07-10-4.png)](https://rawcdn.githack.com/adm78/visualchemeng-js/5de1d5a991a01064f73a4f449ab08f63f369202d/pages/simple_reac.html)
+
 [![VCE about screenshot](http://visualchemeng.com/wp-content/uploads/2018/02/vce_flash_biodiesel.png)](https://cdn.rawgit.com/adm78/visualchemeng_js/13eee3e6db99109bf0f01f8a113b6e72efec3bbf/pages/flash_grid.html)
 
 ## 🔨🔧Contributing 
