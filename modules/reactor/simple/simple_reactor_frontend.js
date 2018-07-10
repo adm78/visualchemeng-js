@@ -269,9 +269,11 @@ $('#run').click(async function(){
     paused_log = !(paused_log);
     if (paused_log) {
 	$("#run").text('Run');
+	$('#run').prop('title', 'Un-pause the reaction');
     }
     else {
 	$("#run").text('Pause');
+	$('#run').prop('title', 'Pause the reaction');
     }
 });
 
@@ -279,7 +281,6 @@ $('#run').click(async function(){
 $('#save').click(async function(){
     console.log("You just clicked save!");
     save_data(Reac);
-    console.log(savedData);
 });
 
 
