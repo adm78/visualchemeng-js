@@ -99,6 +99,7 @@ function setup(first_time=true) {
     if (savedData != null) {
 	Plotly.addTraces('conc_plot_container', get_saved_conc_traces(savedData, Reac));
 	Plotly.addTraces('duty_plot_container', get_saved_duty_trace(savedData, Reac));
+	Plotly.addTraces('conversion_plot_container', get_saved_conversion_trace(savedData, Reac));
     };
     
     // Initialise the sliders
@@ -147,7 +148,8 @@ function save_data(Reac) {
 	T : Reac.T,
 	c0 : Reac.c0,
 	conc_data : document.getElementById('conc_plot_container').data,
-	duty_data : document.getElementById('duty_plot_container').data
+	duty_data : document.getElementById('duty_plot_container').data,
+	conv_data : document.getElementById('conversion_plot_container').data
     };
 };
 

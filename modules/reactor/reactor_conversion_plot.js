@@ -55,7 +55,12 @@ function plotly_conversion_layout() {
 	    l: 50, 
 	    r: 50, 
 	    b: 50
-	}
+	},
+	legend: {
+	    font: {color: 'white'},
+	    x: 0.3,
+	    y : 0.2	    
+	},
     };
     return layout
 };
@@ -67,18 +72,28 @@ function get_conversion_trace(reac) {
 	y : [reac.conversion()*100.0],
 	type : 'scatter',
 	mode : 'lines',
+	name : 'current',
 	fill : 'tozeroy',
 	maxdisplayed: 200/0.1,
 	text : get_hover_text(reac)
-	// marker: {
-	//     color : 'rgba(31,119,180,0.5)',
-	//     line : {
-	// 	color: 'rgba(31,119,180,1.0)',
-	// 	width : 1.5,
-	//     },
-	// }
     };
     return [conversion_trace];
+};
+
+
+function get_saved_conversion_trace(savedData, reac) {
+    // construct conversion trace from a previous save
+    var trace = {
+	type: "scatter",
+	mode: "lines",
+	name: "saved",
+	x: savedData.conv_data[0].x,
+	y: savedData.conv_data[0].y,
+	fill : 'tozeroy',
+	maxdisplayed: 200/0.1,
+	text : get_saved_hover_text(savedData, reac),
+    };
+    return [trace];    
 };
 
 
