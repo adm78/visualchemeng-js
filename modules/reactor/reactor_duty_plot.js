@@ -11,7 +11,7 @@
 // a.mcguire227@gmail.com
 //
 // To do:
-//
+// - remove trace text generation dependecny on reactor_conc_plot.js.
 //
 //----------------------------------------------------------
 function plotly_duty_layout() {
@@ -23,7 +23,6 @@ function plotly_duty_layout() {
 	    t: 50,
 	    pad: 5
 	},
-	//autosize: true,
 	height: 300,
 	title: "reactor duty",
 	titlefont: {
@@ -32,7 +31,9 @@ function plotly_duty_layout() {
 	    color: 'white'
 	},
 	legend: {
-	    font: {color: 'white'}
+	    font: {color: 'white'},
+	    x: 0.3,
+	    y : 1.0	    
 	},
 	hoverlabel: {bordercolor:'#333438'},
 	plot_bgcolor: '#333438',
@@ -75,10 +76,9 @@ function get_duty_trace(reac) {
     var trace = {
 	type: "scatter",
 	mode: "lines",
-	name: 'Q_reaction',
+	name: 'current',
 	x: [reac.t],
 	y: [reac.Q()],
-	//line: {color: settings.component_colours[i]},
 	maxdisplayed: 200/0.1,
 	text : get_hover_text(reac),
 	fill : 'tozeroy'
@@ -87,28 +87,20 @@ function get_duty_trace(reac) {
 };
 
 
-// function get_saved_traces(savedData, reac) {
-//     // constuct traces from a previous save
-//     var all_traces = [];
-//     for (var i = 0; i < savedData.data.length; i++) {
-// 	var trace = {
-// 	    type: "scatter",
-// 	    mode: "lines",
-// 	    name: reac.components[i].name + " saved",
-// 	    x: savedData.data[i].x,
-// 	    y: savedData.data[i].y,
-// 	    line: {
-// 		color: settings.component_colours[i],
-// 		dash: 'dot'
-// 	    },
-// 	    maxdisplayed: 200/0.1,
-// 	    text : get_saved_hover_text(savedData, reac),
-// 	};
-// 	all_traces.push(trace);
-//     };
-//     return all_traces;    
-    
-// };
+function get_saved_duty_trace(savedData, reac) {
+    // constuct duty trace from a previous save
+    var trace = {
+	type: "scatter",
+	mode: "lines",
+	name: "saved",
+	x: savedData.duty_data[0].x,
+	y: savedData.duty_data[0].y,
+	fill : 'tozeroy',
+	maxdisplayed: 200/0.1,
+	text : get_saved_hover_text(savedData, reac),
+    };
+    return [trace];    
+};
 
 
 function unpack_duty_data(reac) {

@@ -14,7 +14,7 @@
 //
 //
 //----------------------------------------------------------
-function plotly_layout(reac) {
+function plotly_conc_layout(reac) {
     var layout =  {
 	margin : {
 	    l: 80,
@@ -78,7 +78,7 @@ function get_fill(i) {
     };
 };
 
-function get_traces(reac) {
+function get_conc_traces(reac) {
 
     var all_traces = [];
     for (var i = 0; i < reac.components.length; i++) {
@@ -99,16 +99,16 @@ function get_traces(reac) {
 };
 
 
-function get_saved_traces(savedData, reac) {
+function get_saved_conc_traces(savedData, reac) {
     // constuct traces from a previous save
     var all_traces = [];
-    for (var i = 0; i < savedData.data.length; i++) {
+    for (var i = 0; i < savedData.conc_data.length; i++) {
 	var trace = {
 	    type: "scatter",
 	    mode: "lines",
 	    name: reac.components[i].name + " saved",
-	    x: savedData.data[i].x,
-	    y: savedData.data[i].y,
+	    x: savedData.conc_data[i].x,
+	    y: savedData.conc_data[i].y,
 	    line: {
 		color: settings.component_colours[i],
 		dash: 'dot'
@@ -143,7 +143,7 @@ function get_saved_hover_text(savedData, reac) {
 };
 
 
-function unpack_data(reac) {
+function unpack_conc_data(reac) {
     // unpacks storage data to extend plotly graph
     var x = [], y = [];
     for (var i = 0; i < reac.conc.length; i++) {

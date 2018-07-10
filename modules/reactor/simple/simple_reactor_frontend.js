@@ -86,8 +86,7 @@ function setup(first_time=true) {
     Graphics = new ReactorGraphics(canvas, Reac, n_init, tank, imp_array, 0.8, debug);
 
     // Construct the plotly graph
-    const layout = plotly_layout(Reac);
-    Plotly.newPlot('conc_plot_container', get_traces(Reac),layout);
+    Plotly.newPlot('conc_plot_container', get_conc_traces(Reac), plotly_conc_layout(Reac));
 
     // Render the conversion plot
     Plotly.newPlot('conversion_plot_container', get_conversion_trace(Reac), plotly_conversion_layout());
@@ -95,9 +94,11 @@ function setup(first_time=true) {
     // Render the duty plot
     Plotly.newPlot('duty_plot_container', get_duty_trace(Reac), plotly_duty_layout());
 
+
     // Plot any saved data
     if (savedData != null) {
-	Plotly.addTraces('conc_plot_container', get_saved_traces(savedData, Reac));
+	Plotly.addTraces('conc_plot_container', get_saved_conc_traces(savedData, Reac));
+	Plotly.addTraces('duty_plot_container', get_saved_duty_trace(savedData, Reac));
     };
     
     // Initialise the sliders
@@ -123,8 +124,7 @@ function draw() {
 	Graphics.update();
 	// update the plots
 	if (Reac.t < 200.0 && update_counter % 5 == 0) {
-	    var new_data = unpack_data(Reac);
-	    Plotly.extendTraces('conc_plot_container', new_data, [0, 1, 2]);
+	    Plotly.extendTraces('conc_plot_container', unpack_conc_data(Reac), [0, 1, 2]);
 	    Plotly.extendTraces('duty_plot_container', unpack_duty_data(Reac), [0]);
 	    Plotly.newPlot('conversion_plot_container', get_conversion_trace(Reac), plotly_conversion_layout());
 	};
@@ -143,11 +143,11 @@ function draw() {
 function save_data(Reac) {
     // Save concentration time-series and stats for the current
     // simulations.
-    var myplot = document.getElementById('conc_plot_container');
     savedData = {
 	T : Reac.T,
 	c0 : Reac.c0,
-	data : myplot.data
+	conc_data : document.getElementById('conc_plot_container').data,
+	duty_data : document.getElementById('duty_plot_container').data
     };
 };
 
