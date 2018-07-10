@@ -197,12 +197,13 @@ function ReactorGraphics(canvas, Reac, n_init, Tank, imp_array=[], isf=0.8, debu
 	this.Impeller.show();
 	this.show_timer();
 	this.show_temp();
-	this.show_fps();
-	this.show_pcount();
 	this.show_reaction_stoich();
 	this.show_rate_expression();
 	this.show_rate_constant_expression();
-	
+	if (this.debug) {
+	    this.show_pcount();
+	    this.show_fps();
+	};
     };
 
     this.show_tank = function() {
@@ -266,12 +267,24 @@ function ReactorGraphics(canvas, Reac, n_init, Tank, imp_array=[], isf=0.8, debu
 	pop()
     };
 
+    var f_y_top = 0.05;
     this.show_reaction_stoich = function() {
-	push()
+	push();
+	textSize(20);
+	fill(255, 255, 255);
+	textAlign(CENTER, CENTER);
+	var x = 0.85*this.canvas.width;
+	var y = f_y_top*this.canvas.height;
+	text("Reaction", x, y);
+	pop();
+	push();
 	var j = 0;
+	// Loop through components drawing them and adding the
+	// relevant labels.  This includes any '+' and reaction
+	// arrows.
 	for (i = 0; i < this.Reac.components.length; i++) {
 	    var x =  (0.70 + 0.05 + (0.28-0.02)*j/(this.Reac.components.length*2 - 1))*this.canvas.width;
-	    var y = (0.02 + 0.3*0.2)*this.canvas.height;
+	    var y = (f_y_top+0.1)*this.canvas.height;
 	    var Part = ParticleFactory(null, x, y, settings.particle_options[i]);
 	    Part.show();
 	    push();
@@ -282,13 +295,15 @@ function ReactorGraphics(canvas, Reac, n_init, Tank, imp_array=[], isf=0.8, debu
 	    pop();
 	    j = j + 1;
 	    var x =  (0.70 + 0.05 + (0.28-0.02)*j/(this.Reac.components.length*2 - 1))*this.canvas.width;
-	    var y = (0.02 + 0.3*0.2)*this.canvas.height;
+	    var y = (f_y_top+0.1)*this.canvas.height;
 	    if (i < this.Reac.components.length - 1) {
+		// a delimiter is required between component labels
 		j = j + 1;
 		push();
 		textSize(20);
 		fill(255, 255, 255);
 		textAlign(CENTER, CENTER);
+		// decide if a '+' or arrow is required
 		if (this.Reac.reactions[0].stoich[i]*this.Reac.reactions[0].stoich[i+1] < 0) {
 		    text('\u2192', x, y);
 		}
@@ -308,8 +323,8 @@ function ReactorGraphics(canvas, Reac, n_init, Tank, imp_array=[], isf=0.8, debu
 	textSize(20);
 	fill(255, 255, 255);
 	textAlign(RIGHT, CENTER);
-	var x = 0.98*this.canvas.width;
-	var y = (0.35)*this.canvas.height;
+	var x = 0.94*this.canvas.width;
+	var y = (f_y_top+0.3)*this.canvas.height;
 	text(settings.reaction.rate_expression, x, y);
 	pop();
     };
@@ -322,7 +337,7 @@ function ReactorGraphics(canvas, Reac, n_init, Tank, imp_array=[], isf=0.8, debu
 	fill(255, 255, 255);
 	textAlign(RIGHT, CENTER);
 	var x = 0.98*this.canvas.width;
-	var y = (0.45)*this.canvas.height;
+	var y = (f_y_top+0.4)*this.canvas.height;
 	text(settings.reaction.rate_constant_expression, x, y);
 	pop();
     }; 

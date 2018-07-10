@@ -51,7 +51,6 @@ var settings = {
 	    h: 400.0,
 	    h_unit : 'J/mol'
 	}
-
     ],
 
     // reaction definition
