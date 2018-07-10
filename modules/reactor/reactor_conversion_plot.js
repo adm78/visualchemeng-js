@@ -23,9 +23,12 @@ function plotly_conversion_layout() {
 	    },
     	plot_bgcolor: '#333438',
 	paper_bgcolor: '#333333',
+	hoverlabel: {bordercolor:'#333438'},
 	xaxis: {
+	    title : 'time/s',
 	    showgrid: true,
 	    gridcolor: '#44474c',
+	    range: [0, 200.0],
 	    titlefont: {
 		family: 'Roboto, serif',
 		size: 18,
@@ -43,13 +46,15 @@ function plotly_conversion_layout() {
 		size: 18,
 		color: 'white'
 	    },
-	    tickfont: {color:'white'}
+	    tickfont: {color:'white'},
+	    autorange: false,
+	    autoscale: false,
 	},
 	margin: {
 	    t: 50, 
 	    l: 50, 
 	    r: 50, 
-	    b: 20
+	    b: 50
 	}
     };
     return layout
@@ -58,20 +63,29 @@ function plotly_conversion_layout() {
 
 function get_conversion_trace(reac) {
     var conversion_trace = {
-	x : [' '],
+	x : [reac.t],
 	y : [reac.conversion()*100.0],
-	type : 'bar',
-	width : 0.3,
-	hoverinfo : 'none',
-	marker: {
-	    color : 'rgba(31,119,180,0.5)',
-	    line : {
-		color: 'rgba(31,119,180,1.0)',
-		width : 1.5,
-	    },
-	}
+	type : 'scatter',
+	mode : 'lines',
+	fill : 'tozeroy',
+	maxdisplayed: 200/0.1,
+	text : get_hover_text(reac)
+	// marker: {
+	//     color : 'rgba(31,119,180,0.5)',
+	//     line : {
+	// 	color: 'rgba(31,119,180,1.0)',
+	// 	width : 1.5,
+	//     },
+	// }
     };
     return [conversion_trace];
 };
 
 
+function unpack_conversion_data(reac) {
+    // unpacks current conversion data to extend plotly graph
+    return {
+	x : [[reac.t]],
+	y : [[reac.conversion()*100.0]],
+    };
+};

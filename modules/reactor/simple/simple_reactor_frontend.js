@@ -126,7 +126,7 @@ function draw() {
 	if (Reac.t < 200.0 && update_counter % 5 == 0) {
 	    Plotly.extendTraces('conc_plot_container', unpack_conc_data(Reac), [0, 1, 2]);
 	    Plotly.extendTraces('duty_plot_container', unpack_duty_data(Reac), [0]);
-	    Plotly.newPlot('conversion_plot_container', get_conversion_trace(Reac), plotly_conversion_layout());
+	    Plotly.extendTraces('conversion_plot_container', unpack_conversion_data(Reac), [0]);
 	};
 	update_counter += 1;
 	if (update_counter > 5000) {update_counter = 0;};
