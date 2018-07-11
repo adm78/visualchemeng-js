@@ -55,12 +55,18 @@ function AnalyticalReactor(options) {
 	var Na0 = this.c0[0]*this.V;
 	var Nb0 = this.c0[1]*this.V;
 	var Nc0 = this.c0[2]*this.V;
-	var alpha = Nb0 - Na0;
-	var num = Na0*alpha;
-	var k = this.reactions[0].k(this.T)
-	var exp = Math.exp(+k*alpha*this.t/this.V)
-	var den = Nb0*exp-Na0;
-	var Na = num/den;
+
+	if (Na0 === Nb0) {
+	    var Na = Na0/(1.0+this.reactions[0].k(this.T)*this.t*Na0/this.V);
+	}
+	else {
+	    var alpha = Nb0 - Na0;
+	    var num = Na0*alpha;
+	    var k = this.reactions[0].k(this.T)
+	    var exp = Math.exp(+k*alpha*this.t/this.V)
+	    var den = Nb0*exp-Na0;
+	    var Na = num/den;
+	};
 	var Nb = Na + Nb0 - Na0;
 	var Nc = Nc0 + Na0 - Na;
 	
