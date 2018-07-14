@@ -55,18 +55,127 @@ function DistillationGraphics(canvas, column_img, debug) {
 
     // Build the boundaries (ideally these co-ordinates should be loaded from file...)
     this.Boundaries = [];
-    var x_middle = (this.xmax-this.sid.width)/2;
-    var y_middle = (this.ymax)/2;
-    this.Boundaries.push(new Boundary(0.515*this.xmax,
-    				      0.43*this.ymax,
-    				      20,
-				      this.sid.height*0.52, 0.0,
-    				      this.world));
-    this.Boundaries.push(new Boundary(0.515*this.xmax,
-    				      0.43*this.ymax,
-    				      20,
-				      this.sid.height*0.52, PI/2,
-    				      this.world));
+    var x_mid = (this.xmax)/2;
+    var y_mid = (this.ymax)/2;
+    var wb = 20.0;
+    var wc = this.sid.width;
+    var hc = this.sid.height;
+    // colum main right
+    this.Boundaries.push(new Boundary(x_mid - 0.02*wc,
+    				      y_mid - 0.34*hc,
+    				      wb,
+				      hc*0.515, 0.0,
+    				      this.world,
+				      LEFT));
+
+    // column upper left
+    this.Boundaries.push(new Boundary(x_mid - 0.325*wc,
+    				      y_mid - 0.34*hc,
+    				      wb,
+				      hc*0.7, 0.0,
+    				      this.world,
+				      LEFT));
+
+    
+    // under reflux
+    this.Boundaries.push(new Boundary(x_mid - 0.02*wc,
+    				      y_mid - 0.34*hc,
+    				      0.515*wc,
+				      wb, 0.0,
+    				      this.world,
+				      LEFT));
+
+    // reflux upper left
+    this.Boundaries.push(new Boundary(x_mid - 0.045*wc,
+    				      y_mid - 0.42*hc,
+    				      0.26*wc,
+				      wb*0.7, 0.0,
+    				      this.world,
+				      LEFT));
+    
+    // reflux upper right
+    this.Boundaries.push(new Boundary(x_mid + 0.26*wc,
+    				      y_mid - 0.42*hc,
+    				      0.26*wc,
+				      wb*0.7, 0.0,
+    				      this.world,
+				      LEFT));
+
+    // condenser top
+    this.Boundaries.push(new Boundary(x_mid + 0.12*wc,
+    				      y_mid - 0.565*hc,
+    				      0.26*wc,
+				      wb, 0.0,
+    				      this.world,
+				      LEFT));
+
+    
+    // condenser feed top
+    this.Boundaries.push(new Boundary(x_mid - 0.14*wc,
+    				      y_mid - 0.53*hc,
+    				      0.26*wc,
+				      wb, 0.0,
+    				      this.world,
+				      LEFT));
+
+    
+    // condenser feed bottom
+    this.Boundaries.push(new Boundary(x_mid - 0.105*wc,
+    				      y_mid - 0.445*hc,
+    				      0.22*wc,
+				      wb*0.7, 0.0,
+    				      this.world,
+				      LEFT));
+    
+    // reboiler feed bottom
+    this.Boundaries.push(new Boundary(x_mid - 0.18*wc,
+    				      y_mid + 0.4*hc,
+    				      0.3*wc,
+				      wb, 0.0,
+    				      this.world,
+				      LEFT));
+
+    // reboiler feed top
+    this.Boundaries.push(new Boundary(x_mid - 0.18*wc,
+    				      y_mid + 0.3*hc,
+    				      0.3*wc,
+				      wb, 0.0,
+    				      this.world,
+				      LEFT));
+    
+    
+    // top of reboiler return pipe
+    this.Boundaries.push(new Boundary(x_mid - 0.02*wc,
+    				      y_mid + 0.115*hc,
+    				      0.35*wc,
+				      wb, 0.0,
+    				      this.world,
+				      LEFT));
+
+    // bottom of reboiler return pipe
+    this.Boundaries.push(new Boundary(x_mid - 0.02*wc,
+    				      y_mid + 0.205*hc,
+    				      0.235*wc,
+				      wb, 0.0,
+    				      this.world,
+				      LEFT));
+    
+
+    // reboiler return right side
+    this.Boundaries.push(new Boundary(x_mid + 0.265*wc,
+    				      y_mid + 0.115*hc,
+    				      wb,
+				      0.23*hc, 0.0,
+    				      this.world,
+				      LEFT));
+
+    
+    
+    // this.Boundaries.push(new Boundary(0.7*this.xmax,
+    // 				      0.6*this.ymax,
+    // 				      20,
+    // 				      this.sid.height*0.52, 0.9*PI,
+    // 				      this.world));
     // this.Boundaries.push(new Boundary((this.xmax+this.sid.width)/2+30,
     // 				      (this.ymax)/2,
     // 				      72, this.sid.height*0.7, 0.0,
