@@ -118,6 +118,15 @@ $('#bounds').click(async function(){
 });
 
 
+// fullscreen functionality
+const target = $('#target')[0]; // Get DOM element from jQuery collection
+$('#fullscreen').on('click', () => {
+    console.log("Fullscreen requested.");
+    if (screenfull.enabled) {
+	screenfull.toggle(target);
+    };
+});
+
 
 // on-click functionality
 function mousePressed() {
@@ -125,3 +134,4 @@ function mousePressed() {
 	$('#run').click();
     };
 };
+

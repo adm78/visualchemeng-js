@@ -40,7 +40,7 @@ function DistillationGraphics(canvas, column_img, debug) {
     this.world = this.engine.world;
     this.column_img = column_img;
     this.sid = getImgScaledDimensions(this.column_img, this.isf, this.ymax);
-    this.show_boundaries_log = false;
+    this.show_boundaries_log = true;
     this.debug = debug;
     
 
@@ -54,11 +54,19 @@ function DistillationGraphics(canvas, column_img, debug) {
 
 
     // Build the boundaries (ideally these co-ordinates should be loaded from file...)
-    this.Boundaries = []; 
-    // this.Boundaries.push(new Boundary((this.xmax-this.sid.width)/2-30,
-    // 				      (this.ymax)/2,
-    // 				      72, this.sid.height*0.7, 0.0,
-    // 				      this.world));
+    this.Boundaries = [];
+    var x_middle = (this.xmax-this.sid.width)/2;
+    var y_middle = (this.ymax)/2;
+    this.Boundaries.push(new Boundary(0.515*this.xmax,
+    				      0.43*this.ymax,
+    				      20,
+				      this.sid.height*0.52, 0.0,
+    				      this.world));
+    this.Boundaries.push(new Boundary(0.515*this.xmax,
+    				      0.43*this.ymax,
+    				      20,
+				      this.sid.height*0.52, PI/2,
+    				      this.world));
     // this.Boundaries.push(new Boundary((this.xmax+this.sid.width)/2+30,
     // 				      (this.ymax)/2,
     // 				      72, this.sid.height*0.7, 0.0,
