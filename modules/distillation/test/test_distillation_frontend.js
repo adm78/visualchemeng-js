@@ -131,7 +131,9 @@ $('#fullscreen').on('click', () => {
 // on-click functionality
 function mousePressed() {
     if (is_on_canvas(mouseX, mouseY, canvas)) {
-	$('#run').click();
+	for (var i = 0; i < Graphics.Boundaries.length; i++) {
+	    Graphics.Boundaries[i].mousePressed(mouseX, mouseY);
+	};
     };
 };
 
