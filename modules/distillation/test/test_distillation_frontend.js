@@ -137,3 +137,13 @@ function mousePressed() {
     };
 };
 
+
+// on-drag functionality
+function mouseDragged() {
+    if (is_on_canvas(mouseX, mouseY, canvas)) {
+	for (var i = 0; i < Graphics.Boundaries.length; i++) {
+	    Graphics.Boundaries[i].mouseDragged(mouseX, mouseY);
+	};
+    };
+};
+

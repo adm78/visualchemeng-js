@@ -21,7 +21,8 @@
 var Engine = Matter.Engine,
     World = Matter.World,
     Bodies = Matter.Bodies,
-    Constraint = Matter.Constraint;
+    Constraint = Matter.Constraint,
+    Body = Matter.Body;
 
 function DistillationGraphics(canvas, column_img, debug) {
     /*
