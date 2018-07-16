@@ -147,3 +147,11 @@ function mouseDragged() {
     };
 };
 
+
+// on key press functionality
+function keyPressed() {
+    console.log(keyCode);
+    for (var i = 0; i < Graphics.Boundaries.length; i++) {
+	Graphics.Boundaries[i].keyPressed();
+    };
+};
