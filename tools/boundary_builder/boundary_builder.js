@@ -200,3 +200,14 @@ $('#rm_boundary').click(async function(){
     boundaries = updated_boundaries;
 	
 });
+
+
+// output boundary coordinates
+$('#output_coords').click(async function(){
+    console.log("Boundary coordinates requested");
+    all_coordinates = { boundaries : []}
+    for (var i = 0; i < boundaries.length; i++) {
+	all_coordinates.boundaries.push(boundaries[i].get_coordinates());
+    }
+    $('#coords').text(JSON.stringify(all_coordinates));
+});
