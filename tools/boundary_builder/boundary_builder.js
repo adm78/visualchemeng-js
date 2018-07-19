@@ -183,4 +183,20 @@ $('#add_boundary').click(async function(){
 });
 
 
-// remove boundary/boundaries
+// remove active boundary/boundaries
+$('#rm_boundary').click(async function(){
+
+    console.log("Deleting active boundaries!");
+    var updated_boundaries = [];
+    for (var i = 0; i < boundaries.length; i++) {
+	var boundary = boundaries[i];
+	if (boundary.active) {
+	    boundary.removeFromWorld();
+	}
+	else {
+	    updated_boundaries.push(boundary);
+	};
+    };
+    boundaries = updated_boundaries;
+	
+});
