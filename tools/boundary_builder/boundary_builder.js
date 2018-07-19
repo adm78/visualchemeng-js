@@ -48,8 +48,8 @@ function setup() {
 
     // set-up the canvas
     var dimensions = getSimBoxDimensions();
-    xmax = 600;//dimensions.xmax;
-    ymax = 400;//dimensions.ymax;
+    xmax = dimensions.xmax;
+    ymax = dimensions.ymax;
     var canvas= createCanvas(xmax, ymax);
     canvas.parent("sim_container");
     sid = getImgScaledDimensions(tank, 0.6, ymax);
