@@ -4,7 +4,7 @@
 // the mouse and keys (as opposed to adjusting the coordinates through
 // trial and error). Images can be imported and displayed on the
 // canvas to aid placement of the boundaries.
-
+//
 // Note: This is a work in progress.
 //
 // Requires:
@@ -18,6 +18,9 @@
 // Andrew D. McGuire 2018
 // a.mcguire227@gmail.com
 //
+// To do:
+// - download jquery and jquery-ui and add to lib/third-party for
+//   offline development
 // --------------------------------------------------
 //               set-up variables
 // --------------------------------------------------
@@ -202,12 +205,19 @@ $('#rm_boundary').click(async function(){
 });
 
 
-// output boundary coordinates
+// output boundary coordinates and scaling factors
 $('#output_coords').click(async function(){
     console.log("Boundary coordinates requested");
-    all_coordinates = { boundaries : []}
+    var dimensions = getSimBoxDimensions();
+    var all_coordinates = [];
+    var all_scaling = [];
     for (var i = 0; i < boundaries.length; i++) {
-	all_coordinates.boundaries.push(boundaries[i].get_coordinates());
-    }
+	all_coordinates.push(boundaries[i].get_coordinates());
+	all_scaling.push(boundaries[i].get_positional_scale_factors(dimensions.xmax, dimensions.ymax,
+								    sid.width, sid.height));
+    };
+    console.log(all_coordinates);
+    console.log(all_scaling);
     $('#coords').text(JSON.stringify(all_coordinates));
+    $('#scaling').text(JSON.stringify(all_scaling));
 });
