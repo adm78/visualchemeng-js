@@ -25,7 +25,7 @@
 //               set-up variables
 // --------------------------------------------------
 var debug = false;
-var paused_log = false;
+var particles_log = false;
 var ensemble;
 var boundaries = [];
 var Engine = Matter.Engine,
@@ -93,13 +93,13 @@ function draw() {
     background(51);
     imageMode(CENTER);
     image(tank, xmax/2 , ymax/2, sid.width, sid.height);
-    if (!paused_log) {
+    if (!particles_log) {
 	if (Math.random() < 0.1) {
 	    ensemble.addParticle(new PhysEngineParticle(world, xmax/2, 0.1*ymax, {radius: random(5, 10)}));
 	};
-	Engine.update(engine);
-	ensemble.removeOutliers(xmax,ymax);
     };
+    Engine.update(engine);
+    ensemble.removeOutliers(xmax,ymax);
     ensemble.show();
     if (show_boundaries) {
 	    for (var i = 0; i < boundaries.length; i++) {
@@ -143,13 +143,13 @@ function keyPressed() {
 $('#run').click(async function(){
 
     // run/pause button functionality
-    console.log("You just clicked stream/pause!");
-    paused_log = !(paused_log);
-    if (paused_log) {
-	$("#run").text('Run');
+    console.log("You just clicked the particle switch!");
+    particles_log = !(particles_log);
+    if (particles_log) {
+	$("#run").text('Particles on');
     }
     else {
-	$("#run").text('Pause');
+	$("#run").text('Particles off');
     }
 });
 
