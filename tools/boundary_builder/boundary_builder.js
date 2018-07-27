@@ -21,6 +21,9 @@
 // To do:
 // - download jquery and jquery-ui and add to lib/third-party for
 //   offline development
+// - testing
+// - allow user to delete boundaries using the delete key
+// - allow user to add boundries using the '+' key
 // --------------------------------------------------
 //               set-up variables
 // --------------------------------------------------
@@ -63,23 +66,10 @@ function setup() {
 
     // initialise the ensemble
     ensemble = new Ensemble([],world);
-    
-    boundaries.push(new Boundary((xmax-sid.width)/2,
-				 (ymax)/2,
-				 20, sid.height*0.7, 0.0, world));
-    boundaries.push(new Boundary((xmax+sid.width)/2,
-				 (ymax)/2,
-				 20, sid.height*0.7, 0.0, world));
-    boundaries.push(new Boundary((xmax)/2,
-				 (ymax+1.0*sid.height)/2,
-				 sid.width, 20, 0.0, world));
-    boundaries.push(new Boundary((xmax-sid.width*0.7)/2,
-				 (ymax+0.9*sid.height)/2,
-				 0.5*sid.width, 20, 0.7, world));
-    boundaries.push(new Boundary((xmax+sid.width*0.7)/2,
-				 (ymax+0.9*sid.height)/2,
-				 0.5*sid.width, 20, 2*PI-0.7, world));
 
+    // intialise the boundaries
+    boundaries = makeBoundaries(settings.boundary_positions, xmax, ymax,
+				sid.width, sid.height, world);
     
 };
 
