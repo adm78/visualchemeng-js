@@ -14,6 +14,7 @@
 // - vce_particle.js
 // - vce_ensemble.js
 // - vce_boundary.js
+// - setting.js (temporarily for boundary positional info)
 //
 // Andrew D. McGuire 2018
 // a.mcguire227@gmail.com
@@ -24,6 +25,7 @@
 // - testing
 // - allow user to delete boundaries using the delete key
 // - allow user to add boundries using the '+' key
+// - allow user to upload a new image file
 // --------------------------------------------------
 //               set-up variables
 // --------------------------------------------------
