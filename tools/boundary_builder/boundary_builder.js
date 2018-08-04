@@ -41,6 +41,7 @@ var Engine = Matter.Engine,
 var sid;
 var show_boundaries = true;
 var my_image;
+var y_max
 
 // --------------------------------------------------
 //             Visualisation functionality
@@ -61,10 +62,8 @@ function setup(new_canvas) {
     var dimensions = getSimBoxDimensions();
     xmax = dimensions.xmax;
     ymax = dimensions.ymax;
-    if (new_canvas || new_canvas == null) {
-	var canvas= createCanvas(xmax, ymax);
-	canvas.parent("sim_container");
-    };
+    var canvas= createCanvas(xmax, ymax);
+    canvas.parent("sim_container");
     sid = getImgScaledDimensions(my_image, 0.6, ymax);
     console.log("ymax = ", ymax);
     console.log("sid = ", sid);
@@ -88,7 +87,8 @@ function draw() {
        This function is continuously called for the
        lifetime of the scripts executions after setup()
        has completed. Effectively advances time. */
-    
+
+    sid = getImgScaledDimensions(my_image, 0.6, ymax);
     background(51);
     imageMode(CENTER);
     image(my_image, xmax/2 , ymax/2, sid.width, sid.height);
@@ -225,8 +225,4 @@ $('#load_image').click(async function(){
     console.log("You just requested for an image to be loaded!");
     var my_image_url = $('#filename_input').val();
     my_image = loadImage(my_image_url, pic => print(pic), loadImgErrFix);
-    ymax = getSimBoxDimensions().ymax;
-    console.log("ymax = ", ymax)
-    sid = getImgScaledDimensions(my_image, 0.6, ymax);
-    console.log("sid = ", sid);
 });
