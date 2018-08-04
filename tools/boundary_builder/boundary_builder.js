@@ -20,12 +20,10 @@
 // a.mcguire227@gmail.com
 //
 // To do:
-// - download jquery and jquery-ui and add to lib/third-party for
-//   offline development
 // - testing
+// - add a 'Make Copy' option
 // - allow user to delete boundaries using the delete key
 // - allow user to add boundries using the '+' key
-// - allow user to upload a new image file
 // --------------------------------------------------
 //               set-up variables
 // --------------------------------------------------
@@ -204,6 +202,16 @@ $('#rm_boundary').click(async function(){
 });
 
 
+// remove all boundaries
+$('#rm_all_boundary').click(async function(){
+    console.log("Deleting all boundaries!");
+    for (var i = 0; i < boundaries.length; i++) {
+	boundaries[i].removeFromWorld();
+    };
+    boundaries = [];
+});
+
+
 // output boundary coordinates and scaling factors
 $('#output_coords').click(async function(){
     console.log("Boundary coordinates requested");
@@ -225,4 +233,13 @@ $('#load_image').click(async function(){
     console.log("You just requested for an image to be loaded!");
     var my_image_url = $('#filename_input').val();
     my_image = loadImage(my_image_url, pic => print(pic), loadImgErrFix);
+    $('#rm_all_boundary').click();
 });
+
+
+// prevent arrow key scrolling
+window.addEventListener("keydown", function(e) {
+    if ([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
+	e.preventDefault();
+    }
+}, false);

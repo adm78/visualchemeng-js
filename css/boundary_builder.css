@@ -33,7 +33,7 @@ body {
 .sim_container {
     grid-column: 2 / 3;
     grid-row: 2 / 8;
-    height: 600px
+    height: 800px
 }
 
 #file_picker_container {
