@@ -32,7 +32,17 @@ body {
 
 .sim_container {
     grid-column: 2 / 3;
-    grid-row: 1 / 8;
+    grid-row: 2 / 8;
+    height: 600px
+}
+
+#file_picker_container {
+    grid-column: 2 / 3;
+    grid-row: 1;
+}
+
+#filename_input {
+    width: 70%
 }
 
 .vce_info {
@@ -44,6 +54,7 @@ body {
     grid-column: 1 ;
     grid-row: 2 / 8 ;
 }
+
 
 .coordinate_container {
     grid-column: 1 / 3 ;

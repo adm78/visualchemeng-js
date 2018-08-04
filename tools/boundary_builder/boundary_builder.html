@@ -2,7 +2,7 @@
   <head>
     <link rel="stylesheet" type="text/css" href="../../css/buttons.css">
     <link rel="stylesheet" type="text/css" href="../../css/boundary_builder.css"
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" type="text/css" href="../../css/jquery-ui.css">
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto">
   </head>
   <body style="background-color:white;">
@@ -23,6 +23,10 @@
 	<button class="button" id="output_coords" style="width:96%">Output Coordinates</button><br/>
 	<button class="button" id="restart" style="width:96%">Hide Bounds</button><br/>
 	<button class="button" id="run" style="width:96%">Particles off</button><br/>
+      </div>
+      <div class="box" id="file_picker_container">
+	<input type="text" id="filename_input"/>
+	<button class="button" id="load_image" style="width:20%">Load Image</button><br/>
       </div>
       <div class="box coordinate_container" id="coordinate_container">
 	<p style="display: block; margin-left: auto; margin-right: auto; text-align: center; font-family:Roboto" >
@@ -58,11 +62,8 @@
 	</p>
       </div>
     <!-- scripts required for simulations -->
-    <script
-       src="https://code.jquery.com/jquery-3.2.1.min.js"
-       integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
-       crossorigin="anonymous"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="../../lib/third-party/jquery-3.2.1.min.js"</script>
+    <script src="../../lib/third-party/jquery-ui.js"></script>
     <script src="../../lib/third-party/p5.min.js"></script>
     <script src="../../lib/vce/vce_utils.js"></script>
     <script src="../../lib/third-party/matter.min.js"></script>

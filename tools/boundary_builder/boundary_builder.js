@@ -40,16 +40,19 @@ var Engine = Matter.Engine,
     Vector = Matter.Vector;
 var sid;
 var show_boundaries = true;
+var my_image;
 
 // --------------------------------------------------
 //             Visualisation functionality
 // --------------------------------------------------
 function preload() {
-    var tank_URL = "../../resources/reactor_ni.svg";
-    tank = loadImage(tank_URL, pic => print(pic), loadImgErrFix);
+    // load the default image
+    var my_image_url = "../../resources/reactor_ni.svg";
+    my_image = loadImage(my_image_url, pic => print(pic), loadImgErrFix);
+    $('#filename_input').val(my_image_url);
 };
 
-function setup() {
+function setup(new_canvas) {
 
     /* This function is called upon entry to create the
        simulation canvas which we draw onto  */
@@ -58,9 +61,13 @@ function setup() {
     var dimensions = getSimBoxDimensions();
     xmax = dimensions.xmax;
     ymax = dimensions.ymax;
-    var canvas= createCanvas(xmax, ymax);
-    canvas.parent("sim_container");
-    sid = getImgScaledDimensions(tank, 0.6, ymax);
+    if (new_canvas || new_canvas == null) {
+	var canvas= createCanvas(xmax, ymax);
+	canvas.parent("sim_container");
+    };
+    sid = getImgScaledDimensions(my_image, 0.6, ymax);
+    console.log("ymax = ", ymax);
+    console.log("sid = ", sid);
     
     // set-up the physics engine
     engine = Engine.create();
@@ -84,7 +91,7 @@ function draw() {
     
     background(51);
     imageMode(CENTER);
-    image(tank, xmax/2 , ymax/2, sid.width, sid.height);
+    image(my_image, xmax/2 , ymax/2, sid.width, sid.height);
     if (!particles_log) {
 	if (Math.random() < 0.1) {
 	    ensemble.addParticle(new PhysEngineParticle(world, xmax/2, 0.1*ymax, {radius: random(5, 10)}));
@@ -208,8 +215,18 @@ $('#output_coords').click(async function(){
 	all_scaling.push(boundaries[i].get_positional_scale_factors(dimensions.xmax, dimensions.ymax,
 								    sid.width, sid.height));
     };
-    console.log(all_coordinates);
-    console.log(all_scaling);
     $('#coords').text(JSON.stringify(all_coordinates));
     $('#scaling').text(JSON.stringify(all_scaling));
+});
+
+
+// load image functionality
+$('#load_image').click(async function(){
+    console.log("You just requested for an image to be loaded!");
+    var my_image_url = $('#filename_input').val();
+    my_image = loadImage(my_image_url, pic => print(pic), loadImgErrFix);
+    ymax = getSimBoxDimensions().ymax;
+    console.log("ymax = ", ymax)
+    sid = getImgScaledDimensions(my_image, 0.6, ymax);
+    console.log("sid = ", sid);
 });
