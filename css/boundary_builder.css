@@ -45,6 +45,10 @@ body {
     width: 70%
 }
 
+#script_input {
+    width: 70%
+}
+
 .vce_info {
     grid-column: 1 ;
     grid-row: 1 ;

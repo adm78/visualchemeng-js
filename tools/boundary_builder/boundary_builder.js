@@ -21,9 +21,7 @@
 //
 // To do:
 // - testing
-// - allow user to load boundaries from a settings.js file (filename
-//   as user input). See
-//   https://stackoverflow.com/questions/950087/how-do-i-include-a-javascript-file-in-another-javascript-file
+//
 // --------------------------------------------------
 //               set-up variables
 // --------------------------------------------------
@@ -273,3 +271,26 @@ window.addEventListener("keydown", function(e) {
 	e.preventDefault();
     }
 }, false);
+
+
+// load settings.js file and associated boundaries
+var load_boundaries_from_settings = function () {
+    $('#rm_all_boundary').click();
+    console.log("loaded settings = ", settings);
+    var dimensions = getSimBoxDimensions();
+    for (var i = 0; i < settings.boundary_positions.length; i++) {
+	var scaling = settings.boundary_positions[i];
+	var abs_coords =  get_absolute_coordinates(dimensions.xmax, dimensions.ymax,
+						   sid.width, sid.height, scaling)
+	console.log("abs_coords = ", abs_coords);
+	var newBoundary = new Boundary(abs_coords.x, abs_coords.y,
+				       abs_coords.w, abs_coords.h,
+				       abs_coords.a, world);
+	boundaries.push(newBoundary); 
+    };
+};
+$('#load_script').click(async function(){
+    console.log("You just requested for a scipt to be loaded!");
+    var my_script_url = $('#script_input').val();
+    loadScript(my_script_url, load_boundaries_from_settings);
+});
