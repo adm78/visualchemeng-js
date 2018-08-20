@@ -21,8 +21,6 @@
 //
 // To do:
 // - testing
-// - add a 'Make Copy' option
-// - allow user to add boundries using the '+' key
 // - allow user to load boundaries from a settings.js file (filename
 //   as user input). See
 //   https://stackoverflow.com/questions/950087/how-do-i-include-a-javascript-file-in-another-javascript-file
@@ -187,6 +185,30 @@ $('#add_boundary').click(async function(){
     boundaries.push(newBoundary);
     for (var i = 0; i < boundaries.length; i++) {
 	console.log(boundaries[i]);
+    };
+});
+
+
+// copyboundary button
+$('#cp_boundary').click(async function(){
+
+    console.log("You just requested active bounds to be copied!");
+    var dimensions = getSimBoxDimensions();
+    for (var i = 0; i < boundaries.length; i++) {
+	if (boundaries[i].active) {
+	    // generate some random numbers to displace the copy
+	    var coordinates = boundaries[i].get_coordinates();
+	    var x = 2.0*dimensions.x;
+	    while (!is_on_canvas(x, coordinates.y)) {
+		var rnd_1 = getRandomSigned();
+		var rnd_2 = -1;
+		if (rnd_1 > 0) {rnd_2 = 1};
+		x = coordinates.x + 50*rnd_2 + 200*rnd_1;
+	    };
+	    var newBoundary = new Boundary(x, coordinates.y, coordinates.w, coordinates.h,
+					   coordinates.angle, world);
+	    boundaries.push(newBoundary);
+	};
     };
 });
 
