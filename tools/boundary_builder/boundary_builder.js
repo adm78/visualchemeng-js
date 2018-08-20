@@ -22,8 +22,10 @@
 // To do:
 // - testing
 // - add a 'Make Copy' option
-// - allow user to delete boundaries using the delete key
 // - allow user to add boundries using the '+' key
+// - allow user to load boundaries from a settings.js file (filename
+//   as user input). See
+//   https://stackoverflow.com/questions/950087/how-do-i-include-a-javascript-file-in-another-javascript-file
 // --------------------------------------------------
 //               set-up variables
 // --------------------------------------------------
@@ -39,7 +41,7 @@ var Engine = Matter.Engine,
 var sid;
 var show_boundaries = true;
 var my_image;
-var y_max
+var y_max;
 
 // --------------------------------------------------
 //             Visualisation functionality
@@ -130,8 +132,14 @@ function mouseDragged() {
 
 
 function keyPressed() {
-    for (var i = 0; i < boundaries.length; i++) {
-	boundaries[i].keyPressed();
+    if (keyCode == 46) {
+	// special treatment for delete key
+	$('#rm_boundary').click();
+    }
+    else {
+	for (var i = 0; i < boundaries.length; i++) {
+	    boundaries[i].keyPressed();
+	};
     };
 };
 
