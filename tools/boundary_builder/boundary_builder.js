@@ -203,7 +203,14 @@ $('#cp_boundary').click(async function(){
 		if (rnd_1 > 0) {rnd_2 = 1};
 		x = coordinates.x + 50*rnd_2 + 200*rnd_1;
 	    };
-	    var newBoundary = new Boundary(x, coordinates.y, coordinates.w, coordinates.h,
+	    y = 2.0*dimensions.y;
+	    while (!is_on_canvas(x, y)) {
+		var rnd_1 = getRandomSigned();
+		var rnd_2 = -1;
+		if (rnd_1 > 0) {rnd_2 = 1};
+		y = coordinates.y + 50*rnd_2 + 200*rnd_1;
+	    };
+	    var newBoundary = new Boundary(x, y, coordinates.w, coordinates.h,
 					   coordinates.angle, world);
 	    boundaries.push(newBoundary);
 	};
