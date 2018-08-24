@@ -40,6 +40,7 @@ var show_boundaries = true;
 var my_image;
 var y_max;
 
+
 // --------------------------------------------------
 //             Visualisation functionality
 // --------------------------------------------------
@@ -77,8 +78,7 @@ function setup(new_canvas) {
 				sid.width, sid.height, world);
 
     // make a test feed
-    var feed = new ParticleFeed(0.2*xmax, 0.2*ymax, 0.1);
-    ensemble.feeds.push(feed);
+
     
 };
 
@@ -117,6 +117,9 @@ function mouseClicked() {
     if (is_on_canvas(mouseX, mouseY, canvas)) {
 	for (var i = 0; i < boundaries.length; i++) {
 	    boundaries[i].mousePressed(mouseX, mouseY);
+	    if (boundaries[i].active) {
+		break; // only allow a single active boundary
+	    };
 	};
     };
 };
@@ -143,21 +146,32 @@ function keyPressed() {
 };
 
 
-// run button
-$('#run').click(async function(){
+// feed on button
+$('#feed_on').click(async function(){
 
-    // run/pause button functionality
+    // feed on/off button functionality
     console.log("You just clicked the particle switch!");
     particles_log = !(particles_log);
     if (particles_log) {
-	$("#run").text('Particles Feed Off');
+	$("#feed_on").text('Particles Feed Off');
     }
     else {
-	$("#run").text('Particles Feed On');
+	$("#feed_off").text('Particles Feed On');
     }
 });
 
 
+// add a particle feed
+$('#add_feed').click(async function(){
+    console.log("New particle feed requested");
+    var dimensions = getSimBoxDimensions();
+    var feed = new ParticleFeed(Math.random()*dimensions.xmax, Math.random()*dimensions.ymax, 0.1);
+    console.log(feed);
+    ensemble.feeds.push(feed);
+    console.log(ensemble);
+});
+
+		     
 // show boundaries button
 $('#restart').click(async function(){
 
