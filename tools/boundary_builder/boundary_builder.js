@@ -21,6 +21,7 @@
 //
 // To do:
 // - testing
+// - allow user to place particle feed(s)
 //
 // --------------------------------------------------
 //               set-up variables
@@ -74,6 +75,10 @@ function setup(new_canvas) {
     // intialise the boundaries
     boundaries = makeBoundaries(settings.boundary_positions, xmax, ymax,
 				sid.width, sid.height, world);
+
+    // make a test feed
+    var feed = new ParticleFeed(0.2*xmax, 0.2*ymax, 0.1);
+    ensemble.feeds.push(feed);
     
 };
 
@@ -88,10 +93,8 @@ function draw() {
     background(51);
     imageMode(CENTER);
     image(my_image, xmax/2 , ymax/2, sid.width, sid.height);
-    if (!particles_log) {
-	if (Math.random() < 0.1) {
-	    ensemble.addParticle(new PhysEngineParticle(world, xmax/2, 0.1*ymax, {radius: random(5, 10)}));
-	};
+    if (particles_log) {
+	ensemble.updateFeeds();
     };
     Engine.update(engine);
     ensemble.removeOutliers(xmax,ymax);
@@ -147,10 +150,10 @@ $('#run').click(async function(){
     console.log("You just clicked the particle switch!");
     particles_log = !(particles_log);
     if (particles_log) {
-	$("#run").text('Particles on');
+	$("#run").text('Particles Feed Off');
     }
     else {
-	$("#run").text('Particles off');
+	$("#run").text('Particles Feed On');
     }
 });
 
