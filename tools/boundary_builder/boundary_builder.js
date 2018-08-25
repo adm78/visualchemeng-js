@@ -166,6 +166,7 @@ function keyPressed() {
     if (keyCode == 46) {
 	// special treatment for delete key
 	$('#rm_boundary').click();
+	$('#rm_feed').click();
     }
     else {
 	for (var i = 0; i < boundaries.length; i++) {
@@ -294,6 +295,40 @@ $('#rm_all_boundary').click(async function(){
 	boundaries[i].removeFromWorld();
     };
     boundaries = [];
+});
+
+
+// remove active boundary/boundaries
+$('#rm_feed').click(async function(){
+
+    console.log("Deleting active feeds!");
+    var updated_feed_blocks = [];
+    var updated_feeds = [];
+    for (var i = 0; i < feed_blocks.length; i++) {
+	var feed_block = feed_blocks[i];
+	var feed = ensemble.feeds[i];
+	if (feed_block.active) {
+	    feed_block.removeFromWorld();
+	}
+	else {
+	    updated_feed_blocks.push(feed_block);
+	    updated_feeds.push(feed);
+	};
+    };
+    feed_blocks = updated_feed_blocks;
+    ensemble.feeds = updated_feeds;
+	
+});
+
+
+// remove all feeds
+$('#rm_all_feed').click(async function(){
+    console.log("Deleting all feeds!");
+    for (var i = 0; i < feed_blocks.length; i++) {
+	feed_blocks[i].removeFromWorld();
+    };
+    feed_blocks = [];
+    ensemble.feeds = [];
 });
 
 
