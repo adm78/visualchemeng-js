@@ -198,7 +198,8 @@ $('#add_feed').click(async function(){
     var feed_block = new Boundary(Math.random()*dimensions.xmax, Math.random()*dimensions.ymax, 20.0, 20.0, 0.0, undefined);
     feed_block.colour.active = 'rgba(0, 255, 0, 0.5)';
     feed_block.colour.inactive = 'rgba(0, 0, 255, 0.5)';
-    var feed = new ParticleFeed(feed_block.body.position.x, feed_block.body.position.y, 0.1);
+    var particle_options = {type :'single-body', radius : 2.0}
+    var feed = new ParticleFeed(feed_block.body.position.x, feed_block.body.position.y, 0.1, particle_options);
     console.log(feed);
     feed_blocks.push(feed_block);
     ensemble.feeds.push(feed);
