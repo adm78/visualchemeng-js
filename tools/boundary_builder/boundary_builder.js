@@ -1,9 +1,9 @@
 // VCE Project - boundary_builder.js
 //
-// This tool can be used to place vce_boundary.Boundary objects using
-// the mouse and keys (as opposed to adjusting the coordinates through
-// trial and error). Images can be imported and displayed on the
-// canvas to aid placement of the boundaries.
+// This tool can be used to place vce_boundary.Boundary objects and
+// particle feeds using the mouse and keys (as opposed to adjusting
+// the coordinates through trial and error). Images can be imported
+// and displayed on the canvas to aid placement of the boundaries.
 //
 // Note: This is a work in progress.
 //
@@ -39,7 +39,7 @@ var sid;
 var show_boundaries = true;
 var my_image;
 var y_max;
-
+var feed_blocks = [];
 
 // --------------------------------------------------
 //             Visualisation functionality
@@ -76,9 +76,6 @@ function setup(new_canvas) {
     // intialise the boundaries
     boundaries = makeBoundaries(settings.boundary_positions, xmax, ymax,
 				sid.width, sid.height, world);
-
-    // make a test feed
-
     
 };
 
@@ -104,7 +101,17 @@ function draw() {
 		boundaries[i].show();
 	    };
     };
+    for (var i = 0; i < feed_blocks.length; i++) {
+	feed_blocks[i].show();
+    };
 };
+
+
+function deactivateAll() {
+    deactiveAllBoundaries();
+    deactivateAllFeedBlocks();
+};
+
 
 function deactiveAllBoundaries() {
     for (var i = 0; i < boundaries.length; i++) {
@@ -113,12 +120,27 @@ function deactiveAllBoundaries() {
 };
 
 
+function deactivateAllFeedBlocks() {
+    for (var i = 0; i < feed_blocks.length; i++) {
+	feed_blocks[i].active = false;
+    };
+};
+
+
 function mouseClicked() {
     if (is_on_canvas(mouseX, mouseY, canvas)) {
+	deactivateAll();
+	for (var i = 0; i < feed_blocks.length; i++) {
+	    feed_blocks[i].mousePressed(mouseX, mouseY);
+	    if (feed_blocks[i].active) {
+		return; // only allow a single active feed block
+	    };
+	};
+	
 	for (var i = 0; i < boundaries.length; i++) {
 	    boundaries[i].mousePressed(mouseX, mouseY);
 	    if (boundaries[i].active) {
-		break; // only allow a single active boundary
+		return; // only allow a single active boundary
 	    };
 	};
     };
@@ -156,7 +178,7 @@ $('#feed_on').click(async function(){
 	$("#feed_on").text('Particles Feed Off');
     }
     else {
-	$("#feed_off").text('Particles Feed On');
+	$("#feed_on").text('Particles Feed On');
     }
 });
 
@@ -165,8 +187,12 @@ $('#feed_on').click(async function(){
 $('#add_feed').click(async function(){
     console.log("New particle feed requested");
     var dimensions = getSimBoxDimensions();
-    var feed = new ParticleFeed(Math.random()*dimensions.xmax, Math.random()*dimensions.ymax, 0.1);
+    var feed_block = new Boundary(Math.random()*dimensions.xmax, Math.random()*dimensions.ymax, 20.0, 20.0, 0.0, undefined);
+    feed_block.colour.active = 'rgba(0, 255, 0, 0.5)';
+    feed_block.colour.inactive = 'rgba(0, 0, 255, 0.5)';
+    var feed = new ParticleFeed(feed_block.body.position.x, feed_block.body.position.y, 0.1);
     console.log(feed);
+    feed_blocks.push(feed_block);
     ensemble.feeds.push(feed);
     console.log(ensemble);
 });
