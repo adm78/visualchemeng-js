@@ -148,6 +148,13 @@ function mouseClicked() {
 
 function mouseDragged() {
     if (is_on_canvas(mouseX, mouseY, canvas)) {
+	for (var i = 0; i < feed_blocks.length; i++) {
+	    feed_blocks[i].mouseDragged(mouseX, mouseY);
+	    ensemble.feeds[i].x = feed_blocks[i].body.position.x;
+	    ensemble.feeds[i].y = feed_blocks[i].body.position.y;
+	};
+
+	
 	for (var i = 0; i < boundaries.length; i++) {
 	    boundaries[i].mouseDragged(mouseX, mouseY);
 	};
