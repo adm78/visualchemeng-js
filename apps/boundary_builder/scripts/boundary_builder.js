@@ -46,7 +46,7 @@ var feed_blocks = [];
 // --------------------------------------------------
 function preload() {
     // load the default image
-    var my_image_url = "../../resources/reactor_ni.svg";
+    var my_image_url = "../../../../lib/images/reactor_ni.svg";
     my_image = loadImage(my_image_url, pic => print(pic), loadImgErrFix);
     $('#filename_input').val(my_image_url);
 };
