@@ -27,7 +27,7 @@ var Graphics,
 // --------------------------------------------------
 function preload() {
     // load the canvas images
-    var column_img_URL = "../resources/distillation_grey.svg";
+    var column_img_URL = "../../images/distillation_grey.svg";
     column_img = loadImage(column_img_URL, pic => print(pic), loadImgErrFix);
 };
 
@@ -41,7 +41,7 @@ function setup(first_time=true) {
     
     // Create the canvas
     var dimensions = getSimBoxDimensions();
-    var canvas= createCanvas(dimensions.xmax, dimensions.ymax);
+    var canvas= createCanvas(dimensions.xmax, screen.height*0.95);
     canvas.parent("sim_container");
     
     // Initialise the graphical reactor
@@ -127,31 +127,3 @@ $('#fullscreen').on('click', () => {
     };
 });
 
-
-// on-click functionality
-function mousePressed() {
-    if (is_on_canvas(mouseX, mouseY, canvas)) {
-	for (var i = 0; i < Graphics.Boundaries.length; i++) {
-	    Graphics.Boundaries[i].mousePressed(mouseX, mouseY);
-	};
-    };
-};
-
-
-// on-drag functionality
-function mouseDragged() {
-    if (is_on_canvas(mouseX, mouseY, canvas)) {
-	for (var i = 0; i < Graphics.Boundaries.length; i++) {
-	    Graphics.Boundaries[i].mouseDragged(mouseX, mouseY);
-	};
-    };
-};
-
-
-// on key press functionality
-function keyPressed() {
-    console.log(keyCode);
-    for (var i = 0; i < Graphics.Boundaries.length; i++) {
-	Graphics.Boundaries[i].keyPressed();
-    };
-};

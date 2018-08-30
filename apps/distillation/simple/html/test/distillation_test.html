@@ -1,0 +1,56 @@
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="../../../../../lib/styles/jquery-ui.css">
+    <link rel="stylesheet" type="text/css" href="../../../../../lib/styles/nice-select.css">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto">
+    <link rel="stylesheet" type="text/css" href="../../../../../lib/styles/buttons.css">
+    <link rel="stylesheet" type="text/css" href="../../../../../lib/styles/slider.css">
+    <link rel="stylesheet" type="text/css" href="../../../../../lib/styles/vce.css">
+    <link rel="stylesheet" type="text/css" href="../../styles/distillation.css">
+  </head>
+  <body style="background-color:white;">
+    <div class="wrapper" id="target">
+      <div class="box conversion_plot_container" id="conversion_plot_container"></div>
+      <div class="box duty_plot_container" id="duty_plot_container"></div>
+      <div class="box conc_plot_container" id="conc_plot_container"></div>
+      <div class="box sim_container" id="sim_container">
+      </div>
+      <div class="box vce_info">
+	<a href="http://visualchemeng.com" title="Go to VCE homepage">
+          <img class="vce_logo" src="../../../../../lib/images/vcelogo.png" />
+	</a>
+	<a href="http://visualchemeng.com"
+	   style="text-decoration:none" title="Go to VCE homepage">
+      	   <p style="display: block; margin-left: auto; margin-right: auto; color:white; text-align: center; font-family:Roboto" >Test distillation column</p>
+	   </a>
+      </div>
+      <div class="box system_id_container" id="system_id_container">
+      </div>
+      <div class="box button_container">
+        <button class="button" id="run" style="width:96%" >Pause</button><br/>
+	<button class="button" id="restart" style="width:96%">Reset</button><br/>
+	<button class="button" id="fullscreen" style="width:96%">Fullscreen</button>
+	<button class="button" id="bounds" style="width:96%">Hide Bounds</button><br/>
+      </div>
+      <div class="box slider_container"></div>
+    </div>
+    <!-- scripts required for simulations -->
+    <script src="../../../../../lib/js/third-party/jquery-3.2.1.min.js"></script>
+    <script src="../../../../../lib/js/third-party/jquery-ui.js"></script>
+    <script src="../../../../../lib/js/third-party/jquery.nice-select.min.js"></script>
+    <script src="../../../../../lib/js/third-party/p5.min.js"></script>
+    <script src="../../../../../lib/js/third-party/matter.min.js"></script>
+    <script src="../../../../../lib/js/third-party/screenfull.js"></script>
+    <script src="../../../../../lib/js/third-party/plotly-latest.min.js"></script>
+    <script src="../../../../../lib/js/vce/vce_utils.js"></script>
+    <script src="../../../../../lib/js/vce/vce_particle.js"></script>
+    <script src="../../../../../lib/js/vce/vce_ensemble.js"></script>
+    <script src="../../../../../lib/js/vce/vce_multibody.js"></script>
+    <script src="../../../../../lib/js/vce/vce_constraint.js"></script>
+    <script src="../../../../../lib/js/vce/vce_boundary.js"></script>
+    <script src="../../../../../lib/js/vce/vce_distillation.js"></script>
+    <script src="../../scripts/settings.js"></script>
+    <script src="../../scripts/distillation_graphics.js"></script>
+    <script src="../../scripts/distillation_frontend.js"></script>
+  </body>
+</html>
