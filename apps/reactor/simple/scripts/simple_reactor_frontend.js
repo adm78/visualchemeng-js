@@ -1,7 +1,7 @@
-// VCE Project - simple_reactor.js
+// VCE Project - simple_reactor_frontend.js
 //
-// This script facilitates the modelling of a simple batch reactor
-// with the reaction:
+// Frontend script for modelling a simple batch reactor with the
+// reaction:
 //
 // A + B --> C
 //
@@ -20,8 +20,6 @@
 // a.mcguire227@gmail.com
 //
 // To do:
-// - improve ensemble update efficiency
-// - confine particles to the tank
 //
 //
 // --------------------------------------------------
@@ -57,10 +55,10 @@ var reactor_options = deep_copy(default_reactor_options);
 function preload() {
     // load the canvas images (tank + impeller)
     var tank_URL = "../../images/reactor_ni.svg";
-    var imp1_URL = "../../../../../resources/imp_0deg.svg";
-    var imp2_URL = "../../../../../resources/imp_45deg.svg";
-    var imp3_URL = "../../../../../resources/imp_90deg.svg";
-    var imp4_URL = "../../../../../resources/imp_135deg.svg";
+    var imp1_URL = "../../../../../lib/images/imp_0deg.svg";
+    var imp2_URL = "../../../../../lib/images/imp_45deg.svg";
+    var imp3_URL = "../../../../../lib/images/imp_90deg.svg";
+    var imp4_URL = "../../../../../lib/images/imp_135deg.svg";
     tank = loadImage(tank_URL, pic => print(pic), loadImgErrFix);
     var imp1 = loadImage(imp1_URL, pic => print(pic), loadImgErrFix);
     var imp2 = loadImage(imp2_URL, pic => print(pic), loadImgErrFix);
