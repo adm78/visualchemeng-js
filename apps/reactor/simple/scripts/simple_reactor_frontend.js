@@ -54,7 +54,7 @@ var reactor_options = deep_copy(default_reactor_options);
 // --------------------------------------------------
 function preload() {
     // load the canvas images (tank + impeller)
-    var tank_URL = "../../images/reactor_ni.svg";
+    var tank_URL = "../../../../../lib/images/reactor_ni.svg";
     var imp1_URL = "../../../../../lib/images/imp_0deg.svg";
     var imp2_URL = "../../../../../lib/images/imp_45deg.svg";
     var imp3_URL = "../../../../../lib/images/imp_90deg.svg";
