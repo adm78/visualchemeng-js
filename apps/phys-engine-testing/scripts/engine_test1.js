@@ -30,7 +30,7 @@ var sid;
 //             Visualisation functionality
 // --------------------------------------------------
 function preload() {
-    var tank_URL = "../resources/reactor_ni.svg";
+    var tank_URL = "../../../../lib/images/reactor_ni.svg";
     tank = loadImage(tank_URL, pic => print(pic), loadImgErrFix);
 };
 
