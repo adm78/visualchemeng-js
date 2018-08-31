@@ -1,6 +1,7 @@
-// VCE Project - mbp_test1.js
+// VCE Project - mbp_test2.js
 //
-// Testing platform for the vce_particle.MultiBodyParticle class.
+// Testing platform for the vce_particle.MultiBodyParticle class with
+// polygons.
 //
 // Requires:
 // - p5.js or p5.min.js
@@ -8,6 +9,7 @@
 // - vce_utils.js
 // - vce_particle.js
 // - vce_ensemble.js
+// - vce_multibody.js
 //
 // Andrew D. McGuire 2018
 // a.mcguire227@gmail.com
@@ -30,7 +32,7 @@ var show_boundaries = false;
 //             Visualisation functionality
 // --------------------------------------------------
 function preload() {
-    var tank_URL = "../resources/reactor_ni.svg";
+    var tank_URL = "../../../../lib/images/reactor_ni.svg";
     tank = loadImage(tank_URL, pic => print(pic), loadImgErrFix);
 };
 
@@ -101,7 +103,13 @@ function draw() {
 // Interactivity
 //================================================
 function mousePressed() {
-    ensemble.addParticle(new TwoBodyParticle(world, mouseX, mouseY, TBP_defaultOptions()));
+    var options = {
+	shape : {'type' : 'polygon', 'sides' : 6},
+	radius : 15.0,
+	colour : '#008CBA'
+    };
+    ensemble.addParticle(new PhysEngineParticle(world, mouseX, mouseY, options));
+    //ensemble.addParticle(new DiatomicParticle(world, mouseX, mouseY, 20.0, 0.0, ['#008CBA','#BC0CDF'], '#BAACDF'));
     console.log(ensemble);
 };
 
