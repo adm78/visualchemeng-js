@@ -19,7 +19,7 @@ The vce project aims to deliver chemical engineering principles in a way that st
 We welcome contributions big and small. If you'd like to contribute or help with a simulation module, please get in touch at [amcguire227@gmail.com](mailto:amcguire227@gmail.com). If you think you've found a bug please check the exisiting [Issues](https://github.com/issues) first and add a new Issue if its not there already. We accept [Pull Requests](https://github.com/pulls)!
 
 ## Usage  
-Just clone or download this repository and open any of the files in [`/tests/`](https://github.com/adm78/visualchemeng-js/tree/master/tests) in your browser (note: it's easiest to navigate to `/tests/` in your file explorer and double-click the file you want to run). That's it! All dependencies are bundled with the repository or auto-downloaded. The latest stable version of each module can be found on 
+Just clone or download this repository and open any of the html files in [`/apps/*/html/test/`] in your browser (note: it's easiest to navigate to a given test directory in your file explorer and double-click the file you want to run). That's it! All dependencies are bundled with the repository or auto-downloaded. The latest stable version of each module can be found on 
 [visualchemeng.com](http://visualchemeng.com). 
 
 ## Credit where credit due 
