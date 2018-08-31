@@ -28,11 +28,11 @@ var impeller;
 //             p5 visualisation functionality
 // --------------------------------------------------
 function preload() {
-    var tank_URL = "../resources/reactor_ni.svg";
-    var imp1_URL = "../resources/imp_0deg.svg";
-    var imp2_URL = "../resources/imp_45deg.svg";
-    var imp3_URL = "../resources/imp_90deg.svg";
-    var imp4_URL = "../resources/imp_135deg.svg";
+    var tank_URL = "../../../../../lib/images/reactor_ni.svg";
+    var imp1_URL = "../../../../../lib/images/imp_0deg.svg";
+    var imp2_URL = "../../../../../lib/images/imp_45deg.svg";
+    var imp3_URL = "../../../../../lib/images/imp_90deg.svg";
+    var imp4_URL = "../../../../../lib/images/imp_135deg.svg";
     tank = loadImage(tank_URL, pic => print(pic), loadImgErrFix);
     var imp1 = loadImage(imp1_URL, pic => print(pic), loadImgErrFix);
     var imp2 = loadImage(imp2_URL, pic => print(pic), loadImgErrFix);
