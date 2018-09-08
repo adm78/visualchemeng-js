@@ -43,9 +43,14 @@ function setup(first_time=true) {
     var dimensions = getSimBoxDimensions();
     var canvas= createCanvas(dimensions.xmax, screen.height*0.95);
     canvas.parent("sim_container");
+
+    // Initialise the backend column
+    options = {};
+    Column = new DistColumnBase(options);
+    Column.stages = 10;
     
     // Initialise the graphical reactor
-    Graphics = new DistillationGraphics(canvas, column_img, debug);
+    Graphics = new DistillationGraphics(canvas, Column, column_img, debug);
 
     
 }

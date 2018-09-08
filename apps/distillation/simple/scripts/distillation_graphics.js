@@ -24,7 +24,7 @@ var Engine = Matter.Engine,
     Constraint = Matter.Constraint,
     Body = Matter.Body;
 
-function DistillationGraphics(canvas, column_img, debug) {
+function DistillationGraphics(canvas, column, column_img, debug) {
     /*
       
     Args:
@@ -34,6 +34,7 @@ function DistillationGraphics(canvas, column_img, debug) {
 
     // Set the main class attributes
     this.canvas = canvas;
+    this.column = column;
     this.xmax = canvas.width;
     this.ymax = canvas.height;
     this.isf = 0.85;
@@ -41,6 +42,10 @@ function DistillationGraphics(canvas, column_img, debug) {
     this.world = this.engine.world;
     this.column_img = column_img;
     this.sid = getImgScaledDimensions(this.column_img, this.isf, this.ymax);
+    this.column_top = this.ymax*0.5 - 0.37*this.sid.height;
+    this.column_left = this.xmax*0.5 - 0.23*this.sid.width;
+    this.column_width = this.sid.width*0.205;
+    this.column_height = this.sid.height*0.68;
     this.show_boundaries_log = true;
     this.debug = debug;
     
@@ -69,10 +74,24 @@ function DistillationGraphics(canvas, column_img, debug) {
 	// render all the neccessary pieces to the canvas
 	background(51);
 	this.show_column();
+	this.show_stages();
 	this.show_boundaries();
 	if (this.debug) {
 	    this.show_fps();
 	};
+    };
+
+
+    this.show_stages = function() {
+	push();
+	fill(255);
+	rectMode(CORNER);
+	var stage_height = this.column_height/this.column.stages;
+	for (var i=0; i < this.column.stages; i++) {
+	    var stage_top = this.column_top + i*stage_height;
+	    rect(this.column_left, stage_top, this.column_width, stage_height);
+	};
+	pop();
     };
     
 
