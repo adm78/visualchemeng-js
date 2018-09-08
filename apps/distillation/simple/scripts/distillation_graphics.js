@@ -43,8 +43,8 @@ function DistillationGraphics(canvas, column, column_img, debug) {
     this.column_img = column_img;
     this.sid = getImgScaledDimensions(this.column_img, this.isf, this.ymax);
     this.column_top = this.ymax*0.5 - 0.37*this.sid.height;
-    this.column_left = this.xmax*0.5 - 0.23*this.sid.width;
-    this.column_width = this.sid.width*0.205;
+    this.column_left = this.xmax*0.5 - 0.225*this.sid.width;
+    this.column_width = this.sid.width*0.193;
     this.column_height = this.sid.height*0.68;
     this.show_boundaries_log = true;
     this.debug = debug;
@@ -84,10 +84,10 @@ function DistillationGraphics(canvas, column, column_img, debug) {
 
     this.show_stages = function() {
 	push();
-	fill(255);
 	rectMode(CORNER);
-	var stage_height = this.column_height/this.column.stages;
-	for (var i=0; i < this.column.stages; i++) {
+	var stage_height = this.column_height/this.column.n_stages;
+	for (var i=0; i < this.column.n_stages; i++) {
+	    fill(column.stages[i].y*255);
 	    var stage_top = this.column_top + i*stage_height;
 	    rect(this.column_left, stage_top, this.column_width, stage_height);
 	};

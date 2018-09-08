@@ -46,11 +46,18 @@ function setup(first_time=true) {
 
     // Initialise the backend column
     options = {};
-    Column = new DistColumnBase(options);
-    Column.stages = 10;
+    column = new DistColumnBase(options);
+    column.n_stages = 10;
+    for (var i=0; i < column.n_stages; i++) {
+	var stage = new Stage();
+	stage.x = i/column.n_stages;
+	stage.y = 1.0 - stage.x;
+	column.stages.push(stage);
+    };
+    console.log(column);
     
     // Initialise the graphical reactor
-    Graphics = new DistillationGraphics(canvas, Column, column_img, debug);
+    Graphics = new DistillationGraphics(canvas, column, column_img, debug);
 
     
 }
