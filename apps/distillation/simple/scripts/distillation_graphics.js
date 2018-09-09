@@ -58,13 +58,16 @@ function DistillationGraphics(canvas, column, column_img, debug) {
 	y : 0.5*(this.ymax + 0.97*this.sid.height)
     };
     var particle_options = 	{
-	    type: 'single-body',
-	    shape : {type:'polygon', sides:6},
-	    radius : 10,
-	    colour : '#008CBA'
+	type: 'single-body',
+	shape : {type:'polygon', sides:6},
+	radius : 10,
+	colour : '#008CBA',
+	matter_options : {friction: 0, restitution: 0.5}
     };
     var rate = 0.1;
-    var bottoms_outflow = new ParticleFeed(bottoms_pos.x, bottoms_pos.y, rate, particle_options)
+    var force = { x : 0.005, y : 0.0};
+    var bottoms_outflow = new ParticleFeed(bottoms_pos.x, bottoms_pos.y,
+					   rate, particle_options, force)
     ensemble.addFeed(bottoms_outflow);
     this.Ensembles.push(ensemble);
 
