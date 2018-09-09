@@ -63,7 +63,7 @@ function DistillationGraphics(canvas, column, column_img, debug) {
 	radius : 3,
 	colour : '#008CBA',
 	init_force : { x : 0.0003, y : 0.0},
-	buoyancy : 2.0,
+	buoyancy : 0.0,
 	matter_options : {
 	    friction: 0,
 	    restitution: 0.5,
@@ -74,6 +74,7 @@ function DistillationGraphics(canvas, column, column_img, debug) {
 					   rate, particle_options)
     ensemble.addFeed(bottoms_outflow);
     this.Ensembles.push(ensemble);
+    console.log(this.Ensembles[0]);
 
     // Build the boundaries
     this.Boundaries = makeBoundaries(settings.boundary_positions,
@@ -81,35 +82,32 @@ function DistillationGraphics(canvas, column, column_img, debug) {
 				     this.sid.width, this.sid.height,
 				     this.world);
     var floor = new Boundary(0.5*this.xmax, this.ymax, this.xmax, 20.0, 0.0, this.world);
-    this.Boundaries.push(floor);
     var levee = makeBoundaries([settings.levee_position],
 			       this.xmax, this.ymax,
 			       this.sid.width, this.sid.height,
 			       this.world)[0];
+    this.Boundaries.push(floor);
     this.Boundaries.push(levee);
 
    
     // Class Methods
     this.update = function() {
 	// update all the graphical elements
+	Engine.update(this.engine);
 	this.update_ensembles();
     };
     
 
     this.update_ensembles = function() {
-	Engine.update(this.engine);
-	for (var i =0; i < this.Ensembles.length; i++) {
-	    this.Ensembles[i].removeOutliers(this.xmax, this.ymax);
-	    this.Ensembles[i].updateFeeds();
-	    this.Ensembles[i].apply_buoyant_force(this.engine.world.gravity);
-	    //this.Ensembles[i].perturb(2,2);
+	// Update each ensemble in sequence.
+	for (var i = 0; i < this.Ensembles.length; i++) {
+	    this.Ensembles[i].update(this.xmax, this.ymax, 0.0, 0.0, this.engine.world.gravity);
 	};
     };
 
 
 
     this.show = function() {
-
 	// render all the neccessary pieces to the canvas
 	background(51);
 	this.show_column();
