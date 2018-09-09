@@ -64,8 +64,8 @@ function DistillationGraphics(canvas, column, column_img, debug) {
 	colour : '#008CBA',
 	matter_options : {friction: 0, restitution: 0.5}
     };
-    var rate = 1;
-    var force = { x : 0.0002, y : 0.0};
+    var rate = 1.0;
+    var force = { x : 0.0003, y : 0.0};
     var bottoms_outflow = new ParticleFeed(bottoms_pos.x, bottoms_pos.y,
 					   rate, particle_options, force)
     ensemble.addFeed(bottoms_outflow);
@@ -97,6 +97,7 @@ function DistillationGraphics(canvas, column, column_img, debug) {
 	for (var i =0; i < this.Ensembles.length; i++) {
 	    this.Ensembles[i].removeOutliers(this.xmax, this.ymax);
 	    this.Ensembles[i].updateFeeds();
+	    //this.Ensembles[i].perturb(2,2);
 	};
     };
 
