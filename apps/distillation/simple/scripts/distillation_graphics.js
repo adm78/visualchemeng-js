@@ -57,17 +57,21 @@ function DistillationGraphics(canvas, column, column_img, debug) {
 	x : 0.5*(this.xmax + this.sid.width),
 	y : 0.5*(this.ymax + 0.97*this.sid.height)
     };
-    var particle_options = 	{
+    var particle_options = {
 	type: 'single-body',
 	shape : {type:'polygon', sides:6},
 	radius : 3,
 	colour : '#008CBA',
-	matter_options : {friction: 0, restitution: 0.5}
+	init_force : { x : 0.0003, y : 0.0},
+	buoyancy : 2.0,
+	matter_options : {
+	    friction: 0,
+	    restitution: 0.5,
+	}
     };
     var rate = 1.0;
-    var force = { x : 0.0003, y : 0.0};
     var bottoms_outflow = new ParticleFeed(bottoms_pos.x, bottoms_pos.y,
-					   rate, particle_options, force)
+					   rate, particle_options)
     ensemble.addFeed(bottoms_outflow);
     this.Ensembles.push(ensemble);
 
@@ -97,6 +101,7 @@ function DistillationGraphics(canvas, column, column_img, debug) {
 	for (var i =0; i < this.Ensembles.length; i++) {
 	    this.Ensembles[i].removeOutliers(this.xmax, this.ymax);
 	    this.Ensembles[i].updateFeeds();
+	    this.Ensembles[i].apply_buoyant_force(this.engine.world.gravity);
 	    //this.Ensembles[i].perturb(2,2);
 	};
     };
