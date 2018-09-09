@@ -60,12 +60,12 @@ function DistillationGraphics(canvas, column, column_img, debug) {
     var particle_options = 	{
 	type: 'single-body',
 	shape : {type:'polygon', sides:6},
-	radius : 10,
+	radius : 3,
 	colour : '#008CBA',
 	matter_options : {friction: 0, restitution: 0.5}
     };
-    var rate = 0.1;
-    var force = { x : 0.005, y : 0.0};
+    var rate = 1;
+    var force = { x : 0.0002, y : 0.0};
     var bottoms_outflow = new ParticleFeed(bottoms_pos.x, bottoms_pos.y,
 					   rate, particle_options, force)
     ensemble.addFeed(bottoms_outflow);
@@ -78,6 +78,12 @@ function DistillationGraphics(canvas, column, column_img, debug) {
 				     this.world);
     var floor = new Boundary(0.5*this.xmax, this.ymax, this.xmax, 20.0, 0.0, this.world);
     this.Boundaries.push(floor);
+    var levee = makeBoundaries([settings.levee_position],
+			       this.xmax, this.ymax,
+			       this.sid.width, this.sid.height,
+			       this.world)[0];
+    this.Boundaries.push(levee);
+
    
     // Class Methods
     this.update = function() {
@@ -103,7 +109,7 @@ function DistillationGraphics(canvas, column, column_img, debug) {
 	this.show_column();
 	this.show_stages();
 	this.show_boundaries();
-	this.show_floor();
+	this.show_walls();
 	this.show_ensembles();
 	if (this.debug) {
 	    this.show_fps();
@@ -143,12 +149,14 @@ function DistillationGraphics(canvas, column, column_img, debug) {
     };
 
  
-    this.show_floor = function() {
+    this.show_walls = function() {
 	push();
 	fill(128);
 	noStroke();
 	rectMode(CENTER);
 	rect(0.5*this.xmax, this.ymax, this.xmax, 20.0);
+	var abs_coords = get_absolute_coordinates(this.xmax, this.ymax, this.sid.width, this.sid.height, settings.levee_position);
+	rect(abs_coords.x, abs_coords.y, abs_coords.w, abs_coords.h);
 	pop();
     };
     
