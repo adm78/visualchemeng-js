@@ -50,22 +50,46 @@ function DistillationGraphics(canvas, column, column_img, debug) {
     this.debug = debug;
     
 
-    // Build the ensemble array (one ensemble for each component)
+    // Build the ensemble array (one for each feed)
     this.Ensembles = [];
+    var ensemble = new Ensemble([], this.world);
+    var tops_pos = {
+	x : 0.5*(this.xmax + this.sid.width),
+	y : 0.5*(this.ymax + 0.97*this.sid.height)
+    };
+    var particle_options = 	{
+	    type: 'single-body',
+	    shape : {type:'polygon', sides:6},
+	    radius : 10,
+	    colour : '#008CBA'
+    };
+    var rate = 0.1;
+    var tops_outflow = new ParticleFeed(tops_pos.x, tops_pos.y, rate, particle_options)
+    ensemble.addFeed(tops_outflow);
+    this.Ensembles.push(ensemble);
 
     // Build the boundaries
-    this.Boundaries = makeBoundaries(settings.boundary_positions, this.xmax, this.ymax,
-				     this.sid.width, this.sid.height, this.world);
-
+    this.Boundaries = makeBoundaries(settings.boundary_positions,
+				     this.xmax, this.ymax,
+				     this.sid.width, this.sid.height,
+				     this.world);
+    var floor = new Boundary(0.5*this.xmax, this.ymax, this.xmax, 20.0, 0.0, this.world);
+    this.Boundaries.push(floor);
    
     // Class Methods
     this.update = function() {
-
-	this.update_ensemble();
-	
+	// update all the graphical elements
+	this.update_ensembles();
     };
+    
 
-    this.update_ensemble = function() {   };
+    this.update_ensembles = function() {
+	Engine.update(this.engine);
+	for (var i =0; i < this.Ensembles.length; i++) {
+	    this.Ensembles[i].removeOutliers(this.xmax, this.ymax);
+	    this.Ensembles[i].updateFeeds();
+	};
+    };
 
 
 
@@ -76,18 +100,31 @@ function DistillationGraphics(canvas, column, column_img, debug) {
 	this.show_column();
 	this.show_stages();
 	this.show_boundaries();
+	this.show_floor();
+	this.show_ensembles();
 	if (this.debug) {
 	    this.show_fps();
 	};
     };
 
 
+    this.show_ensembles = function() {
+	for (var i=0; i < this.Ensembles.length; i++) {
+	    this.Ensembles[i].show();
+	};
+
+    };
+
+
     this.show_stages = function() {
 	push();
 	rectMode(CORNER);
+	var c1 = color(settings.components[0].colour);
+	var c2 = color(settings.components[1].colour);
 	var stage_height = this.column_height/this.column.n_stages;
 	for (var i=0; i < this.column.n_stages; i++) {
-	    fill(column.stages[i].y*255);
+	    var c = lerpColor(c1, c2, column.stages[i].y);
+	    fill(c);
 	    var stage_top = this.column_top + i*stage_height;
 	    rect(this.column_left, stage_top, this.column_width, stage_height);
 	};
@@ -100,6 +137,16 @@ function DistillationGraphics(canvas, column, column_img, debug) {
 	imageMode(CENTER);
 	image(this.column_img, this.xmax/2 , this.ymax/2, this.sid.width, this.sid.height);
 	pop();	
+    };
+
+ 
+    this.show_floor = function() {
+	push();
+	fill(128);
+	noStroke();
+	rectMode(CENTER);
+	rect(0.5*this.xmax, this.ymax, this.xmax, 20.0);
+	pop();
     };
     
 
