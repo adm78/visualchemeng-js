@@ -53,7 +53,7 @@ function DistillationGraphics(canvas, column, column_img, debug) {
     // Build the ensemble array (one for each feed)
     this.Ensembles = [];
     var ensemble = new Ensemble([], this.world);
-    var tops_pos = {
+    var bottoms_pos = {
 	x : 0.5*(this.xmax + this.sid.width),
 	y : 0.5*(this.ymax + 0.97*this.sid.height)
     };
@@ -64,8 +64,8 @@ function DistillationGraphics(canvas, column, column_img, debug) {
 	    colour : '#008CBA'
     };
     var rate = 0.1;
-    var tops_outflow = new ParticleFeed(tops_pos.x, tops_pos.y, rate, particle_options)
-    ensemble.addFeed(tops_outflow);
+    var bottoms_outflow = new ParticleFeed(bottoms_pos.x, bottoms_pos.y, rate, particle_options)
+    ensemble.addFeed(bottoms_outflow);
     this.Ensembles.push(ensemble);
 
     // Build the boundaries
