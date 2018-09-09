@@ -30,7 +30,8 @@
 var Engine = Matter.Engine,
     World = Matter.World,
     Bodies = Matter.Bodies,
-    Constraint = Matter.Constraint;
+    Constraint = Matter.Constraint
+    Body = Matter.Body;
 
 function ReactorGraphics(canvas, Reac, n_init, Tank, imp_array=[], isf=0.8, debug) {
     /*
