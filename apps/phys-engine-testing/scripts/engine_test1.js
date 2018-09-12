@@ -23,7 +23,8 @@ var particles = [];
 var boundaries = [];
 var Engine = Matter.Engine,
     World = Matter.World,
-    Bodies = Matter.Bodies;
+    Bodies = Matter.Bodies,
+    Body = Matter.Body;
 var sid;
 
 // --------------------------------------------------
@@ -101,7 +102,7 @@ function draw() {
 };
 
 function mouseDragged() {
-    particles.push(new PhysEngineParticle(world, mouseX, mouseY, {radius: random(5, 10)}));
+    particles.push(new MatterParticle(world, mouseX, mouseY, {radius: random(5, 10)}));
 };
 
 // run button

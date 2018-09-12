@@ -57,7 +57,7 @@ function DistillationGraphics(canvas, column, column_img, debug) {
 	x : 0.5*(this.xmax + this.sid.width),
 	y : 0.5*(this.ymax + 0.97*this.sid.height)
     };
-    var particle_options = {
+    var bottoms_particle_options = {
 	type: 'single-body',
 	shape : {type:'polygon', sides:6},
 	radius : 3,
@@ -69,10 +69,34 @@ function DistillationGraphics(canvas, column, column_img, debug) {
 	    restitution: 0.5,
 	}
     };
-    var rate = 1.0;
+    var rate = 2.0;
     var bottoms_outflow = new ParticleFeed(bottoms_pos.x, bottoms_pos.y,
-					   rate, particle_options)
+					   rate, bottoms_particle_options)
     ensemble.addFeed(bottoms_outflow);
+
+
+    var tops_pos = {
+	x : 0.5*(this.xmax + this.sid.width),
+	y : 0.5*(this.ymax - 0.76*this.sid.height)
+    };
+    var tops_particle_options = {
+	type: 'single-body',
+	shape : {type:'polygon', sides:6},
+	radius : 3,
+	colour : '#008CBA',
+	init_force : { x : 0.00010, y : 0.0},
+	buoyancy : 1.05,
+	perturb : { x : 2, y : 2},
+	matter_options : {
+	    friction: 0,
+	    restitution: 0.5,
+	}
+    };
+    var rate = 1.0;
+    var tops_outflow = new ParticleFeed(tops_pos.x, tops_pos.y,
+					rate, tops_particle_options)
+    ensemble.addFeed(tops_outflow);
+    
     this.Ensembles.push(ensemble);
     console.log(this.Ensembles[0]);
 
@@ -101,7 +125,12 @@ function DistillationGraphics(canvas, column, column_img, debug) {
     this.update_ensembles = function() {
 	// Update each ensemble in sequence.
 	for (var i = 0; i < this.Ensembles.length; i++) {
-	    this.Ensembles[i].update(this.xmax, this.ymax, 0.0, 0.0, this.engine.world.gravity);
+	    var update_options = {
+		xmax : this.xmax,
+		ymax : this.ymax,
+		gravity : this.engine.world.gravity
+	    };
+	    this.Ensembles[i].update(update_options);
 	};
     };
 

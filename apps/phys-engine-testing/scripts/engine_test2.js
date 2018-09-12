@@ -26,7 +26,8 @@ var ensemble;
 var boundaries = [];
 var Engine = Matter.Engine,
     World = Matter.World,
-    Bodies = Matter.Bodies;
+    Bodies = Matter.Bodies,
+    Body = Matter.Body;
 var sid;
 var show_boundaries = false;
 
@@ -101,7 +102,7 @@ function draw() {
 };
 
 function mouseDragged() {
-    ensemble.addParticle(new PhysEngineParticle(world, mouseX, mouseY, {radius: random(5, 10)}));
+    ensemble.addParticle(new MatterParticle(world, mouseX, mouseY, {radius: random(5, 10)}));
     console.log(ensemble);
 };
 
