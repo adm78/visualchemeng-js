@@ -56,20 +56,20 @@ function ReactorGraphics(canvas, Reac, n_init, Tank, imp_array=[], isf=0.8, debu
     this.engine = Engine.create();
     this.world = this.engine.world;
     this.Tank = Tank;
-    this.sid = getImgScaledDimensions(this.Tank, this.isf, this.ymax);
+    this.sid = utils.getImgScaledDimensions(this.Tank, this.isf, this.ymax);
     this.show_boundaries_log = false;
     this.debug = debug;
     
 
     // Build the ensemble array (one ensemble for each component)
     this.Ensembles = [];
-    var cT = sum(this.Reac.conc);
+    var cT = utils.sum(this.Reac.conc);
     for (var i = 0; i < Reac.components.length; i++) {
 	var component_ensemble = new Ensemble([],this.world);
 	var component_n_init = Math.round(this.Reac.conc[i]*n_init/cT);
 	for (j = 0; j < component_n_init; j++) {
-	    var inlet_x = 0.5*(this.xmax + 0.8*getRandomSigned()*this.sid.width); 
-	    var inlet_y = (this.ymax)*0.7 + 0.2*getRandomSigned()*this.sid.height;
+	    var inlet_x = 0.5*(this.xmax + 0.8*utils.getRandomSigned()*this.sid.width); 
+	    var inlet_y = (this.ymax)*0.7 + 0.2*utils.getRandomSigned()*this.sid.height;
 	    var Part = ParticleFactory(this.world, inlet_x, inlet_y, settings.particle_options[i]);
 	    component_ensemble.addParticle(Part);
 	};
@@ -139,8 +139,8 @@ function ReactorGraphics(canvas, Reac, n_init, Tank, imp_array=[], isf=0.8, debu
 	 * outliers and reactor concentration changes. */
 	
 	Engine.update(this.engine);
-	var inlet_x = 0.5*(this.xmax + 0.8*getRandomSigned()*this.sid.width); 
-	var inlet_y = (this.ymax)*0.7 + 0.2*getRandomSigned()*this.sid.height;
+	var inlet_x = 0.5*(this.xmax + 0.8*utils.getRandomSigned()*this.sid.width); 
+	var inlet_y = (this.ymax)*0.7 + 0.2*utils.getRandomSigned()*this.sid.height;
 	for (var i = 0; i < this.Ensembles.length; i++) {
 	    var dN = this.get_dN_int(i);
 	    if (dN < 0) {

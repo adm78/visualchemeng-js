@@ -41,7 +41,7 @@ function DistillationGraphics(canvas, column, column_img, debug) {
     this.engine = Engine.create();
     this.world = this.engine.world;
     this.column_img = column_img;
-    this.sid = getImgScaledDimensions(this.column_img, this.isf, this.ymax);
+    this.sid = utils.getImgScaledDimensions(this.column_img, this.isf, this.ymax);
     this.column_top = this.ymax*0.5 - 0.37*this.sid.height;
     this.column_left = this.xmax*0.5 - 0.225*this.sid.width;
     this.column_width = this.sid.width*0.193;
@@ -188,7 +188,7 @@ function DistillationGraphics(canvas, column, column_img, debug) {
 	noStroke();
 	rectMode(CENTER);
 	rect(0.5*this.xmax, this.ymax, this.xmax, 20.0);
-	var abs_coords = get_absolute_coordinates(this.xmax, this.ymax, this.sid.width, this.sid.height, settings.levee_position);
+	var abs_coords = utils.get_absolute_coordinates(this.xmax, this.ymax, this.sid.width, this.sid.height, settings.levee_position);
 	rect(abs_coords.x, abs_coords.y, abs_coords.w, abs_coords.h);
 	pop();
     };

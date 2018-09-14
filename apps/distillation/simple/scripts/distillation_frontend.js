@@ -1,4 +1,4 @@
-// VCE Project - test_distillation_frontend.js
+1// VCE Project - test_distillation_frontend.js
 //
 // This script facilitates the testing of a distillation simulation
 // module.
@@ -28,7 +28,7 @@ var Graphics,
 function preload() {
     // load the canvas images
     var column_img_URL = "../../images/distillation_grey.svg";
-    column_img = loadImage(column_img_URL, pic => print(pic), loadImgErrFix);
+    column_img = loadImage(column_img_URL, pic => print(pic), utils.loadImgErrFix);
 };
 
 function setup(first_time=true) {
@@ -40,7 +40,7 @@ function setup(first_time=true) {
     
     
     // Create the canvas
-    var dimensions = getSimBoxDimensions();
+    var dimensions = utils.getSimBoxDimensions();
     var canvas= createCanvas(dimensions.xmax, screen.height*0.95);
     canvas.parent("sim_container");
 

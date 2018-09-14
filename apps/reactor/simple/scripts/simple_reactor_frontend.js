@@ -46,7 +46,7 @@ const default_reactor_options = {
     stoich : settings.reaction.stoich,
     debug : settings.debug
 };
-var reactor_options = deep_copy(default_reactor_options);
+var reactor_options = utils.deep_copy(default_reactor_options);
 
 
 // --------------------------------------------------
@@ -59,11 +59,11 @@ function preload() {
     var imp2_URL = "../../../../../lib/images/imp_45deg.svg";
     var imp3_URL = "../../../../../lib/images/imp_90deg.svg";
     var imp4_URL = "../../../../../lib/images/imp_135deg.svg";
-    tank = loadImage(tank_URL, pic => print(pic), loadImgErrFix);
-    var imp1 = loadImage(imp1_URL, pic => print(pic), loadImgErrFix);
-    var imp2 = loadImage(imp2_URL, pic => print(pic), loadImgErrFix);
-    var imp3 = loadImage(imp3_URL, pic => print(pic), loadImgErrFix);
-    var imp4 = loadImage(imp4_URL, pic => print(pic), loadImgErrFix);
+    tank = loadImage(tank_URL, pic => print(pic), utils.loadImgErrFix);
+    var imp1 = loadImage(imp1_URL, pic => print(pic), utils.loadImgErrFix);
+    var imp2 = loadImage(imp2_URL, pic => print(pic), utils.loadImgErrFix);
+    var imp3 = loadImage(imp3_URL, pic => print(pic), utils.loadImgErrFix);
+    var imp4 = loadImage(imp4_URL, pic => print(pic), utils.loadImgErrFix);
     imp_array = [imp1, imp2, imp3, imp4];
 };
 
@@ -76,7 +76,7 @@ function setup(first_time=true) {
     Reac = new AnalyticalReactor(reactor_options);
 
     // Create the canvas
-    var dimensions = getSimBoxDimensions();
+    var dimensions = utils.getSimBoxDimensions();
     var canvas= createCanvas(dimensions.xmax, dimensions.ymax);
     canvas.parent("sim_container");
     
@@ -104,8 +104,8 @@ function setup(first_time=true) {
     if (first_time) { update_sliders()};
 
     // Re-size plots where required
-    resizePlotly('duty_plot_container');
-    resizePlotly('conversion_plot_container');
+    utils.resizePlotly('duty_plot_container');
+    utils.resizePlotly('conversion_plot_container');
     
 }
 
@@ -295,7 +295,7 @@ $('#bounds').click(async function(){
 // reset button
 $('#restart').click(async function(){
     console.log("You just clicked reset!");
-    reactor_options = deep_copy(default_reactor_options);
+    reactor_options = utils.deep_copy(default_reactor_options);
     setup();
     update_labels();
 });
@@ -313,8 +313,8 @@ $('#fullscreen').on('click', () => {
 
 // page resize actions
 window.onresize = function() {
-    resizePlotly('duty_plot_container');
-    resizePlotly('conversion_plot_container');
+    utils.resizePlotly('duty_plot_container');
+    utils.resizePlotly('conversion_plot_container');
 };
 
 // page full load actions
@@ -324,7 +324,7 @@ $(document).ready(function () {
 
 // on-click functionality
 function mousePressed() {
-    if (is_on_canvas(mouseX, mouseY, canvas)) {
+    if (utils.is_on_canvas(mouseX, mouseY, canvas)) {
 	$('#run').click();
     };
 };
