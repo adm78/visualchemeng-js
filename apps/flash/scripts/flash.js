@@ -53,7 +53,7 @@ function preload() {
     // preload the flash tank image and font
     //URL = "http://visualchemeng.com/wp-content/uploads/2018/01/flash.svg";
     URL = "../../images/flash.svg";
-    img = loadImage(URL, pic => print(pic), loadImgErrFix);
+    img = loadImage(URL, pic => print(pic), utils.loadImgErrFix);
 
 };
 
@@ -63,7 +63,7 @@ function setup() {
        simulation canvas which we draw onto and run
        a very simple flash unit test */
 
-    var dimensions = getSimBoxDimensions();
+    var dimensions = utils.getSimBoxDimensions();
     xmax = dimensions.xmax;
     ymax = dimensions.ymax;
     console.log("xmax=",xmax);
@@ -83,7 +83,7 @@ function setup() {
     // draw the flash schematic to screen
     background(51);
     imageMode(CENTER);
-    sid = getImgScaledDimensions(img);
+    sid = utils.getImgScaledDimensions(img, img_shrink_factor, ymax);
     image(img, xmax/2 , ymax/2, sid.width, sid.height);
     frameRate(fr);
 
@@ -215,7 +215,7 @@ function plotCompositionData(flash, debug=false) {
 
 
     var feed_data = [{
-    x: generateLabels(flash.z,'z'),
+    x: utils.generateLabels(flash.z,'z'),
 	y: flash.z,
 	type: 'bar',
 	marker: {
@@ -226,7 +226,7 @@ function plotCompositionData(flash, debug=false) {
     }];
 
     var tops_data = [{
-	x: generateLabels(flash.y,'y'),
+	x: utils.generateLabels(flash.y,'y'),
 	y: flash.y,
 	type: 'bar',
 	marker: {
@@ -237,7 +237,7 @@ function plotCompositionData(flash, debug=false) {
     }];
 
     var bottoms_data = [{
-	x: generateLabels(flash.x,'x'),
+	x: utils.generateLabels(flash.x,'x'),
 	y: flash.x,
 	type: 'bar',
 	marker: {
@@ -588,16 +588,16 @@ function resizePlotlyContainers() {
     var d3 = Plotly.d3;
     var gd0 = d3.select("div[id='flow_chart_container']");
     var gd0_node = gd0.node();
-    resizePlotlyHeight(gd0_node,'flow_chart_container');
+    utils.resizePlotlyHeight(gd0_node,'flow_chart_container');
     var gd1 = d3.select("div[id='feedplotDiv']");
     var gd1_node = gd1.node();
-    resizePlotlyWidth(gd1_node,'feedplotDiv');
+    utils.resizePlotlyWidth(gd1_node,'feedplotDiv');
     var gd2 = d3.select("div[id='topsplotDiv']");
     var gd2_node = gd2.node();
-    resizePlotlyWidth(gd2_node,'topsplotDiv');
+    utils.resizePlotlyWidth(gd2_node,'topsplotDiv');
     var gd3 = d3.select("div[id='bottomsplotDiv']");
     var gd3_node = gd3.node();
-    resizePlotlyWidth(gd3_node,'bottomsplotDiv');
+    utils.resizePlotlyWidth(gd3_node,'bottomsplotDiv');
 };
 
 // resize on window resize

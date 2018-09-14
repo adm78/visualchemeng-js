@@ -33,11 +33,11 @@ function preload() {
     var imp2_URL = "../../../../../lib/images/imp_45deg.svg";
     var imp3_URL = "../../../../../lib/images/imp_90deg.svg";
     var imp4_URL = "../../../../../lib/images/imp_135deg.svg";
-    tank = loadImage(tank_URL, pic => print(pic), loadImgErrFix);
-    var imp1 = loadImage(imp1_URL, pic => print(pic), loadImgErrFix);
-    var imp2 = loadImage(imp2_URL, pic => print(pic), loadImgErrFix);
-    var imp3 = loadImage(imp3_URL, pic => print(pic), loadImgErrFix);
-    var imp4 = loadImage(imp4_URL, pic => print(pic), loadImgErrFix);
+    tank = loadImage(tank_URL, pic => print(pic), utils.loadImgErrFix);
+    var imp1 = loadImage(imp1_URL, pic => print(pic), utils.loadImgErrFix);
+    var imp2 = loadImage(imp2_URL, pic => print(pic), utils.loadImgErrFix);
+    var imp3 = loadImage(imp3_URL, pic => print(pic), utils.loadImgErrFix);
+    var imp4 = loadImage(imp4_URL, pic => print(pic), utils.loadImgErrFix);
     imp_array = [imp1, imp2, imp3, imp4];
 };
 
@@ -46,12 +46,12 @@ function setup() {
     /* This function is called upon entry to create the
        simulation canvas which we draw onto  */
 
-    var dimensions = getSimBoxDimensions();
+    var dimensions = utils.getSimBoxDimensions();
     xmax = dimensions.xmax;
     ymax = dimensions.ymax;
     var canvas= createCanvas(xmax, ymax);
     canvas.parent("sim_container");
-    sid = getImgScaledDimensions(tank, img_shrink_factor, ymax);
+    sid = utils.getImgScaledDimensions(tank, img_shrink_factor, ymax);
     var imp_height = sid.height*0.6297;
     impeller = new Impeller(imp_array, imp_height, ymax, [xmax/2.0,ymax/2.0], speed=0.2)
     impeller.updateSpeed(0.1);

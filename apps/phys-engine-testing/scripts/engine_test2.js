@@ -36,7 +36,7 @@ var show_boundaries = false;
 // --------------------------------------------------
 function preload() {
     var tank_URL = "../../../../lib/images/reactor_ni.svg";
-    tank = loadImage(tank_URL, pic => print(pic), loadImgErrFix);
+    tank = loadImage(tank_URL, pic => print(pic), utils.loadImgErrFix);
 };
 
 function setup() {
@@ -48,9 +48,9 @@ function setup() {
     //var dimensions = getSimBoxDimensions();
     xmax = 400;//dimensions.xmax;
     ymax = 400;//dimensions.ymax;
-    var canvas= createCanvas(xmax, ymax);
+    var canvas = createCanvas(xmax, ymax);
     canvas.parent("sim_container");
-    sid = getImgScaledDimensions(tank, 0.6, ymax);
+    sid = utils.getImgScaledDimensions(tank, 0.6, ymax);
     
     // set-up the physics engine
     engine = Engine.create();
