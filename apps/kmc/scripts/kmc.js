@@ -530,7 +530,7 @@ $('#stream').click(async function(){
 	// extend the plots based on the new data
 	new_data = unpack_data(kmc_Storage, exact_Storage,ss_Storage);
 	Plotly.extendTraces('myDiv', new_data, [0, 1, 2, 3 ,4, 5, 6, 7, 8], max, layout);
-	await sleep(1);
+	await utils.sleep(1);
     }
 });
 
