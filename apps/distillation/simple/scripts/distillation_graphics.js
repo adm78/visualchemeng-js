@@ -24,7 +24,7 @@ var Engine = Matter.Engine,
     Constraint = Matter.Constraint,
     Body = Matter.Body;
 
-function DistillationGraphics(canvas, column, column_img, debug) {
+function DistillationGraphics(canvas, column, images, debug) {
     /*
       
     Args:
@@ -40,12 +40,13 @@ function DistillationGraphics(canvas, column, column_img, debug) {
     this.isf = 0.85;
     this.engine = Engine.create();
     this.world = this.engine.world;
-    this.column_img = column_img;
-    this.sid = utils.getImgScaledDimensions(this.column_img, this.isf, this.ymax);
+    this.images = images;
+    this.sid = utils.getImgScaledDimensions(this.images.column, this.isf, this.ymax);
     this.column_top = this.ymax*0.5 - 0.37*this.sid.height;
     this.column_left = this.xmax*0.5 - 0.225*this.sid.width;
     this.column_width = this.sid.width*0.193;
     this.column_height = this.sid.height*0.68;
+    this.column_bottom = this.column_top + this.column_height;
     this.show_boundaries_log = true;
     this.debug = debug;
     
@@ -84,9 +85,9 @@ function DistillationGraphics(canvas, column, column_img, debug) {
 	shape : {type:'polygon', sides:6},
 	radius : 3,
 	colour : '#008CBA',
-	init_force : { x : 0.00010, y : 0.0},
+	init_force : { x : 0.0002, y : 0.0},
 	buoyancy : 1.05,
-	perturb : { x : 2, y : 2},
+	perturbation : { x : 2, y : 2 },
 	matter_options : {
 	    friction: 0,
 	    restitution: 0.5,
@@ -141,6 +142,7 @@ function DistillationGraphics(canvas, column, column_img, debug) {
 	background(51);
 	this.show_column();
 	this.show_stages();
+	this.show_feed();
 	this.show_boundaries();
 	this.show_walls();
 	this.show_ensembles();
@@ -163,22 +165,62 @@ function DistillationGraphics(canvas, column, column_img, debug) {
 	rectMode(CORNER);
 	var c1 = color(settings.components[0].colour);
 	var c2 = color(settings.components[1].colour);
-	var stage_height = this.column_height/this.column.n_stages;
 	for (var i=0; i < this.column.n_stages; i++) {
 	    var c = lerpColor(c1, c2, column.stages[i].y);
 	    fill(c);
-	    var stage_top = this.column_top + i*stage_height;
-	    rect(this.column_left, stage_top, this.column_width, stage_height);
+	    var stage_top = this.column_bottom - (i+1)*this.stage_height();
+	    rect(this.column_left, stage_top, this.column_width, this.stage_height());
 	};
 	pop();
+    };
+
+    
+    this.stage_pos = function(i) {
+	// Return the centre position of stage number i.
+	// Note stages number is the stage index + 1, i.e.
+	// stages start counting at 1 not 0.
+	return {
+	    x : this.column_left + 0.5*this.column_width,
+	    y : this.column_bottom - (i-0.5)*this.stage_height()
+	};
+    };
+
+
+    this.stage_height = function() {
+	return this.column_height/this.column.n_stages;
     };
     
 
     this.show_column = function() {
 	push();
 	imageMode(CENTER);
-	image(this.column_img, this.xmax/2 , this.ymax/2, this.sid.width, this.sid.height);
+	image(this.images.column, this.xmax/2 , this.ymax/2, this.sid.width, this.sid.height);
 	pop();	
+    };
+
+
+    this.show_feed = function() {
+	push();
+	imageMode(CENTER);
+	var img = this.images.feed;
+	var sf = this.sid.width/this.images.column.width;
+	var pos = this.feed_pos();
+	image(img, pos.x, pos.y, img.width*sf, img.height*sf);
+	pop();
+
+    };
+
+
+    this.feed_pos = function() {
+	var feed_stage_pos = this.stage_pos(column.feed_pos);
+	var sf = this.sid.width/this.images.column.width;
+	return {
+	    x : feed_stage_pos.x
+		- 0.5*this.column_width
+		- 0.5*this.images.feed.width*sf,
+	    y : feed_stage_pos.y
+	};
+
     };
 
  

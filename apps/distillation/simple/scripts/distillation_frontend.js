@@ -20,7 +20,7 @@
 var paused_log = false;
 var debug = true;
 var Graphics,
-    column_img;
+    images = {};
 
 // --------------------------------------------------
 //             p5 visualisation functionality
@@ -28,7 +28,9 @@ var Graphics,
 function preload() {
     // load the canvas images
     var column_img_URL = "../../images/distillation_grey.svg";
-    column_img = loadImage(column_img_URL, pic => print(pic), utils.loadImgErrFix);
+    var feed_img_URL = "../../images/feed_pipe.svg";
+    images.column = loadImage(column_img_URL, pic => print(pic), utils.loadImgErrFix);
+    images.feed = loadImage(feed_img_URL, pic => print(pic), utils.loadImgErrFix);
 };
 
 function setup(first_time=true) {
@@ -47,7 +49,8 @@ function setup(first_time=true) {
     // Initialise the backend column
     options = {};
     column = new DistColumnBase(options);
-    column.n_stages = 10;
+    column.n_stages = 20;
+    column.feed_pos = 6;
     for (var i=0; i < column.n_stages; i++) {
 	var stage = new Stage();
 	stage.x = i/column.n_stages;
@@ -57,7 +60,7 @@ function setup(first_time=true) {
     console.log(column);
     
     // Initialise the graphical reactor
-    Graphics = new DistillationGraphics(canvas, column, column_img, debug);
+    Graphics = new DistillationGraphics(canvas, column, images, debug);
 
     
 }
