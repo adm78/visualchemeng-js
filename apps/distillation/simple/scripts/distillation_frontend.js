@@ -38,9 +38,6 @@ function setup(first_time=true) {
     /* This function is called upon entry to create the
        simulation canvas which we draw onto.  */
 
-    // Intialise the backend column
-    
-    
     // Create the canvas
     var dimensions = utils.getSimBoxDimensions();
     var canvas= createCanvas(dimensions.xmax, screen.height*0.95);
@@ -49,8 +46,8 @@ function setup(first_time=true) {
     // Initialise the backend column
     options = {};
     column = new DistColumnBase(options);
-    column.n_stages = 20;
-    column.feed_pos = 6;
+    column.n_stages = 12;
+    column.feed_pos = 1;
     for (var i=0; i < column.n_stages; i++) {
 	var stage = new Stage();
 	stage.x = i/column.n_stages;
@@ -59,7 +56,7 @@ function setup(first_time=true) {
     };
     console.log(column);
     
-    // Initialise the graphical reactor
+    // Initialise the graphical column representation
     Graphics = new DistillationGraphics(canvas, column, images, debug);
 
     

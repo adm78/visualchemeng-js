@@ -136,31 +136,41 @@ function draw() {
 
 	    // handle the feed stream
 	    for (i=0; i < pout*flash.F; i++) {
-		var new_feed_part1 = new Particle(feed_pos.x,feed_pos.y+0.01*sid.height,
-						  rpart,1.0,2.0,0.0,null,
-						  createVector(0,0), colour.z);
-		var new_feed_part2 = new Particle(feed_pos.x,feed_pos.y-0.01*sid.height,
-						  rpart,1.0,2.0,0.0,null,
-						  createVector(0,0), colour.z);
+		var feed_particle_options = {
+		    radius : rpart,
+		    energy : 1.0,
+		    v : { x : 2.0, y : 0.0 },
+		    colour : colour.z
+		}
+		var new_feed_part1 = new Particle(feed_pos.x,feed_pos.y+0.01*sid.height, feed_particle_options);
+		var new_feed_part2 = new Particle(feed_pos.x,feed_pos.y-0.01*sid.height, feed_particle_options);
 		feed_stream.addParticle(new_feed_part1);
 		feed_stream.addParticle(new_feed_part2);
 	    };
 
-	    // handle the delayed outlet and inlet streams
+	    // handle the delayed outlet streams
 	    if (feed_stream.outliers >  output_delay) {
 		for (i=0; i < pout*flash.V; i++) {
-		    var new_tops_part = new Particle(tops_pos.x,tops_pos.y,rpart,
-						     1.0,2.0,0.0,null,
-						     createVector(0,-gravity), colour.y);
+		    var tops_particle_options = {
+			radius : rpart,
+			v : { x : 2.0, y : 0.0 },
+			colour : colour.y,
+			acc : createVector(0, -gravity)
+		    };
+		    var new_tops_part = new Particle(tops_pos.x, tops_pos.y, tops_particle_options);
     		    tops_stream.addParticle(new_tops_part);
 
 		};
 		for (i=0; i < pout*flash.L; i++) {
-		    var new_bottoms_part = new Particle(bottoms_pos.x,bottoms_pos.y,rpart,
-							1.0,2.0,0.0,null,
-							createVector(0,gravity), colour.x);
+		    var bottoms_particle_options = {
+			radius : rpart,
+			v : { x : 2.0, y : 0.0 },
+			colour : colour.x,
+			acc : createVector(0, gravity)
+		    };
+		    var new_bottoms_part = new Particle(bottoms_pos.x, bottoms_pos.y, bottoms_particle_options);
 		    bottoms_stream.addParticle(new_bottoms_part);
-		}
+		};
 	    };
     	};
 
@@ -323,6 +333,9 @@ function chooseColoursFromComposition(colours, sep) {
     var x_cum = [sep.x[0]];
     var y_cum = [sep.y[0]];
     var z_cum = [sep.z[0]];
+    var i_x = 0;
+    var i_y = 0;
+    var i_z = 0;
 
     // generate cumulative composition lists
     for (var i = 1; i < sep.x.length; i++) {
@@ -335,13 +348,6 @@ function chooseColoursFromComposition(colours, sep) {
     for (var i = 0; i < x_cum.length; i++) {
 	if (rndx <= x_cum[i]) {
 	    var i_x = i;
-	    break;
-	}
-    };
-    var rndy = Math.random();
-    for (var i = 0; i < y_cum.length; i++) {
-	if (rndy <= y_cum[i]) {
-	    var i_y = i;
 	    break;
 	}
     };
