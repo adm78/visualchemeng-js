@@ -353,7 +353,8 @@ function initParticles(n,r,xmax, ymax) {
     for (i = 0; i < Math.round(xmax/dx); i++) {
 	for (j = 0; j < Math.round(ymax/dx); j++) {
 	    if (n_try < n) {
-		potential_part = new Particle(dx*(i+0.5),dx*(j+0.5),getRadius());
+		var particle_options =  { radius : getRadius() };
+		potential_part = new Particle(dx*(i+0.5),dx*(j+0.5),particle_options);
 		// On small screens, there may be some overlap with the wall
 		if (particleInSimBox(potential_part)) {
     		    parts[n_init] = potential_part;
@@ -390,7 +391,8 @@ function addParticle() {
     // find a overlap free position or deem the ensemble
     // to be full.
 
-    var new_part = new Particle(mouseX,mouseY,getRadius());
+    var particle_options = { radius : getRadius() }; 
+    var new_part = new Particle(mouseX, mouseY, particle_options);
     var attempts = 1;
     while (overlapExists(new_part)) {
 	new_part = randomMove(new_part);
