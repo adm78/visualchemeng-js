@@ -48,12 +48,77 @@ function DistillationGraphics(canvas, column, images, debug) {
     this.column_height = this.sid.height*0.68;
     this.column_bottom = this.column_top + this.column_height;
     this.show_boundaries_log = true;
+    this.Ensembles = [];
     this.debug = debug;
     
+    this.stage_pos = function(i) {
+	// Return the centre position of stage number i.
+	// Note stages number is the stage index + 1, i.e.
+	// stages start counting at 1 not 0.
+	return {
+	    x : this.column_left + 0.5*this.column_width,
+	    y : this.column_bottom - (i-0.5)*this.stage_height()
+	};
+    };
+
+
+    this.stage_height = function() {
+	return this.column_height/this.column.n_stages;
+    };
+
+    this.feed_pos = function() {
+	var feed_stage_pos = this.stage_pos(column.feed_pos);
+	var sf = this.sid.width/this.images.column.width;
+	return {
+	    x : feed_stage_pos.x
+		- 0.5*this.column_width
+		- 0.5*this.images.feed.width*sf,
+	    y : feed_stage_pos.y
+	};
+
+    };
+
+
+    this.reset_feed_boundaries = function() {
+	// Move the feed boundaries so they line up with the feed pipe
+	// position.
+	var sf = this.sid.width/this.images.column.width;
+	var dy = this.feed_pos().y - this.feed_boundaries[0].body.position.y + 0.40*this.images.feed.height*sf;
+	for (var i=0; i < this.feed_boundaries.length; i++) {
+	    this.feed_boundaries[i].translate(0, dy);
+	};
+    };
+
 
     // Build the ensemble array (one for each feed)
-    this.Ensembles = [];
-    var ensemble = new Ensemble([], this.world);
+
+    // feed particles
+    var feed_ensemble = new Ensemble([], this.world);
+    var sf = this.sid.width/this.images.column.width;
+    var feed_pos = {
+	x : this.column_left - sf*this.images.feed.width + 2,
+	y : this.feed_pos().y 
+    };
+    var feed_particle_options = {
+	type: 'single-body',
+	shape : {type:'polygon', sides:6},
+	radius : 3,
+	colour : '#008CBA',
+	init_force : { x : 0.0003, y : 0.0},
+	buoyancy : 0.0,
+	matter_options : {
+	    friction: 0,
+	    restitution: 0.5,
+	}
+    };
+    var rate = 1.0;
+    var feed_inflow = new ParticleFeed(feed_pos.x, feed_pos.y,
+				       rate, feed_particle_options)
+    feed_ensemble.addFeed(feed_inflow);
+    this.Ensembles.push(feed_ensemble);
+
+    // bottoms particles
+    var bottoms_ensemble = new Ensemble([], this.world);
     var bottoms_pos = {
 	x : 0.5*(this.xmax + this.sid.width),
 	y : 0.5*(this.ymax + 0.97*this.sid.height)
@@ -73,9 +138,11 @@ function DistillationGraphics(canvas, column, images, debug) {
     var rate = 2.0;
     var bottoms_outflow = new ParticleFeed(bottoms_pos.x, bottoms_pos.y,
 					   rate, bottoms_particle_options)
-    ensemble.addFeed(bottoms_outflow);
+    bottoms_ensemble.addFeed(bottoms_outflow);
+    this.Ensembles.push(bottoms_ensemble);
 
-
+    // tops particles
+    var tops_ensemble = new Ensemble([], this.world);
     var tops_pos = {
 	x : 0.5*(this.xmax + this.sid.width),
 	y : 0.5*(this.ymax - 0.76*this.sid.height)
@@ -96,10 +163,10 @@ function DistillationGraphics(canvas, column, images, debug) {
     var rate = 1.0;
     var tops_outflow = new ParticleFeed(tops_pos.x, tops_pos.y,
 					rate, tops_particle_options)
-    ensemble.addFeed(tops_outflow);
+    tops_ensemble.addFeed(tops_outflow);
+    this.Ensembles.push(tops_ensemble);
+
     
-    this.Ensembles.push(ensemble);
-    console.log(this.Ensembles[0]);
 
     // Build the boundaries
     this.Boundaries = makeBoundaries(settings.boundary_positions,
@@ -114,6 +181,11 @@ function DistillationGraphics(canvas, column, images, debug) {
     this.Boundaries.push(floor);
     this.Boundaries.push(levee);
 
+    // generate the feed pipe boundaries and translate the 
+    this.feed_boundaries = makeBoundaries(settings.feed_positions, this.xmax, this.ymax,
+					  this.sid.width, this.sid.height, this.world);
+    this.reset_feed_boundaries();
+
    
     // Class Methods
     this.update = function() {
@@ -127,10 +199,11 @@ function DistillationGraphics(canvas, column, images, debug) {
 	// Update each ensemble in sequence.
 	for (var i = 0; i < this.Ensembles.length; i++) {
 	    var update_options = {
-		xmax : this.xmax,
-		ymax : this.ymax,
-		gravity : this.engine.world.gravity
+		    xmax : this.xmax,
+		    ymax : this.ymax,
+		    gravity : this.engine.world.gravity
 	    };
+	    if (i == 0) { update_options.xmax = this.column_left };
 	    this.Ensembles[i].update(update_options);
 	};
     };
@@ -173,23 +246,7 @@ function DistillationGraphics(canvas, column, images, debug) {
 	};
 	pop();
     };
-
-    
-    this.stage_pos = function(i) {
-	// Return the centre position of stage number i.
-	// Note stages number is the stage index + 1, i.e.
-	// stages start counting at 1 not 0.
-	return {
-	    x : this.column_left + 0.5*this.column_width,
-	    y : this.column_bottom - (i-0.5)*this.stage_height()
-	};
-    };
-
-
-    this.stage_height = function() {
-	return this.column_height/this.column.n_stages;
-    };
-    
+   
 
     this.show_column = function() {
 	push();
@@ -210,19 +267,6 @@ function DistillationGraphics(canvas, column, images, debug) {
 
     };
 
-
-    this.feed_pos = function() {
-	var feed_stage_pos = this.stage_pos(column.feed_pos);
-	var sf = this.sid.width/this.images.column.width;
-	return {
-	    x : feed_stage_pos.x
-		- 0.5*this.column_width
-		- 0.5*this.images.feed.width*sf,
-	    y : feed_stage_pos.y
-	};
-
-    };
-
  
     this.show_walls = function() {
 	push();
@@ -240,6 +284,9 @@ function DistillationGraphics(canvas, column, images, debug) {
 	if (this.show_boundaries_log) {
 	    for (var i = 0; i < this.Boundaries.length; i++) {
 		this.Boundaries[i].show();
+	    };
+	    for (var i = 0; i < this.feed_boundaries.length; i++) {
+		this.feed_boundaries[i].show();
 	    };
 	};
     };

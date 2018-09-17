@@ -47,7 +47,7 @@ var feed_blocks = [];
 function preload() {
     // load the default image
     var my_image_url = "../../../../lib/images/reactor_ni.svg";
-    my_image = loadImage(my_image_url, pic => print(pic), loadImgErrFix);
+    my_image = loadImage(my_image_url, pic => print(pic), utils.loadImgErrFix);
     $('#filename_input').val(my_image_url);
 };
 
@@ -57,12 +57,12 @@ function setup(new_canvas) {
        simulation canvas which we draw onto  */
 
     // set-up the canvas
-    var dimensions = getSimBoxDimensions();
+    var dimensions = utils.getSimBoxDimensions();
     xmax = dimensions.xmax;
     ymax = dimensions.ymax;
     var canvas= createCanvas(xmax, ymax);
     canvas.parent("sim_container");
-    sid = getImgScaledDimensions(my_image, 0.6, ymax);
+    sid = utils.getImgScaledDimensions(my_image, 0.6, ymax);
     console.log("ymax = ", ymax);
     console.log("sid = ", sid);
     
@@ -86,7 +86,7 @@ function draw() {
        lifetime of the scripts executions after setup()
        has completed. Effectively advances time. */
 
-    sid = getImgScaledDimensions(my_image, 0.6, ymax);
+    sid = utils.getImgScaledDimensions(my_image, 0.6, ymax);
     background(51);
     imageMode(CENTER);
     image(my_image, xmax/2 , ymax/2, sid.width, sid.height);
@@ -128,7 +128,7 @@ function deactivateAllFeedBlocks() {
 
 
 function mouseClicked() {
-    if (is_on_canvas(mouseX, mouseY, canvas)) {
+    if (utils.is_on_canvas(mouseX, mouseY, canvas)) {
 	deactivateAll();
 	for (var i = 0; i < feed_blocks.length; i++) {
 	    feed_blocks[i].mousePressed(mouseX, mouseY);
@@ -147,7 +147,7 @@ function mouseClicked() {
 };
 
 function mouseDragged() {
-    if (is_on_canvas(mouseX, mouseY, canvas)) {
+    if (utils.is_on_canvas(mouseX, mouseY, canvas)) {
 	for (var i = 0; i < feed_blocks.length; i++) {
 	    feed_blocks[i].mouseDragged(mouseX, mouseY);
 	    ensemble.feeds[i].x = feed_blocks[i].body.position.x;
@@ -194,7 +194,7 @@ $('#feed_on').click(async function(){
 // add a particle feed
 $('#add_feed').click(async function(){
     console.log("New particle feed requested");
-    var dimensions = getSimBoxDimensions();
+    var dimensions = utils.getSimBoxDimensions();
     var feed_block = new Boundary(Math.random()*dimensions.xmax, Math.random()*dimensions.ymax, 20.0, 20.0, 0.0, undefined);
     feed_block.colour.active = 'rgba(0, 255, 0, 0.5)';
     feed_block.colour.inactive = 'rgba(0, 0, 255, 0.5)';
@@ -227,7 +227,7 @@ $('#add_boundary').click(async function(){
 
     console.log("You just added a new boundary!");
     deactiveAllBoundaries();
-    var dimensions = getSimBoxDimensions();
+    var dimensions = utils.getSimBoxDimensions();
     var newBoundary = new Boundary(Math.random()*dimensions.xmax,
 				   Math.random()*dimensions.ymax,
 				   20, 0.3*dimensions.ymax, 0.0, world);
@@ -243,21 +243,21 @@ $('#add_boundary').click(async function(){
 $('#cp_boundary').click(async function(){
 
     console.log("You just requested active bounds to be copied!");
-    var dimensions = getSimBoxDimensions();
+    var dimensions = utils.getSimBoxDimensions();
     for (var i = 0; i < boundaries.length; i++) {
 	if (boundaries[i].active) {
 	    // generate some random numbers to displace the copy
 	    var coordinates = boundaries[i].get_coordinates();
 	    var x = 2.0*dimensions.x;
-	    while (!is_on_canvas(x, coordinates.y)) {
-		var rnd_1 = getRandomSigned();
+	    while (!utils.is_on_canvas(x, coordinates.y)) {
+		var rnd_1 = utils.getRandomSigned();
 		var rnd_2 = -1;
 		if (rnd_1 > 0) {rnd_2 = 1};
 		x = coordinates.x + 50*rnd_2 + 200*rnd_1;
 	    };
 	    y = 2.0*dimensions.y;
-	    while (!is_on_canvas(x, y)) {
-		var rnd_1 = getRandomSigned();
+	    while (!utils.is_on_canvas(x, y)) {
+		var rnd_1 = utils.getRandomSigned();
 		var rnd_2 = -1;
 		if (rnd_1 > 0) {rnd_2 = 1};
 		y = coordinates.y + 50*rnd_2 + 200*rnd_1;
@@ -336,7 +336,7 @@ $('#rm_all_feed').click(async function(){
 // output boundary coordinates and scaling factors
 $('#output_coords').click(async function(){
     console.log("Boundary coordinates requested");
-    var dimensions = getSimBoxDimensions();
+    var dimensions = utils.getSimBoxDimensions();
     var all_coordinates = [];
     var all_scaling = [];
     for (var i = 0; i < boundaries.length; i++) {
@@ -353,7 +353,7 @@ $('#output_coords').click(async function(){
 $('#load_image').click(async function(){
     console.log("You just requested for an image to be loaded!");
     var my_image_url = $('#filename_input').val();
-    my_image = loadImage(my_image_url, pic => print(pic), loadImgErrFix);
+    my_image = loadImage(my_image_url, pic => print(pic), utils.loadImgErrFix);
     $('#rm_all_boundary').click();
 });
 
@@ -370,7 +370,7 @@ window.addEventListener("keydown", function(e) {
 var load_boundaries_from_settings = function () {
     $('#rm_all_boundary').click();
     console.log("loaded settings = ", settings);
-    var dimensions = getSimBoxDimensions();
+    var dimensions = utils.getSimBoxDimensions();
     for (var i = 0; i < settings.boundary_positions.length; i++) {
 	var scaling = settings.boundary_positions[i];
 	var abs_coords =  get_absolute_coordinates(dimensions.xmax, dimensions.ymax,
@@ -385,5 +385,5 @@ var load_boundaries_from_settings = function () {
 $('#load_script').click(async function(){
     console.log("You just requested for a scipt to be loaded!");
     var my_script_url = $('#script_input').val();
-    loadScript(my_script_url, load_boundaries_from_settings);
+    utils.loadScript(my_script_url, load_boundaries_from_settings);
 });
