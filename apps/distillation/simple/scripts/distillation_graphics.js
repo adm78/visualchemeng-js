@@ -50,6 +50,7 @@ function DistillationGraphics(canvas, column, images, debug) {
     this.show_boundaries_log = true;
     this.Ensembles = [];
     this.debug = debug;
+    this.valves = {}
     
     this.stage_pos = function(i) {
 	// Return the centre position of stage number i.
@@ -186,7 +187,11 @@ function DistillationGraphics(canvas, column, images, debug) {
 					  this.sid.width, this.sid.height, this.world);
     this.reset_feed_boundaries();
 
-   
+    // Set-up the valves
+    this.valves = {
+	reflux : new Valve(this.xmax/2, this.ymax/2, this.images.valve)
+    };
+    
     // Class Methods
     this.update = function() {
 	// update all the graphical elements
@@ -219,6 +224,7 @@ function DistillationGraphics(canvas, column, images, debug) {
 	this.show_boundaries();
 	this.show_walls();
 	this.show_ensembles();
+	this.show_valves();
 	if (this.debug) {
 	    this.show_fps();
 	};
@@ -253,6 +259,11 @@ function DistillationGraphics(canvas, column, images, debug) {
 	imageMode(CENTER);
 	image(this.images.column, this.xmax/2 , this.ymax/2, this.sid.width, this.sid.height);
 	pop();	
+    };
+
+
+    this.show_valves = function() {
+	this.valves.reflux.show();
     };
 
 
