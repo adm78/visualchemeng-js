@@ -50,6 +50,7 @@ function setup() {
     valve.images.body = valve_img;
     valve.images.handle = handle_img;
     valve.images.highlight = highlight_img;
+    valve.set_position(0.8);
     
 };
 
