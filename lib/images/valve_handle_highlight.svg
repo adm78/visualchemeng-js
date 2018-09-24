@@ -9,9 +9,9 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="18.240007mm"
-   height="88.861397mm"
-   viewBox="0 0 18.240007 88.861397"
+   width="18.240009mm"
+   height="168.23434mm"
+   viewBox="0 0 18.240009 168.23435"
    version="1.1"
    id="svg1086"
    inkscape:version="0.92.3 (2405546, 2018-03-11)"
@@ -25,11 +25,11 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.98994949"
-     inkscape:cx="417.94391"
-     inkscape:cy="-55.827635"
+     inkscape:zoom="1.979899"
+     inkscape:cx="216.03669"
+     inkscape:cy="353.95534"
      inkscape:document-units="mm"
-     inkscape:current-layer="g1014"
+     inkscape:current-layer="layer1"
      showgrid="false"
      fit-margin-top="0"
      fit-margin-left="0"
@@ -39,7 +39,8 @@
      inkscape:window-height="1046"
      inkscape:window-x="-11"
      inkscape:window-y="-11"
-     inkscape:window-maximized="1" />
+     inkscape:window-maximized="1"
+     inkscape:snap-global="true" />
   <metadata
      id="metadata1083">
     <rdf:RDF>
@@ -57,24 +58,18 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(-105.02881,-77.188346)">
-    <g
-       id="g1035"
-       transform="translate(65.188622,72.928371)">
-      <g
-         id="g1027">
-        <g
-           transform="translate(82.398809,-77.485119)"
-           id="g1014">
-          <rect
-             y="82.041809"
-             x="-42.210983"
-             height="88.302017"
-             width="17.57622"
-             id="rect973"
-             style="fill:#0000ff;fill-opacity:0.76136363;stroke:#0000ff;stroke-width:0.56796318;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-             ry="9.3768749" />
-        </g>
-      </g>
-    </g>
+    <path
+       style="fill:none;stroke:none;stroke-width:0.18869777px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 105.02881,245.42269 c 18.24001,0 18.24001,0 18.24001,0"
+       id="path2249-6"
+       inkscape:connector-curvature="0" />
+    <rect
+       y="77.423759"
+       x="105.31213"
+       height="88.302017"
+       width="17.57622"
+       id="rect973"
+       style="fill:#0000ff;fill-opacity:0.76136361;stroke:#0000ff;stroke-width:0.56796318;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       ry="9.3768749" />
   </g>
 </svg>
