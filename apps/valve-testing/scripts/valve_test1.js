@@ -86,12 +86,14 @@ function mousePressed() {
     var m = createVector(mouseX, mouseY);
     if (valve.is_on_handle(mouseX, mouseY)) {
 	isDragging = true;
+	valve.click();
     };
 }
 
 
 function mouseReleased() {
-  isDragging = false;
+    isDragging = false;
+    valve.unclick();
 }
 
 // run button
