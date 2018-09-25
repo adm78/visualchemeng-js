@@ -19,6 +19,7 @@ var valve;
 var xmax, ymax;
 var valve_img;
 
+
 // --------------------------------------------------
 //             Visualisation functionality
 // --------------------------------------------------
@@ -66,13 +67,32 @@ function draw() {
 
 };
 
-function mouseDragged() {};
+
+function mouseDragged() {
+  if (isDragging) {
+      valve.drag_handle(mouseX, mouseY); 
+  };
+}
+
 
 
 function mouseClicked() {
     if (valve.is_on_handle(mouseX, mouseY)) { valve.click(); }
     else {valve.unclick();};
 };
+
+
+function mousePressed() {
+    var m = createVector(mouseX, mouseY);
+    if (valve.is_on_handle(mouseX, mouseY)) {
+	isDragging = true;
+    };
+}
+
+
+function mouseReleased() {
+  isDragging = false;
+}
 
 // run button
 $('#run').click(async function(){
