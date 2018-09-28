@@ -48,13 +48,19 @@ var kpert = 4.0; // particle perturbation scaling constant (float)
 var fr = 40;    // target frame rate
 var output_delay = 60; // contro delay between feed entering flash and first particle exit
 var e_coeff = 0.3; // liquid-wall coefficent of restitution (kind of)
+var feed_valve, valve_img, handle_img, highlight_img, isDragging = false; // valve variables
 
 function preload() {
     // preload the flash tank image and font
     //URL = "http://visualchemeng.com/wp-content/uploads/2018/01/flash.svg";
-    URL = "../../images/flash.svg";
-    img = loadImage(URL, pic => print(pic), utils.loadImgErrFix);
-
+    var flash_URL = "../../images/flash.svg";
+    var valve_img_URL = "../../../../lib/images/valve4.svg";
+    var handle_img_URL = "../../../../lib/images/valve_handle.svg";
+    var highlight_img_URL = "../../../../lib/images/valve_handle_highlight.svg";
+    img = loadImage(flash_URL, pic => print(pic), utils.loadImgErrFix);
+    valve_img = loadImage(valve_img_URL, pic => print(pic), utils.loadImgErrFix);
+    handle_img = loadImage(handle_img_URL, pic => print(pic), utils.loadImgErrFix);
+    highlight_img = loadImage(highlight_img_URL, pic => print(pic), utils.loadImgErrFix);
 };
 
 function setup() {
@@ -92,6 +98,15 @@ function setup() {
     tops_pos = getTopsPosition(sid);
     bottoms_pos = getBottomsPosition(sid);
 
+    // intialise the feed valve
+    var valve_pos = getFeedPosition(sid,xmax)
+    var valve_options = {};
+    valve = new Valve(valve_pos.x, valve_pos.y, valve_options)
+    valve.images.body = valve_img;
+    valve.images.handle = handle_img;
+    valve.images.highlight = highlight_img;
+    var F_range = getRanges(sys).F;
+    valve.set_position(flash.F/(F_range.max - F_range.min));
 
 }
 
@@ -103,13 +118,14 @@ function draw() {
        has completed. */
 
 
-    // draw the tanks and particle streams
+    // draw the tank, particle streams and valve
     background(51);
     imageMode(CENTER);
     image(img, xmax/2 , ymax/2, sid.width, sid.height);
     feed_stream.show();
     tops_stream.show();
     bottoms_stream.show();
+    valve.show();
 
     //draw the operating param values to screen
     updateCanvasText(flash,sid);
@@ -214,6 +230,7 @@ function updateCanvasText(flash, sid) {
     text("L", L_string_pos_x,L_string_pos_y);
 
     // update disabled sliders while we're here
+    $( "#k3_slider" ).slider( "value", flash.F);
     $( "#k4_slider" ).slider( "value", flash.V);
     $( "#k5_slider" ).slider( "value", flash.L);
 
@@ -453,19 +470,20 @@ function update_temp() {
 
 function update_F() {
     if (!resetting_log && !chem_sys_changing_log) {
-	flash.F = $( "#k3_slider" ).slider( "value");
-	flash.solve_PTZF();
-	plotCompositionData(flash);
+	var F_range = getRanges(sys).F
+    	flash.F = F_range.min + valve.position*(F_range.max - F_range.min);
+    	flash.solve_PTZF();
+    	plotCompositionData(flash);
     };
 };
 
-function update_V() {
 
-};
+function do_nothing() {};
 
-function update_L() {
+function update_V() {};
 
-};
+function update_L() {};
+
 
 //--------------------------------------------------------------------
 //                  UI event listners
@@ -549,8 +567,9 @@ function updateFSlider() {
 	max: F_range.max,
 	step: (F_range.max-F_range.min)/50.0,
 	value: F_range.min,
-	slide: update_F,
-	change: update_F
+	slide: do_nothing,
+	change: do_nothing,
+	disabled: true
     });
     $( "#k3_slider" ).slider( "value", flash.F );
 };
@@ -643,3 +662,35 @@ $('#system_id').on('change', function() {
     };
     chem_sys_changing_log = false;
 })
+
+
+// drag/valve control
+function mouseClicked() {
+    if (valve.is_on_handle(mouseX, mouseY)) { valve.click(); }
+    else {valve.unclick();};
+};
+
+
+function mousePressed() {
+    var m = createVector(mouseX, mouseY);
+    if (valve.is_on_handle(mouseX, mouseY)) {
+	isDragging = true;
+	valve.click();
+    };
+};
+
+
+function mouseReleased() {
+    // Note: This is important! Other things can be dragged after
+    // clicking the valve... like all the sliders.
+    isDragging = false;
+    valve.unclick();
+};
+
+
+function mouseDragged() {
+  if (isDragging) {
+      valve.drag_handle(mouseX, mouseY);
+      update_F();
+  };
+};

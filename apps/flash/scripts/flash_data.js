@@ -111,7 +111,7 @@ function getRanges(sys=1) {
 		max:420
 	    },
 	    F: {
-		min: 1.0,
+		min: 0.0,
 		max: 40.0
 	    },
 	    V: {
@@ -135,7 +135,7 @@ function getRanges(sys=1) {
 		max:360.0
 	    },
 	    F: {
-		min: 1.0,
+		min: 0.0,
 		max: 40.0
 	    },
 	    V: {
@@ -159,7 +159,7 @@ function getRanges(sys=1) {
 		max:360.0
 	    },
 	    F: {
-		min: 1.0,
+		min: 0.0,
 		max: 40.0
 	    },
 	    V: {
