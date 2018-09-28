@@ -15,22 +15,15 @@
 // --------------------------------------------------
 var debug = false;
 var paused_log = false;
+var online = false;
 var valve;
 var xmax, ymax;
-var valve_img;
-
+console.log("Note: Online mode = ", online)
 
 // --------------------------------------------------
 //             Visualisation functionality
 // --------------------------------------------------
-function preload() {
-    var valve_img_URL = "../../../../lib/images/valve4.svg";
-    var handle_img_URL = "../../../../lib/images/valve_handle.svg";
-    var highlight_img_URL = "../../../../lib/images/valve_handle_highlight.svg";
-    valve_img = loadImage(valve_img_URL, pic => print(pic), utils.loadImgErrFix);
-    handle_img = loadImage(handle_img_URL, pic => print(pic), utils.loadImgErrFix);
-    highlight_img = loadImage(highlight_img_URL, pic => print(pic), utils.loadImgErrFix);
-};
+function preload() {};
 
 function setup() {
 
@@ -47,10 +40,12 @@ function setup() {
 	name : 'Reflux',
 	scaling : 0.6
     };
+    if (!online) {
+	options.body_img_URL = "../../../../lib/images/valve4.svg";
+	options.handle_img_URL = "../../../../lib/images/valve_handle.svg";
+	options.highlight_img_URL = "../../../../lib/images/valve_handle_highlight.svg";
+    }
     valve = new Valve(0.5*xmax, 0.5*ymax, options);
-    valve.images.body = valve_img;
-    valve.images.handle = handle_img;
-    valve.images.highlight = highlight_img;
     valve.set_position(0.2);
     
 };

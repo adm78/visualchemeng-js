@@ -15,6 +15,7 @@
 //             visualisation functionality
 // --------------------------------------------------
 var debug = false;
+var online = true;
 var img; // fash tank image object used by draw
 var xmax;
 var ymax;
@@ -49,18 +50,13 @@ var fr = 40;    // target frame rate
 var output_delay = 60; // contro delay between feed entering flash and first particle exit
 var e_coeff = 0.3; // liquid-wall coefficent of restitution (kind of)
 var feed_valve, valve_img, handle_img, highlight_img, isDragging = false; // valve variables
+console.log("Note: Online mode = ", online);
 
 function preload() {
     // preload the flash tank image and font
-    //URL = "http://visualchemeng.com/wp-content/uploads/2018/01/flash.svg";
-    var flash_URL = "../../images/flash.svg";
-    var valve_img_URL = "../../../../lib/images/valve4.svg";
-    var handle_img_URL = "../../../../lib/images/valve_handle.svg";
-    var highlight_img_URL = "../../../../lib/images/valve_handle_highlight.svg";
+    if (online) {var flash_URL = "http://visualchemeng.com/wp-content/uploads/2018/01/flash.svg";}
+    else {var flash_URL = "../../images/flash.svg";};
     img = loadImage(flash_URL, pic => print(pic), utils.loadImgErrFix);
-    valve_img = loadImage(valve_img_URL, pic => print(pic), utils.loadImgErrFix);
-    handle_img = loadImage(handle_img_URL, pic => print(pic), utils.loadImgErrFix);
-    highlight_img = loadImage(highlight_img_URL, pic => print(pic), utils.loadImgErrFix);
 };
 
 function setup() {
@@ -101,10 +97,12 @@ function setup() {
     // intialise the feed valve
     var valve_pos = getFeedPosition(sid,xmax)
     var valve_options = {};
+    if (!online) {
+	valve_options.body_img_URL = "../../../../lib/images/valve4.svg";
+	valve_options.handle_img_URL = "../../../../lib/images/valve_handle.svg";
+	valve_options.highlight_img_URL = "../../../../lib/images/valve_handle_highlight.svg";
+    }
     valve = new Valve(valve_pos.x, valve_pos.y, valve_options)
-    valve.images.body = valve_img;
-    valve.images.handle = handle_img;
-    valve.images.highlight = highlight_img;
     var F_range = getRanges(sys).F;
     valve.set_position(flash.F/(F_range.max - F_range.min));
 
