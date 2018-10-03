@@ -16,7 +16,7 @@
 // a.mcguire227@gmail.com
 //
 // To do:
-//
+// - figure out how to best integrate the valve
 //----------------------------------------------------------
 var Engine = Matter.Engine,
     World = Matter.World,
@@ -91,84 +91,57 @@ function DistillationGraphics(canvas, column, images, debug) {
     };
 
 
-    // Build the ensemble array (one for each feed)
+    // Build the ensemble array (need multiple, since some have different boundaries)
 
     // feed particles
-    var feed_ensemble = new Ensemble([], this.world);
     var sf = this.sid.width/this.images.column.width;
+    var feed_ensemble = new Ensemble([], this.world);
     var feed_pos = {
 	x : this.column_left - sf*this.images.feed.width + 2,
 	y : this.feed_pos().y 
     };
-    var feed_particle_options = {
-	type: 'single-body',
-	shape : {type:'polygon', sides:6},
-	radius : 3,
-	colour : '#008CBA',
-	init_force : { x : 0.0003, y : 0.0},
-	buoyancy : 0.0,
-	matter_options : {
-	    friction: 0,
-	    restitution: 0.5,
-	}
-    };
     var rate = 1.0;
-    var feed_inflow = new ParticleFeed(feed_pos.x, feed_pos.y,
-				       rate, feed_particle_options)
+    var full_feed_particle_options = [];
+    for (var i = 0; i < settings.particles.length; i++) {
+	full_feed_particle_options[i] = utils.merge_options(settings.particles[i], settings.feed_options.feed);
+    };
+    var feed_inflow = new ParticleFeed(feed_pos.x, feed_pos.y, rate, full_feed_particle_options);
     feed_ensemble.addFeed(feed_inflow);
     this.Ensembles.push(feed_ensemble);
 
+    
     // bottoms particles
     var bottoms_ensemble = new Ensemble([], this.world);
     var bottoms_pos = {
 	x : 0.5*(this.xmax + this.sid.width),
 	y : 0.5*(this.ymax + 0.97*this.sid.height)
     };
-    var bottoms_particle_options = {
-	type: 'single-body',
-	shape : {type:'polygon', sides:6},
-	radius : 3,
-	colour : '#008CBA',
-	init_force : { x : 0.0003, y : 0.0},
-	buoyancy : 0.0,
-	matter_options : {
-	    friction: 0,
-	    restitution: 0.5,
-	}
-    };
     var rate = 2.0;
-    var bottoms_outflow = new ParticleFeed(bottoms_pos.x, bottoms_pos.y,
-					   rate, bottoms_particle_options)
+    var full_bottoms_particle_options = [];
+    for (var i = 0; i < settings.particles.length; i++) {
+	full_bottoms_particle_options[i] = utils.merge_options(settings.particles[i], settings.feed_options.bottoms);
+    };
+    var bottoms_outflow = new ParticleFeed(bottoms_pos.x, bottoms_pos.y, rate, full_bottoms_particle_options);
     bottoms_ensemble.addFeed(bottoms_outflow);
     this.Ensembles.push(bottoms_ensemble);
 
+    
     // tops particles
     var tops_ensemble = new Ensemble([], this.world);
     var tops_pos = {
 	x : 0.5*(this.xmax + this.sid.width),
 	y : 0.5*(this.ymax - 0.76*this.sid.height)
     };
-    var tops_particle_options = {
-	type: 'single-body',
-	shape : {type:'polygon', sides:6},
-	radius : 3,
-	colour : '#008CBA',
-	init_force : { x : 0.0002, y : 0.0},
-	buoyancy : 1.05,
-	perturbation : { x : 2, y : 2 },
-	matter_options : {
-	    friction: 0,
-	    restitution: 0.5,
-	}
-    };
     var rate = 1.0;
-    var tops_outflow = new ParticleFeed(tops_pos.x, tops_pos.y,
-					rate, tops_particle_options)
+    var full_tops_particle_options = [];
+    for (var i = 0; i < settings.particles.length; i++) {
+	full_tops_particle_options[i] = utils.merge_options(settings.particles[i], settings.feed_options.tops);
+    };
+    var tops_outflow = new ParticleFeed(tops_pos.x, tops_pos.y, rate, full_tops_particle_options);
     tops_ensemble.addFeed(tops_outflow);
     this.Ensembles.push(tops_ensemble);
 
     
-
     // Build the boundaries
     this.Boundaries = makeBoundaries(settings.boundary_positions,
 				     this.xmax, this.ymax,
@@ -189,7 +162,7 @@ function DistillationGraphics(canvas, column, images, debug) {
 
     // Set-up the valves
     this.valves = {
-	reflux : new Valve(this.xmax/2, this.ymax/2, this.images.valve)
+	reflux : new Valve(this.xmax/2, this.ymax/2)
     };
     
     // Class Methods
@@ -202,13 +175,27 @@ function DistillationGraphics(canvas, column, images, debug) {
 
     this.update_ensembles = function() {
 	// Update each ensemble in sequence.
+	// TO DO: go by ensemble name here, rather than index.
 	for (var i = 0; i < this.Ensembles.length; i++) {
+	    var x_feed = this.column.stages[this.column.feed_pos-1].x;
+	    var x_bottoms = this.column.stages[0].x;
+	    var x_tops = this.column.stages[this.column.stages.length-1].x;
 	    var update_options = {
-		    xmax : this.xmax,
-		    ymax : this.ymax,
-		    gravity : this.engine.world.gravity
+		xmax : this.xmax,
+		ymax : this.ymax,
+		gravity : this.engine.world.gravity,
 	    };
-	    if (i == 0) { update_options.xmax = this.column_left };
+	    if (i == 0) {
+		// feed
+		update_options.xmax = this.column_left;
+		update_options.feed_args = [[x_feed, 1.0 - x_feed]];
+	    } else if (i == 1) {
+		// bottoms
+		update_options.feed_args = [[x_bottoms, 1.0 - x_bottoms]];
+	    } else if (i == 2) {
+		// tops
+		update_options.feed_args = [[x_tops, 1.0 - x_tops]];
+	    };
 	    this.Ensembles[i].update(update_options);
 	};
     };
