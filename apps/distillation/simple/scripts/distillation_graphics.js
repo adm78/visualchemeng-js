@@ -42,10 +42,10 @@ function DistillationGraphics(canvas, column, images, debug) {
     this.world = this.engine.world;
     this.images = images;
     this.sid = utils.getImgScaledDimensions(this.images.column, this.isf, this.ymax);
-    this.column_top = this.ymax*0.5 - 0.37*this.sid.height;
+    this.column_top = this.ymax*0.5 - 0.34*this.sid.height;
     this.column_left = this.xmax*0.5 - 0.225*this.sid.width;
     this.column_width = this.sid.width*0.193;
-    this.column_height = this.sid.height*0.68;
+    this.column_height = this.sid.height*0.66;
     this.column_bottom = this.column_top + this.column_height;
     this.show_boundaries_log = true;
     this.Ensembles = [];
@@ -130,7 +130,7 @@ function DistillationGraphics(canvas, column, images, debug) {
     var tops_ensemble = new Ensemble([], this.world);
     var tops_pos = {
 	x : 0.5*(this.xmax + this.sid.width),
-	y : 0.5*(this.ymax - 0.76*this.sid.height)
+	y : 0.5*(this.ymax - 0.69*this.sid.height)
     };
     var rate = 1.0;
     var full_tops_particle_options = [];
@@ -155,15 +155,27 @@ function DistillationGraphics(canvas, column, images, debug) {
     this.Boundaries.push(floor);
     this.Boundaries.push(levee);
 
+    
     // generate the feed pipe boundaries and translate the 
     this.feed_boundaries = makeBoundaries(settings.feed_positions, this.xmax, this.ymax,
 					  this.sid.width, this.sid.height, this.world);
     this.reset_feed_boundaries();
 
+    
     // Set-up the valves
+    var sf = this.sid.width/this.images.column.width;
+    var reflux_valve_pos = utils.get_absolute_coordinates(this.xmax, this.ymax,
+						    this.sid.width, this.sid.height,
+						    settings.reflux_valve_position)
+    var feed_valve_pos = {
+	x: this.feed_pos().x - 0.9*this.images.feed.width*sf,
+	y : this.feed_pos().y
+    }
     this.valves = {
-	reflux : new Valve(this.xmax/2, this.ymax/2)
+	reflux : new Valve(reflux_valve_pos.x, reflux_valve_pos.y),
+	feed : new Valve(feed_valve_pos.x, feed_valve_pos.y)
     };
+
     
     // Class Methods
     this.update = function() {
@@ -250,6 +262,7 @@ function DistillationGraphics(canvas, column, images, debug) {
 
 
     this.show_valves = function() {
+	this.valves.feed.show();
 	this.valves.reflux.show();
     };
 
