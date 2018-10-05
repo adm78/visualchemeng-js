@@ -19,6 +19,7 @@
 // --------------------------------------------------
 var paused_log = false;
 var debug = true;
+var isDragging = false;
 var Graphics,
     images = {};
 
@@ -138,3 +139,57 @@ $('#fullscreen').on('click', () => {
     };
 });
 
+
+function mouseDragged() {
+    if (isDragging) {
+	for (var key in Graphics.valves) {
+	    var valve = Graphics.valves[key];
+	    if (valve.active) {
+		valve.drag_handle(mouseX, mouseY);
+	    };
+	};
+    };
+};
+
+function mouseClicked() {
+    for (var key in Graphics.valves) {
+	var valve = Graphics.valves[key];
+	if (valve.is_on_handle(mouseX, mouseY)) {
+	    for (var key in Graphics.valves) {
+		var alt_valve = Graphics.valves[key];
+		alt_valve.unclick();
+	    };
+	    valve.click();
+	    break;
+	} else {
+	    valve.unclick();
+	};
+    };
+};
+
+
+function mousePressed() {
+    var m = createVector(mouseX, mouseY);
+    console.log("mouse pressed!");
+    for (var key in Graphics.valves) {
+	var valve = Graphics.valves[key];
+	if (valve.is_on_handle(mouseX, mouseY)) {
+	    for (var key in Graphics.valves) {
+		var alt_valve = Graphics.valves[key];
+		alt_valve.unclick();
+	    };
+	    isDragging = true;
+	    valve.click();
+	    break;
+	};
+    };
+};
+
+
+function mouseReleased() {
+    isDragging = false;
+    for (var key in Graphics.valves) {
+	var valve = Graphics.valves[key];
+	valve.unclick();
+    };
+};
