@@ -62,6 +62,7 @@ function setup(first_time=true) {
     
     // Initialise the graphical column representation
     Graphics = new DistillationGraphics(canvas, column, images, debug);
+    console.log(Graphics);
 
     
 }

@@ -1,13 +1,7 @@
 // VCE Project - distillation_graphics.js
 //
 // This class is intended to provide a graphical representation of a
-// distillation column.  Its primary attribute is a list of
-// vce_ensemble.Ensemble objects. Each ensemble object in this list
-// represents a component in the main reaction. THIS CLASS IS UNDER
-// DEVELOPMENT AND SHOULD NOT BE CONSIDERED STABLE. ONLY ONE REACTION
-// IS SUPPORTED FOR THE MOMENT.
-//
-//
+// distillation column.  
 //
 // Requires:
 
@@ -51,7 +45,7 @@ function DistillationGraphics(canvas, column, images, debug) {
     this.column_height = this.sid.height*0.66;
     this.column_bottom = this.column_top + this.column_height;
     this.show_boundaries_log = true;
-    this.Ensembles = [];
+    this.Ensembles = {};
     this.debug = debug;
     this.valves = {}
     
@@ -94,9 +88,9 @@ function DistillationGraphics(canvas, column, images, debug) {
 
     this.update_feeds = function() {
 	// adjust the particle feed rates to match the backend flowrates
-	this.Ensembles[0].feeds[0].set_rate(this.column.F*this.pm); // feed
-	this.Ensembles[1].feeds[0].set_rate(this.column.L()*this.pm); // bottoms
-	this.Ensembles[2].feeds[0].set_rate(this.column.V()*this.pm); // tops
+	this.Ensembles.feed.feeds[0].set_rate(this.column.F*this.pm); 
+	this.Ensembles.bottoms.feeds[0].set_rate(this.column.L()*this.pm); 
+	this.Ensembles.tops.feeds[0].set_rate(this.column.V()*this.pm); 
     };
 
 
@@ -105,9 +99,9 @@ function DistillationGraphics(canvas, column, images, debug) {
     // EXTRACT THESE AS PROTOTYPE FUNCTIONS.
     
     // Build the ensemble array (need one for each feed, since some have different boundaries)
-
+    
     // feed particles
-    var feed_ensemble = new Ensemble([], this.world);
+    this.Ensembles.feed = new Ensemble([], this.world, 'feed');
     var feed_pos = {
 	x : this.column_left - this.column_sf*this.images.feed.width + 2,
 	y : this.feed_pos().y 
@@ -116,13 +110,12 @@ function DistillationGraphics(canvas, column, images, debug) {
     for (var i = 0; i < settings.particles.length; i++) {
 	full_feed_particle_options[i] = utils.merge_options(settings.particles[i], settings.feed_options.feed);
     };
-    var feed_inflow = new ParticleFeed(feed_pos.x, feed_pos.y, undefined, full_feed_particle_options);
-    feed_ensemble.addFeed(feed_inflow);
-    this.Ensembles.push(feed_ensemble);
+    this.Ensembles.feed.addFeed(new ParticleFeed(feed_pos.x, feed_pos.y, undefined, full_feed_particle_options));
+
 
     
     // bottoms particles
-    var bottoms_ensemble = new Ensemble([], this.world);
+    this.Ensembles.bottoms = new Ensemble([], this.world, 'bottoms');
     var bottoms_pos = {
 	x : 0.5*(this.xmax + this.sid.width),
 	y : 0.5*(this.ymax + 0.97*this.sid.height)
@@ -131,13 +124,11 @@ function DistillationGraphics(canvas, column, images, debug) {
     for (var i = 0; i < settings.particles.length; i++) {
 	full_bottoms_particle_options[i] = utils.merge_options(settings.particles[i], settings.feed_options.bottoms);
     };
-    var bottoms_outflow = new ParticleFeed(bottoms_pos.x, bottoms_pos.y, undefined, full_bottoms_particle_options);
-    bottoms_ensemble.addFeed(bottoms_outflow);
-    this.Ensembles.push(bottoms_ensemble);
+    this.Ensembles.bottoms.addFeed(new ParticleFeed(bottoms_pos.x, bottoms_pos.y, undefined, full_bottoms_particle_options));
 
     
     // tops particles
-    var tops_ensemble = new Ensemble([], this.world);
+    this.Ensembles.tops = new Ensemble([], this.world, 'tops');
     var tops_pos = {
 	x : 0.5*(this.xmax + this.sid.width),
 	y : 0.5*(this.ymax - 0.69*this.sid.height)
@@ -146,11 +137,9 @@ function DistillationGraphics(canvas, column, images, debug) {
     for (var i = 0; i < settings.particles.length; i++) {
 	full_tops_particle_options[i] = utils.merge_options(settings.particles[i], settings.feed_options.tops);
     };
-    var tops_outflow = new ParticleFeed(tops_pos.x, tops_pos.y, undefined, full_tops_particle_options);
-    tops_ensemble.addFeed(tops_outflow);
-    this.Ensembles.push(tops_ensemble);
+    this.Ensembles.tops.addFeed(new ParticleFeed(tops_pos.x, tops_pos.y, undefined, full_tops_particle_options));
 
-    // set the feed rates
+    // set the feed rates all together
     this.update_feeds();
     
     // Build the boundaries
@@ -199,8 +188,8 @@ function DistillationGraphics(canvas, column, images, debug) {
     
     this.update_ensembles = function() {
 	// Update each ensemble in sequence.
-	// TO DO: go by ensemble name here, rather than index.
-	for (var i = 0; i < this.Ensembles.length; i++) {
+	for (var key in this.Ensembles) {
+	    var ensemble = this.Ensembles[key];
 	    var x_feed = this.column.stages[this.column.feed_pos-1].x;
 	    var x_bottoms = this.column.stages[0].x;
 	    var x_tops = this.column.stages[this.column.stages.length-1].x;
@@ -209,18 +198,17 @@ function DistillationGraphics(canvas, column, images, debug) {
 		ymax : this.ymax,
 		gravity : this.engine.world.gravity,
 	    };
-	    if (i == 0) {
-		// feed
+	    if (key == 'feed') {
 		update_options.xmax = this.column_left;
 		update_options.feed_args = [[x_feed, 1.0 - x_feed]];
-	    } else if (i == 1) {
-		// bottoms
+	    } else if (key == 'bottoms') {
 		update_options.feed_args = [[x_bottoms, 1.0 - x_bottoms]];
-	    } else if (i == 2) {
-		// tops
+	    } else if (key == 'tops') {
 		update_options.feed_args = [[x_tops, 1.0 - x_tops]];
+	    } else {
+		throw new RangeError("No ensemble with key", key);
 	    };
-	    this.Ensembles[i].update(update_options);
+	    ensemble.update(update_options);
 	};
     };
 
@@ -249,8 +237,8 @@ function DistillationGraphics(canvas, column, images, debug) {
 
 
     this.show_ensembles = function() {
-	for (var i=0; i < this.Ensembles.length; i++) {
-	    this.Ensembles[i].show();
+	for (var key in this.Ensembles) {
+	    this.Ensembles[key].show();
 	};
 
     };
