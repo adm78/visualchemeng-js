@@ -44,9 +44,9 @@ function setup(first_time=true) {
     var canvas= createCanvas(dimensions.xmax, screen.height*0.95);
     canvas.parent("sim_container");
 
-    // Initialise the backend column
+    // Initialise the backend column properties THIS IS A TEST
     options = {};
-    column = new DistColumnBase(options);
+    column = new DistTestBackend(options);
     column.n_stages = 12;
     column.feed_pos = 6;
     for (var i=0; i < column.n_stages; i++) {
@@ -55,6 +55,9 @@ function setup(first_time=true) {
 	stage.y = 1.0 - stage.x;
 	column.stages.push(stage);
     };
+    column.F = 100.0;
+    column.Fmax = 200.0;
+    column.R = 0.5;
     console.log(column);
     
     // Initialise the graphical column representation
@@ -148,6 +151,8 @@ function mouseDragged() {
 		valve.drag_handle(mouseX, mouseY);
 	    };
 	};
+	Graphics.update_backend();
+	Graphics.update_feeds();
     };
 };
 

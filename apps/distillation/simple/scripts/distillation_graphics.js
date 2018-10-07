@@ -16,7 +16,9 @@
 // a.mcguire227@gmail.com
 //
 // To do:
-// - figure out how to best integrate the valve
+// - act on ensembles by name rather than index
+// - get rid of scaling factr computations, use isf attribute instead
+// - separate methods from constructor
 //----------------------------------------------------------
 var Engine = Matter.Engine,
     World = Matter.World,
@@ -38,6 +40,7 @@ function DistillationGraphics(canvas, column, images, debug) {
     this.xmax = canvas.width;
     this.ymax = canvas.height;
     this.isf = 0.85;
+    this.pm = 0.01; // particle multiplier 
     this.engine = Engine.create();
     this.world = this.engine.world;
     this.images = images;
@@ -91,7 +94,19 @@ function DistillationGraphics(canvas, column, images, debug) {
     };
 
 
-    // Build the ensemble array (need multiple, since some have different boundaries)
+    this.update_feeds = function() {
+	// adjust the particle feed rates to match the backend flowrates
+	this.Ensembles[0].feeds[0].set_rate(this.column.F*this.pm); // feed
+	this.Ensembles[1].feeds[0].set_rate(this.column.L()*this.pm); // bottoms
+	this.Ensembles[2].feeds[0].set_rate(this.column.V()*this.pm); // tops
+    };
+
+
+    // THIS IS A BIT OF A MESS, METHODS MIXED WITH CONSTRUCTOR, DUE TO
+    // THE NEED FOR SOME OF THE METHODS IN CONSTRUCTION. MIGHT HAVE TO
+    // EXTRACT THESE AS PROTOTYPE FUNCTIONS.
+    
+    // Build the ensemble array (need one for each feed, since some have different boundaries)
 
     // feed particles
     var sf = this.sid.width/this.images.column.width;
@@ -100,12 +115,11 @@ function DistillationGraphics(canvas, column, images, debug) {
 	x : this.column_left - sf*this.images.feed.width + 2,
 	y : this.feed_pos().y 
     };
-    var rate = 1.0;
     var full_feed_particle_options = [];
     for (var i = 0; i < settings.particles.length; i++) {
 	full_feed_particle_options[i] = utils.merge_options(settings.particles[i], settings.feed_options.feed);
     };
-    var feed_inflow = new ParticleFeed(feed_pos.x, feed_pos.y, rate, full_feed_particle_options);
+    var feed_inflow = new ParticleFeed(feed_pos.x, feed_pos.y, undefined, full_feed_particle_options);
     feed_ensemble.addFeed(feed_inflow);
     this.Ensembles.push(feed_ensemble);
 
@@ -116,12 +130,11 @@ function DistillationGraphics(canvas, column, images, debug) {
 	x : 0.5*(this.xmax + this.sid.width),
 	y : 0.5*(this.ymax + 0.97*this.sid.height)
     };
-    var rate = 2.0;
     var full_bottoms_particle_options = [];
     for (var i = 0; i < settings.particles.length; i++) {
 	full_bottoms_particle_options[i] = utils.merge_options(settings.particles[i], settings.feed_options.bottoms);
     };
-    var bottoms_outflow = new ParticleFeed(bottoms_pos.x, bottoms_pos.y, rate, full_bottoms_particle_options);
+    var bottoms_outflow = new ParticleFeed(bottoms_pos.x, bottoms_pos.y, undefined, full_bottoms_particle_options);
     bottoms_ensemble.addFeed(bottoms_outflow);
     this.Ensembles.push(bottoms_ensemble);
 
@@ -132,15 +145,16 @@ function DistillationGraphics(canvas, column, images, debug) {
 	x : 0.5*(this.xmax + this.sid.width),
 	y : 0.5*(this.ymax - 0.69*this.sid.height)
     };
-    var rate = 1.0;
     var full_tops_particle_options = [];
     for (var i = 0; i < settings.particles.length; i++) {
 	full_tops_particle_options[i] = utils.merge_options(settings.particles[i], settings.feed_options.tops);
     };
-    var tops_outflow = new ParticleFeed(tops_pos.x, tops_pos.y, rate, full_tops_particle_options);
+    var tops_outflow = new ParticleFeed(tops_pos.x, tops_pos.y, undefined, full_tops_particle_options);
     tops_ensemble.addFeed(tops_outflow);
     this.Ensembles.push(tops_ensemble);
 
+    // set the feed rates
+    this.update_feeds();
     
     // Build the boundaries
     this.Boundaries = makeBoundaries(settings.boundary_positions,
@@ -175,6 +189,8 @@ function DistillationGraphics(canvas, column, images, debug) {
 	reflux : new Valve(reflux_valve_pos.x, reflux_valve_pos.y),
 	feed : new Valve(feed_valve_pos.x, feed_valve_pos.y)
     };
+    this.valves.reflux.set_position(this.column.R);
+    this.valves.feed.set_position(this.column.F/settings.Fmax);
 
     
     // Class Methods
@@ -184,7 +200,7 @@ function DistillationGraphics(canvas, column, images, debug) {
 	this.update_ensembles();
     };
     
-
+    
     this.update_ensembles = function() {
 	// Update each ensemble in sequence.
 	// TO DO: go by ensemble name here, rather than index.
@@ -212,6 +228,12 @@ function DistillationGraphics(canvas, column, images, debug) {
 	};
     };
 
+
+    this.update_backend = function() {
+	// update the column based on any UI controls
+	this.column.F = this.valves.feed.position*settings.Fmax;
+	this.column.R = this.valves.reflux.position;
+    };
 
 
     this.show = function() {
