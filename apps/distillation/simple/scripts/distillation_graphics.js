@@ -17,7 +17,6 @@
 //
 // To do:
 // - act on ensembles by name rather than index
-// - get rid of scaling factr computations, use isf attribute instead
 // - separate methods from constructor
 //----------------------------------------------------------
 var Engine = Matter.Engine,
@@ -39,12 +38,13 @@ function DistillationGraphics(canvas, column, images, debug) {
     this.column = column;
     this.xmax = canvas.width;
     this.ymax = canvas.height;
-    this.isf = 0.85;
+    this.canvas_sf = 0.85; // fraction of canvas height to be take up by the image
+    this.images = images;
+    this.sid = utils.getImgScaledDimensions(this.images.column, this.canvas_sf, this.ymax);
+    this.column_sf = this.sid.width/this.images.column.width; // col scale factor
     this.pm = 0.01; // particle multiplier 
     this.engine = Engine.create();
     this.world = this.engine.world;
-    this.images = images;
-    this.sid = utils.getImgScaledDimensions(this.images.column, this.isf, this.ymax);
     this.column_top = this.ymax*0.5 - 0.34*this.sid.height;
     this.column_left = this.xmax*0.5 - 0.225*this.sid.width;
     this.column_width = this.sid.width*0.193;
@@ -72,11 +72,10 @@ function DistillationGraphics(canvas, column, images, debug) {
 
     this.feed_pos = function() {
 	var feed_stage_pos = this.stage_pos(column.feed_pos);
-	var sf = this.sid.width/this.images.column.width;
 	return {
 	    x : feed_stage_pos.x
 		- 0.5*this.column_width
-		- 0.5*this.images.feed.width*sf,
+		- 0.5*this.images.feed.width*this.column_sf,
 	    y : feed_stage_pos.y
 	};
 
@@ -86,8 +85,7 @@ function DistillationGraphics(canvas, column, images, debug) {
     this.reset_feed_boundaries = function() {
 	// Move the feed boundaries so they line up with the feed pipe
 	// position.
-	var sf = this.sid.width/this.images.column.width;
-	var dy = this.feed_pos().y - this.feed_boundaries[0].body.position.y + 0.40*this.images.feed.height*sf;
+	var dy = this.feed_pos().y - this.feed_boundaries[0].body.position.y + 0.40*this.images.feed.height*this.column_sf;
 	for (var i=0; i < this.feed_boundaries.length; i++) {
 	    this.feed_boundaries[i].translate(0, dy);
 	};
@@ -109,10 +107,9 @@ function DistillationGraphics(canvas, column, images, debug) {
     // Build the ensemble array (need one for each feed, since some have different boundaries)
 
     // feed particles
-    var sf = this.sid.width/this.images.column.width;
     var feed_ensemble = new Ensemble([], this.world);
     var feed_pos = {
-	x : this.column_left - sf*this.images.feed.width + 2,
+	x : this.column_left - this.column_sf*this.images.feed.width + 2,
 	y : this.feed_pos().y 
     };
     var full_feed_particle_options = [];
@@ -177,12 +174,11 @@ function DistillationGraphics(canvas, column, images, debug) {
 
     
     // Set-up the valves
-    var sf = this.sid.width/this.images.column.width;
     var reflux_valve_pos = utils.get_absolute_coordinates(this.xmax, this.ymax,
 						    this.sid.width, this.sid.height,
 						    settings.reflux_valve_position)
     var feed_valve_pos = {
-	x: this.feed_pos().x - 0.9*this.images.feed.width*sf,
+	x: this.feed_pos().x - 0.9*this.images.feed.width*this.column_sf,
 	y : this.feed_pos().y
     }
     this.valves = {
@@ -293,9 +289,8 @@ function DistillationGraphics(canvas, column, images, debug) {
 	push();
 	imageMode(CENTER);
 	var img = this.images.feed;
-	var sf = this.sid.width/this.images.column.width;
 	var pos = this.feed_pos();
-	image(img, pos.x, pos.y, img.width*sf, img.height*sf);
+	image(img, pos.x, pos.y, img.width*this.column_sf, img.height*this.column_sf);
 	pop();
 
     };
