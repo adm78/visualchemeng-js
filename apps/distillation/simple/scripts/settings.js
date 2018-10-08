@@ -28,8 +28,8 @@ var settings = {
 	},
 	tops : {
 	    init_force : { x : 0.0002, y : 0.0},
-	    buoyancy : 1.05,
-	    perturbation : { x : 2, y : 2 },
+	    buoyancy : 0.0,//1.05,
+	    //perturbation : { x : 2, y : 2 },
 	},
 	bottoms : {
 	    init_force : { x : 0.0003, y : 0.0},
@@ -69,8 +69,8 @@ var settings = {
     feed_positions : [{"x_scaling":-1.1275273547635363,"y_scaling":0.21894175015711917,"w_scaling":0.12612276107909576,"h_scaling":0.13696974850908034,"a":0},
     {"x_scaling":-0.942281921465001,"y_scaling":0.2874055273980731,"w_scaling":0.11411106954775331,"h_scaling":0.28016061924194147,"a":1.5707963267948968},
     {"x_scaling":-0.942281921465001,"y_scaling":0.11196689826074094,"w_scaling":0.11411106954775331,"h_scaling":0.28016061924194147,"a":1.5707963267948968}],
-    boundary_positions : [{"x_scaling":0.9279268183813038,"y_scaling":-0.688204253184066,"w_scaling":0.07689402115260091,"h_scaling":0.09685574222925042,"a":0}],
-
+    tops_boundaries : [{"x_scaling":0.9289445012825301,"y_scaling":-0.4072171865388987,"w_scaling":0.05142205097126506,"h_scaling":0.17678850292558604,"a":0},{"x_scaling":2.332361563661119,"y_scaling":-0.2645842030255469,"w_scaling":0.05142205097126506,"h_scaling":0.8124111951052492,"a":-1.5707963267948968}],
+    boundary_positions : [],
 
     // column limits
     Fmax : 200.0

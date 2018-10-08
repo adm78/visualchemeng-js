@@ -131,7 +131,7 @@ function DistillationGraphics(canvas, column, images, debug) {
     this.Ensembles.tops = new Ensemble([], this.world, 'tops');
     var tops_pos = {
 	x : 0.5*(this.xmax + this.sid.width),
-	y : 0.5*(this.ymax - 0.69*this.sid.height)
+	y : 0.5*(this.ymax - 0.57*this.sid.height)
     };
     var full_tops_particle_options = [];
     for (var i = 0; i < settings.particles.length; i++) {
@@ -152,6 +152,11 @@ function DistillationGraphics(canvas, column, images, debug) {
 			       this.xmax, this.ymax,
 			       this.sid.width, this.sid.height,
 			       this.world)[0];
+    var tops_bounds = makeBoundaries(settings.tops_boundaries,
+				     this.xmax, this.ymax,
+				     this.sid.width, this.sid.height,
+				     this.world)
+    this.Boundaries = this.Boundaries.concat(tops_bounds);
     this.Boundaries.push(floor);
     this.Boundaries.push(levee);
 
@@ -223,11 +228,11 @@ function DistillationGraphics(canvas, column, images, debug) {
     this.show = function() {
 	// render all the neccessary pieces to the canvas
 	background(51);
+	this.show_walls();
 	this.show_column();
 	this.show_stages();
 	this.show_feed();
 	this.show_boundaries();
-	this.show_walls();
 	this.show_ensembles();
 	this.show_valves();
 	if (this.debug) {
@@ -289,10 +294,21 @@ function DistillationGraphics(canvas, column, images, debug) {
 	fill(128);
 	noStroke();
 	rectMode(CENTER);
-	rect(0.5*this.xmax, this.ymax, this.xmax, 20.0);
+	rect(0.5*this.xmax, this.ymax, this.xmax, 20.0); // floor
 	var abs_coords = utils.get_absolute_coordinates(this.xmax, this.ymax, this.sid.width, this.sid.height, settings.levee_position);
-	rect(abs_coords.x, abs_coords.y, abs_coords.w, abs_coords.h);
-	pop();
+	rect(abs_coords.x, abs_coords.y, abs_coords.w, abs_coords.h); // bottoms levess
+	pop()
+	for (var i = 0; i < settings.tops_boundaries.length; i++) { // tops stream catchers
+	    push();
+	    fill(128);
+	    noStroke();
+	    rectMode(CENTER);
+	    var abs_coords = utils.get_absolute_coordinates(this.xmax, this.ymax, this.sid.width, this.sid.height, settings.tops_boundaries[i]);
+	    translate(abs_coords.x, abs_coords.y);
+	    rotate(abs_coords.a);
+	    rect(0, 0, abs_coords.w, abs_coords.h);
+	    pop();
+	};
     };
     
 

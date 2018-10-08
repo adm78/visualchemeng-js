@@ -12,7 +12,9 @@
 // a.mcguire227@gmail.com
 //
 // To do:
-//
+// - add relflux hold-up tank
+// - add particles to conderser
+// - liquify tops outflow
 //
 // --------------------------------------------------
 //               set-up variables
@@ -47,8 +49,8 @@ function setup(first_time=true) {
     // Initialise the backend column properties THIS IS A TEST
     options = {};
     column = new DistTestBackend(options);
-    column.n_stages = 12;
-    column.feed_pos = 6;
+    column.n_stages = 20;
+    column.feed_pos = 10;
     for (var i=0; i < column.n_stages; i++) {
 	var stage = new Stage();
 	stage.x = i/column.n_stages;
