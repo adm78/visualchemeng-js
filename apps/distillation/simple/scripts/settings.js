@@ -29,7 +29,7 @@ var settings = {
 	    },
 	},
 	tops : {
-	    position : {"x_scaling":0.3429281541452073,"y_scaling":-0.5655398223968362,"w_scaling":0.0266851683834125,"h_scaling":0.04278990158322636,"a":0},
+	    position : {"x_scaling":0.3454965261660366,"y_scaling":-0.5141919731430687,"w_scaling":0.02752785791130974,"h_scaling":0.04278990158322636,"a":0},
 	    options : {
 		init_force : { x : 0.0002, y : 0.0},
 		buoyancy : 0.0
@@ -69,8 +69,8 @@ var settings = {
 	},
     ],
 
-    reflux_valve_position : {"x_scaling":0.08400113140944375,"y_scaling":-0.68820424502254,"w_scaling":0.0266851683834125,"h_scaling":0.04278990158322636,"a":0},
-    column_interior_position : {"x_scaling":-0.09217601808086937,"y_scaling":-0.022108137582069694,"w_scaling":0.06709535245336722,"h_scaling":0.6667017690098147,"a":0},
+    reflux_valve_position : {"x_scaling":0.08940744475380127,"y_scaling":-0.6368563712841944,"w_scaling":0.02752785791130974,"h_scaling":0.08304169199380357,"a":0},
+    column_interior_position : {"x_scaling":-0.09233319366778506,"y_scaling":0.01212380000756345,"w_scaling":0.06921415305715777,"h_scaling":0.634954065723633,"a":0},
 
     // boundaries
     levee_boundary_position : {"x_scaling":0.2735250346490234,"y_scaling":1.4983598074955873,"w_scaling":0.0266851683834125,"h_scaling":0.5,"a":0},
@@ -78,7 +78,7 @@ var settings = {
 	{"x_scaling":-0.3724578468154588,"y_scaling":0.07202967854713241,"w_scaling":0.0266851683834125,"h_scaling":0.1019534128728952,"a":0},
 	{"x_scaling":-0.2870386228201554,"y_scaling":-0.0007131541443524016,"w_scaling":0.026618455462453967,"h_scaling":0.2085375171905646,"a":1.5707963267948968},
 	{"x_scaling":-0.2870386228201554,"y_scaling":0.13621453092197194,"w_scaling":0.026618455462453967,"h_scaling":0.2085375171905646,"a":1.5707963267948968}],
-    tops_boundary_position : {"x_scaling":0.42834737814051066,"y_scaling":-0.40008557980316645,"w_scaling":0.0266851683834125,"h_scaling":0.525,"a":1.5707963267948968},
+    tops_boundary_position : {"x_scaling":0.4253522612300667,"y_scaling":-0.358722002831697,"w_scaling":0.02752785791130974,"h_scaling":0.5,"a":1.5707963267948968},
     general_boundary_positions : [],
 
     // column limits
