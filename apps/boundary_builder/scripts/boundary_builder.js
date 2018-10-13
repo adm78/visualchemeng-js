@@ -76,6 +76,9 @@ function setup(new_canvas) {
     // intialise the boundaries
     boundaries = makeBoundaries(settings.boundary_positions, xmax, ymax,
 				sid.width, sid.height, world);
+    for (var i = 0; i < boundaries.length; i++) {
+	boundaries[i].name = "B" + i;
+    };
     
 };
 
@@ -198,6 +201,7 @@ $('#add_feed').click(async function(){
     var feed_block = new Boundary(Math.random()*dimensions.xmax, Math.random()*dimensions.ymax, 20.0, 20.0, 0.0, undefined);
     feed_block.colour.active = 'rgba(0, 255, 0, 0.5)';
     feed_block.colour.inactive = 'rgba(0, 0, 255, 0.5)';
+    feed_block.name = 'F' + feed_blocks.length;
     var particle_options = {type :'single-body', radius : 2.0}
     var feed = new ParticleFeed(feed_block.body.position.x, feed_block.body.position.y, 0.1, particle_options);
     console.log(feed);
@@ -231,6 +235,7 @@ $('#add_boundary').click(async function(){
     var newBoundary = new Boundary(Math.random()*dimensions.xmax,
 				   Math.random()*dimensions.ymax,
 				   20, 0.3*dimensions.ymax, 0.0, world);
+    newBoundary.name = 'B' + boundaries.length;
     newBoundary.active = true;
     boundaries.push(newBoundary);
     for (var i = 0; i < boundaries.length; i++) {
@@ -264,6 +269,7 @@ $('#cp_boundary').click(async function(){
 	    };
 	    var newBoundary = new Boundary(x, y, coordinates.w, coordinates.h,
 					   coordinates.angle, world);
+	    newBoundary.name = "B" + boundaries.length;
 	    boundaries.push(newBoundary);
 	};
     };
@@ -335,17 +341,28 @@ $('#rm_all_feed').click(async function(){
 
 // output boundary coordinates and scaling factors
 $('#output_coords').click(async function(){
-    console.log("Boundary coordinates requested");
+    console.log("Coordinates requested");
     var dimensions = utils.getSimBoxDimensions();
-    var all_coordinates = [];
-    var all_scaling = [];
+    var all_b_coordindates = [];
+    var all_b_scaling = [];
     for (var i = 0; i < boundaries.length; i++) {
-	all_coordinates.push(boundaries[i].get_coordinates());
-	all_scaling.push(boundaries[i].get_positional_scale_factors(dimensions.xmax, dimensions.ymax,
+	all_b_coordindates.push(boundaries[i].get_coordinates());
+	all_b_scaling.push(boundaries[i].get_positional_scale_factors(dimensions.xmax, dimensions.ymax,
 								    sid.width, sid.height));
     };
-    $('#coords').text(JSON.stringify(all_coordinates));
-    $('#scaling').text(JSON.stringify(all_scaling));
+    $('#b_coords').text(JSON.stringify(all_b_coordindates));
+    $('#b_scaling').text(JSON.stringify(all_b_scaling));
+
+    var all_f_coordindates = [];
+    var all_f_scaling = [];
+    for (var i = 0; i < feed_blocks.length; i++) {
+	all_f_coordindates.push(feed_blocks[i].get_coordinates());
+	all_f_scaling.push(feed_blocks[i].get_positional_scale_factors(dimensions.xmax, dimensions.ymax,
+								       sid.width, sid.height));
+    };
+    $('#f_coords').text(JSON.stringify(all_f_coordindates));
+    $('#f_scaling').text(JSON.stringify(all_f_scaling));
+    
 });
 
 
@@ -379,6 +396,7 @@ var load_boundaries_from_settings = function () {
 	var newBoundary = new Boundary(abs_coords.x, abs_coords.y,
 				       abs_coords.w, abs_coords.h,
 				       abs_coords.a, world);
+	newBoundary.name = "B" + boundaries.length;
 	boundaries.push(newBoundary); 
     };
 };

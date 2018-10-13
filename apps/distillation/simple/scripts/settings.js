@@ -20,20 +20,27 @@ var settings = {
 	},
     ],
 
-    // particle feed options
-    feed_options : {
+    // particle feed
+    particle_feeds : {
 	feed : {
-	    init_force : { x : 0.0003, y : 0.0},
-	    buoyancy : 0.0,
+	    options : {
+		init_force : { x : 0.0003, y : 0.0},
+		buoyancy : 0.0
+	    },
 	},
 	tops : {
-	    init_force : { x : 0.0002, y : 0.0},
-	    buoyancy : 0.0,//1.05,
-	    //perturbation : { x : 2, y : 2 },
+	    position : {"x_scaling":0.3429281541452073,"y_scaling":-0.5655398223968362,"w_scaling":0.0266851683834125,"h_scaling":0.04278990158322636,"a":0},
+	    options : {
+		init_force : { x : 0.0002, y : 0.0},
+		buoyancy : 0.0
+	    },
 	},
 	bottoms : {
-	    init_force : { x : 0.0003, y : 0.0},
-	    buoyancy : 0.0,
+	    position : {"x_scaling":0.3455975048950604,"y_scaling":0.9763229265649654,"w_scaling":0.0266851683834125,"h_scaling":0.04278990158322636,"a":0},
+	    options : {
+		init_force : { x : 0.0003, y : 0.0},
+		buoyancy : 0.0
+	    },
 	}
     },
 
@@ -62,15 +69,17 @@ var settings = {
 	},
     ],
 
-    reflux_valve_position : {"x_scaling":0.28811019594601234,"y_scaling":-0.6910569105691057,"w_scaling":0.07689402115260091,"h_scaling":0.09685574222925042,"a":0},
+    reflux_valve_position : {"x_scaling":0.08400113140944375,"y_scaling":-0.68820424502254,"w_scaling":0.0266851683834125,"h_scaling":0.04278990158322636,"a":0},
+    column_interior_position : {"x_scaling":-0.09217601808086937,"y_scaling":-0.022108137582069694,"w_scaling":0.06709535245336722,"h_scaling":0.6667017690098147,"a":0},
 
     // boundaries
-    levee_position : {"x_scaling":0.8731233248606424,"y_scaling":1.3642847390066726,"w_scaling":0.05,"h_scaling":0.3675459453124999,"a":0},
-    feed_positions : [{"x_scaling":-1.1275273547635363,"y_scaling":0.21894175015711917,"w_scaling":0.12612276107909576,"h_scaling":0.13696974850908034,"a":0},
-    {"x_scaling":-0.942281921465001,"y_scaling":0.2874055273980731,"w_scaling":0.11411106954775331,"h_scaling":0.28016061924194147,"a":1.5707963267948968},
-    {"x_scaling":-0.942281921465001,"y_scaling":0.11196689826074094,"w_scaling":0.11411106954775331,"h_scaling":0.28016061924194147,"a":1.5707963267948968}],
-    tops_boundaries : [{"x_scaling":0.9289445012825301,"y_scaling":-0.4072171865388987,"w_scaling":0.05142205097126506,"h_scaling":0.17678850292558604,"a":0},{"x_scaling":2.332361563661119,"y_scaling":-0.2645842030255469,"w_scaling":0.05142205097126506,"h_scaling":0.8124111951052492,"a":-1.5707963267948968}],
-    boundary_positions : [],
+    levee_boundary_position : {"x_scaling":0.2735250346490234,"y_scaling":1.4983598074955873,"w_scaling":0.0266851683834125,"h_scaling":0.5,"a":0},
+    feed_boundary_positions : [
+	{"x_scaling":-0.3724578468154588,"y_scaling":0.07202967854713241,"w_scaling":0.0266851683834125,"h_scaling":0.1019534128728952,"a":0},
+	{"x_scaling":-0.2870386228201554,"y_scaling":-0.0007131541443524016,"w_scaling":0.026618455462453967,"h_scaling":0.2085375171905646,"a":1.5707963267948968},
+	{"x_scaling":-0.2870386228201554,"y_scaling":0.13621453092197194,"w_scaling":0.026618455462453967,"h_scaling":0.2085375171905646,"a":1.5707963267948968}],
+    tops_boundary_position : {"x_scaling":0.42834737814051066,"y_scaling":-0.40008557980316645,"w_scaling":0.0266851683834125,"h_scaling":0.525,"a":1.5707963267948968},
+    general_boundary_positions : [],
 
     // column limits
     Fmax : 200.0

@@ -12,7 +12,8 @@
 // a.mcguire227@gmail.com
 //
 // To do:
-// - add relflux hold-up tank
+// - fix outflow
+// - walls show functionality should just be handled by the boundaries themselves
 // - add particles to conderser
 // - liquify tops outflow
 //
@@ -32,8 +33,10 @@ function preload() {
     // load the canvas images
     var column_img_URL = "../../images/distillation_grey.svg";
     var feed_img_URL = "../../images/feed_pipe.svg";
+    var distillate_img_URL = "../../images/distillate_pipe.svg" 
     images.column = loadImage(column_img_URL, pic => print(pic), utils.loadImgErrFix);
     images.feed = loadImage(feed_img_URL, pic => print(pic), utils.loadImgErrFix);
+    images.distillate = loadImage(distillate_img_URL, pic => print(pic), utils.loadImgErrFix);
 };
 
 function setup(first_time=true) {
@@ -155,7 +158,7 @@ function mouseDragged() {
 	    };
 	};
 	Graphics.update_backend();
-	Graphics.update_feeds();
+	Graphics.update_feed_rates();
     };
 };
 

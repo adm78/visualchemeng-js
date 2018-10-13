@@ -39,10 +39,12 @@ function DistillationGraphics(canvas, column, images, debug) {
     this.pm = 0.01; // particle multiplier 
     this.engine = Engine.create();
     this.world = this.engine.world;
-    this.column_top = this.ymax*0.5 - 0.34*this.sid.height;
-    this.column_left = this.xmax*0.5 - 0.225*this.sid.width;
-    this.column_width = this.sid.width*0.193;
-    this.column_height = this.sid.height*0.66;
+    var column_int = utils.get_abs_coords(this.xmax, this.ymax, this.sid.width,
+					       this.sid.height, settings.column_interior_position)
+    this.column_top = column_int.y - 0.5*column_int.h;
+    this.column_left = column_int.x - 0.5*column_int.w;
+    this.column_width = column_int.w;
+    this.column_height = column_int.h;
     this.column_bottom = this.column_top + this.column_height;
     this.show_boundaries_log = true;
     this.Ensembles = {};
@@ -64,7 +66,8 @@ function DistillationGraphics(canvas, column, images, debug) {
 	return this.column_height/this.column.n_stages;
     };
 
-    this.feed_pos = function() {
+    this.feed_pipe_pos = function() {
+	// central position of the feed pipe
 	var feed_stage_pos = this.stage_pos(column.feed_pos);
 	return {
 	    x : feed_stage_pos.x
@@ -79,14 +82,14 @@ function DistillationGraphics(canvas, column, images, debug) {
     this.reset_feed_boundaries = function() {
 	// Move the feed boundaries so they line up with the feed pipe
 	// position.
-	var dy = this.feed_pos().y - this.feed_boundaries[0].body.position.y + 0.40*this.images.feed.height*this.column_sf;
+	var dy = this.feed_pipe_pos().y - this.feed_boundaries[0].body.position.y;
 	for (var i=0; i < this.feed_boundaries.length; i++) {
 	    this.feed_boundaries[i].translate(0, dy);
 	};
     };
 
 
-    this.update_feeds = function() {
+    this.update_feed_rates = function() {
 	// adjust the particle feed rates to match the backend flowrates
 	this.Ensembles.feed.feeds[0].set_rate(this.column.F*this.pm); 
 	this.Ensembles.bottoms.feeds[0].set_rate(this.column.L()*this.pm); 
@@ -102,78 +105,69 @@ function DistillationGraphics(canvas, column, images, debug) {
     
     // feed particles
     this.Ensembles.feed = new Ensemble([], this.world, 'feed');
-    var feed_pos = {
-	x : this.column_left - this.column_sf*this.images.feed.width + 2,
-	y : this.feed_pos().y 
+    var feed_particle_feed_pos = {
+	x : this.feed_pipe_pos().x - 0.5*this.images.feed.width*this.column_sf,
+	y : this.feed_pipe_pos().y 
     };
     var full_feed_particle_options = [];
     for (var i = 0; i < settings.particles.length; i++) {
-	full_feed_particle_options[i] = utils.merge_options(settings.particles[i], settings.feed_options.feed);
+	full_feed_particle_options[i] = utils.merge_options(settings.particles[i], settings.particle_feeds.feed.options);
     };
-    this.Ensembles.feed.addFeed(new ParticleFeed(feed_pos.x, feed_pos.y, undefined, full_feed_particle_options));
+    var feed_particle_feed_rate = null; // will be set later
+    this.Ensembles.feed.addFeed(new ParticleFeed(feed_particle_feed_pos.x, feed_particle_feed_pos.y,
+						 feed_particle_feed_rate, full_feed_particle_options));
 
 
     
     // bottoms particles
     this.Ensembles.bottoms = new Ensemble([], this.world, 'bottoms');
-    var bottoms_pos = {
-	x : 0.5*(this.xmax + this.sid.width),
-	y : 0.5*(this.ymax + 0.97*this.sid.height)
-    };
+    var bottoms_particle_feed_pos = utils.get_abs_coords(this.xmax, this.ymax, this.sid.width,
+							      this.sid.height, settings.particle_feeds.bottoms.position)
     var full_bottoms_particle_options = [];
     for (var i = 0; i < settings.particles.length; i++) {
-	full_bottoms_particle_options[i] = utils.merge_options(settings.particles[i], settings.feed_options.bottoms);
+	full_bottoms_particle_options[i] = utils.merge_options(settings.particles[i], settings.particle_feeds.bottoms.options);
     };
-    this.Ensembles.bottoms.addFeed(new ParticleFeed(bottoms_pos.x, bottoms_pos.y, undefined, full_bottoms_particle_options));
+    var bottoms_particle_feed_rate = null; // will be set later
+    this.Ensembles.bottoms.addFeed(new ParticleFeed(bottoms_particle_feed_pos.x, bottoms_particle_feed_pos.y,
+						    bottoms_particle_feed_rate, full_bottoms_particle_options));
 
     
     // tops particles
     this.Ensembles.tops = new Ensemble([], this.world, 'tops');
-    var tops_pos = {
-	x : 0.5*(this.xmax + this.sid.width),
-	y : 0.5*(this.ymax - 0.57*this.sid.height)
-    };
+    var tops_pos = utils.get_abs_coords(this.xmax, this.ymax, this.sid.width,
+					     this.sid.height, settings.particle_feeds.tops.position)
     var full_tops_particle_options = [];
     for (var i = 0; i < settings.particles.length; i++) {
-	full_tops_particle_options[i] = utils.merge_options(settings.particles[i], settings.feed_options.tops);
+	full_tops_particle_options[i] = utils.merge_options(settings.particles[i], settings.particle_feeds.tops.options);
     };
-    this.Ensembles.tops.addFeed(new ParticleFeed(tops_pos.x, tops_pos.y, undefined, full_tops_particle_options));
+    var tops_particle_feed_rate = null; // will be set later
+    this.Ensembles.tops.addFeed(new ParticleFeed(tops_pos.x, tops_pos.y,
+						 tops_particle_feed_rate,
+						 full_tops_particle_options));
 
     // set the feed rates all together
-    this.update_feeds();
+    this.update_feed_rates();
     
     // Build the boundaries
-    this.Boundaries = makeBoundaries(settings.boundary_positions,
-				     this.xmax, this.ymax,
-				     this.sid.width, this.sid.height,
-				     this.world);
+    this.Boundaries = [];
     var floor = new Boundary(0.5*this.xmax, this.ymax, this.xmax, 20.0, 0.0, this.world);
-    var levee = makeBoundaries([settings.levee_position],
-			       this.xmax, this.ymax,
-			       this.sid.width, this.sid.height,
-			       this.world)[0];
-    var tops_bounds = makeBoundaries(settings.tops_boundaries,
-				     this.xmax, this.ymax,
-				     this.sid.width, this.sid.height,
-				     this.world)
-    this.Boundaries = this.Boundaries.concat(tops_bounds);
+    var levee = makeBoundaries([settings.levee_boundary_position], this.xmax, this.ymax,
+			       this.sid.width, this.sid.height, this.world)[0];
     this.Boundaries.push(floor);
     this.Boundaries.push(levee);
-
     
-    // generate the feed pipe boundaries and translate the 
-    this.feed_boundaries = makeBoundaries(settings.feed_positions, this.xmax, this.ymax,
+    // generate the feed pipe boundaries and translate them 
+    this.feed_boundaries = makeBoundaries(settings.feed_boundary_positions, this.xmax, this.ymax,
 					  this.sid.width, this.sid.height, this.world);
     this.reset_feed_boundaries();
 
     
     // Set-up the valves
-    var reflux_valve_pos = utils.get_absolute_coordinates(this.xmax, this.ymax,
-						    this.sid.width, this.sid.height,
-						    settings.reflux_valve_position)
+    var reflux_valve_pos = utils.get_abs_coords(this.xmax, this.ymax, this.sid.width,
+							  this.sid.height, settings.reflux_valve_position)
     var feed_valve_pos = {
-	x: this.feed_pos().x - 0.9*this.images.feed.width*this.column_sf,
-	y : this.feed_pos().y
+	x: this.feed_pipe_pos().x - 0.9*this.images.feed.width*this.column_sf,
+	y : this.feed_pipe_pos().y
     }
     this.valves = {
 	reflux : new Valve(reflux_valve_pos.x, reflux_valve_pos.y),
@@ -209,6 +203,8 @@ function DistillationGraphics(canvas, column, images, debug) {
 	    } else if (key == 'bottoms') {
 		update_options.feed_args = [[x_bottoms, 1.0 - x_bottoms]];
 	    } else if (key == 'tops') {
+		update_options.ymax = utils.get_abs_coords(this.xmax, this.ymax, this.sid.width,
+							   this.sid.height, settings.tops_boundary_position).y;
 		update_options.feed_args = [[x_tops, 1.0 - x_tops]];
 	    } else {
 		throw new RangeError("No ensemble with key", key);
@@ -282,7 +278,7 @@ function DistillationGraphics(canvas, column, images, debug) {
 	push();
 	imageMode(CENTER);
 	var img = this.images.feed;
-	var pos = this.feed_pos();
+	var pos = this.feed_pipe_pos();
 	image(img, pos.x, pos.y, img.width*this.column_sf, img.height*this.column_sf);
 	pop();
 
@@ -295,20 +291,9 @@ function DistillationGraphics(canvas, column, images, debug) {
 	noStroke();
 	rectMode(CENTER);
 	rect(0.5*this.xmax, this.ymax, this.xmax, 20.0); // floor
-	var abs_coords = utils.get_absolute_coordinates(this.xmax, this.ymax, this.sid.width, this.sid.height, settings.levee_position);
+	var abs_coords = utils.get_abs_coords(this.xmax, this.ymax, this.sid.width, this.sid.height, settings.levee_boundary_position);
 	rect(abs_coords.x, abs_coords.y, abs_coords.w, abs_coords.h); // bottoms levess
 	pop()
-	for (var i = 0; i < settings.tops_boundaries.length; i++) { // tops stream catchers
-	    push();
-	    fill(128);
-	    noStroke();
-	    rectMode(CENTER);
-	    var abs_coords = utils.get_absolute_coordinates(this.xmax, this.ymax, this.sid.width, this.sid.height, settings.tops_boundaries[i]);
-	    translate(abs_coords.x, abs_coords.y);
-	    rotate(abs_coords.a);
-	    rect(0, 0, abs_coords.w, abs_coords.h);
-	    pop();
-	};
     };
     
 
