@@ -33,10 +33,8 @@ function preload() {
     // load the canvas images
     var column_img_URL = "../../images/distillation_grey.svg";
     var feed_img_URL = "../../images/feed_pipe.svg";
-    var distillate_img_URL = "../../images/distillate_pipe.svg" 
     images.column = loadImage(column_img_URL, pic => print(pic), utils.loadImgErrFix);
     images.feed = loadImage(feed_img_URL, pic => print(pic), utils.loadImgErrFix);
-    images.distillate = loadImage(distillate_img_URL, pic => print(pic), utils.loadImgErrFix);
 };
 
 function setup(first_time=true) {
