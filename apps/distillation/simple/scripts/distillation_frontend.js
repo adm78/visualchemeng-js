@@ -31,8 +31,13 @@ var Graphics,
 // --------------------------------------------------
 function preload() {
     // load the canvas images
-    var column_img_URL = "../../images/distillation_grey.svg";
-    var feed_img_URL = "../../images/feed_pipe.svg";
+    if (vce_online) {
+	var column_img_URL = "../../images/distillation_grey.svg";
+	var feed_img_URL = "../../images/feed_pipe.svg";
+    } else {
+	var column_img_URL = "http://visualchemeng.com/wp-content/uploads/2018/10/distillation_grey.svg";
+	var feed_img_URL = "http://visualchemeng.com/wp-content/uploads/2018/10/feed_pipe.svg";
+    };
     images.column = loadImage(column_img_URL, pic => print(pic), utils.loadImgErrFix);
     images.feed = loadImage(feed_img_URL, pic => print(pic), utils.loadImgErrFix);
 };

@@ -24,7 +24,9 @@ function DistillationGraphics(canvas, column, images, debug) {
       
     Args:
         cavas (p5.canvas) : The p5 canvas to render on top of.
-
+	column : The backend column object
+	images : a JSON object
+	debug : debug bool
     */
 
     // Set the main class attributes
