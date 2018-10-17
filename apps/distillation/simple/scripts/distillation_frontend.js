@@ -72,6 +72,9 @@ function setup(first_time=true) {
     Graphics = new DistillationGraphics(canvas, column, images, debug);
     console.log(Graphics);
 
+    // Update any labels based on the initialised state
+    update_labels();
+
     
 }
 

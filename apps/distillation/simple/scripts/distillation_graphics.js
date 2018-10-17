@@ -48,7 +48,7 @@ function DistillationGraphics(canvas, column, images, debug) {
     this.column_width = column_int.w;
     this.column_height = column_int.h;
     this.column_bottom = this.column_top + this.column_height;
-    this.show_boundaries_log = true;
+    this.show_boundaries_log = false;
     this.Ensembles = {};
     this.debug = debug;
     this.valves = {}
