@@ -24,7 +24,8 @@ function plot_mccabe_thiele_diagram(container) {
 
 function _get_mccabe_thiele_traces() {
     // central line
-    center_line = {
+    var center_line = {
+	name : 'x=y',
 	type: "scatter",
 	mode: "lines",
 	x: [0.0, 1.0],
@@ -33,7 +34,17 @@ function _get_mccabe_thiele_traces() {
 	    color : '#aeb1b7'
 	}
     };
-    return [center_line];
+    var equilib_line = {
+	name: 'Vapour-Liquid Equilibirum',
+	type: "scatter",
+	mode: "lines",
+	x: settings.equilibrium_data.x,
+	y: settings.equilibrium_data.y,
+	line: {
+	    color : '#008CBA'
+	}
+    }
+    return [center_line, equilib_line];
 };
 
 
@@ -54,6 +65,7 @@ function _get_mccabe_thiele_layout() {
 	    size: 16,
 	},
 	title : 'McCabe-Thiele Diagram',
+	showlegend: false,
 	legend: {
 	    font: {color: 'white'}
 	},
