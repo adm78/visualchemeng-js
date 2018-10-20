@@ -11,18 +11,15 @@
   </head>
   <body style="background-color:white;">
     <div class="wrapper" id="target">
-      <div class="box conversion_plot_container" id="conversion_plot_container"></div>
-      <div class="box duty_plot_container" id="duty_plot_container"></div>
-      <div class="box conc_plot_container" id="conc_plot_container"></div>
-      <div class="box sim_container" id="sim_container">
-      </div>
+      <div class="box" id="mccabe_thiele_container"></div>
+      <div class="box sim_container" id="sim_container"></div>
       <div class="box vce_info">
 	<a href="http://visualchemeng.com" title="Go to VCE homepage">
           <img class="vce_logo" src="../../../../../lib/images/vcelogo.png" />
 	</a>
 	<a href="http://visualchemeng.com"
 	   style="text-decoration:none" title="Go to VCE homepage">
-      	   <p style="display: block; margin-left: auto; margin-right: auto; color:white; text-align: center; font-family:Roboto" >Test distillation column</p>
+      	   <p style="display: block; margin-left: auto; margin-right: auto; color:white; text-align: center; font-family:Roboto" >Binary Distillation</p>
 	   </a>
       </div>
       <div class="box system_id_container" id="system_id_container">
@@ -54,6 +51,7 @@
     <script src="../../../../../lib/js/vce/vce_valve.js"></script>
     <script src="../../../../../lib/js/vce/vce_distillation.js"></script>
     <script src="../../scripts/distillation_test_backend.js"></script>
+    <script src="../../scripts/mccabe_thiele_plot.js"></script>
     <script src="../../scripts/settings.js"></script>
     <script src="../../scripts/distillation_graphics.js"></script>
     <script src="../../scripts/distillation_frontend.js"></script>

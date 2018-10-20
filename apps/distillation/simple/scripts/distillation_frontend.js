@@ -1,4 +1,4 @@
-1// VCE Project - test_distillation_frontend.js
+// VCE Project - distillation_frontend.js
 //
 // This script facilitates the testing of a distillation simulation
 // module.
@@ -12,10 +12,8 @@
 // a.mcguire227@gmail.com
 //
 // To do:
-// - fix outflow
 // - walls show functionality should just be handled by the boundaries themselves
 // - add particles to conderser
-// - liquify tops outflow
 //
 // --------------------------------------------------
 //               set-up variables
@@ -71,6 +69,9 @@ function setup(first_time=true) {
     // Initialise the graphical column representation
     Graphics = new DistillationGraphics(canvas, column, images, debug);
     console.log(Graphics);
+
+    // Initialise the McCabe-Thiele plot
+    plot_mccabe_thiele_diagram('mccabe_thiele_container');
 
     // Update any labels based on the initialised state
     update_labels();
