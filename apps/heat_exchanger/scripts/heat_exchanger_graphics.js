@@ -34,11 +34,6 @@ function HeatExchangerGraphics(canvas, exchanger, images, debug) {
     this._show_background = function() {
 	push();
 	background(51);
-	textAlign(CENTER);
-	fill(255);
-	noStroke();
-	textSize(24);
-	text('[insert heat exchanger graphics here]', this.xmax/2, this.ymax/2);
 	pop();
     };
 

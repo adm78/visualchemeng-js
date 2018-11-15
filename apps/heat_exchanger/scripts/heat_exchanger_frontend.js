@@ -60,6 +60,9 @@ function setup() {
     // Update any labels based on the initialised state
     update_labels();
 
+
+    // test the backend
+    console.log("duty = ", exchanger.duty());
     
 }
 
