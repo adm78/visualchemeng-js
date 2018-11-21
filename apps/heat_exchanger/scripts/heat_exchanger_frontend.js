@@ -63,7 +63,8 @@ function setup() {
 
     // test the backend
     console.log("duty = ", exchanger.duty());
-    
+    console.log("delta_h_shell = ", exchanger.delta_h_shell());
+    console.log("F_shell = ", exchanger.F_shell());
 }
 
 function draw() {

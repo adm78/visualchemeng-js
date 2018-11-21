@@ -18,40 +18,97 @@
 // --------------------------------------------------
 function HeatExchanger() {
 
-    this.F = 1.0 // molar flow rate (mol/s)
-    this.T_in = 60 + 273.15; // (K)
-    this.T_out = 160.5 + 273.15; // (K)
-    this.component = new Methanol(); 
+    // Assumption
+    // - inlet steam is not super-heated
+
+    // Tube side parameters
+    this.F_tube = 1.0; // molar flow rate (mol/s)
+    this.T_in_tube = 60 + 273.15; // Inlet temp (K)
+    this.T_out_tube = 160.5 + 273.15; // Outlet temp (K)
+    this.component_tube = new Methanol();
+
+    // Shell side parameters
+    this.component_shell = new Water();
+    this.T_in_shell = 473.15 // Inlet temp (K)
+    this.T_out_shell = 453.0 // Outlet temp (K)
+    
     
     // Methods
     this.duty = function() {
 	// Exchanger duty (W)
-	return this.F*this.delta_h();
+	return -this.F_tube*this.delta_h_tube();
     };
+
+
+    this.F_shell = function() {
+	// Shell molar flowrate (mol/s)
+	return this.duty()/this.delta_h_shell();
+    };
+
     
-    this.delta_h = function() {
+    this.delta_h_tube = function() {
 	// Enthalpy change (J)
-	return vce_math.integrator.simpson(this.component.Cp_liq, this.T_in, this.T_out, 50)
+	return vce_math.integrator.simpson(this.component_tube.Cp_l, this.T_in_tube, this.T_out_tube, 50);
     };
+
+
+    this.delta_h_shell = function() {
+	return this.delta_h_v_shell() - this.lambda_shell() + this.delta_h_liq_shell(); 
+    };
+
+
+    this.delta_h_v_shell = function() {
+	// We assume that the incoming steam in saturated (not superheated)
+	return 0.0
+    };
+
+
+    this.lambda_shell = function() {
+	return this.component_shell.lambda_vap(this.T_in_shell)
+    };
+
+
+    this.delta_h_liq_shell = function() {
+	return vce_math.integrator.simpson(this.component_shell.Cp_l, this.T_in_shell, this.T_out_shell, 50);
+    };
+
 
 };
 
-function Methanol() {
+function Methanol() {    
+    /* Methanol component */
+    Component.call(this);
+
+    // Liquid heat capacity parameters
+    this.A_l = 256040;
+    this.B_l = -2741.4;
+    this.C_l = 14.777;
+    this.D_l = -0.0351;
+    this.E_l = 0.00003;
+};
+
+
+function Water() {
+    // Water component
+    Component.call(this);
+
     
-    // Methanol dummy component
-    this.A_liq = 256040;
-    this.B_liq = -2741.4;
-    this.C_liq = 14.777;
-    this.D_liq = -0.0351;
-    this.E_liq = 0.00003;
- 
+    // Liquid heat capacity parameters
+    this.A_l = 276370;
+    this.B_l = -2090.1;
+    this.C_l = 8.125;
+    this.D_l = -0.014116;
+    this.E_l = 9.37e-06;
+
     
-    this.Cp_liq = (function(T) {
-	// Cp_liq (J/mol.K)
-	return this.A_liq + this.B_liq*T + this.C_liq*Math.pow(T,2) + this.D_liq*Math.pow(T,3) + this.E_liq*Math.pow(T,4);
-    }).bind(this)
-    // @Note: 'bind' allows this method to be used by callers other than
-    // Methanol, whilst still pointing `this` at Methanol (instead of the
-    // caller object instance). See
-    // https://stackoverflow.com/a/20279485/4530680 for more info.
+    // Heat of vaporisation parameters
+    this.A_vap = 56600000;
+    this.B_vap = 0.612041;
+    this.C_vap = -0.625697;
+    this.D_vap = 0.398804;
+    this.T_limit_lower_vap = 273.16;  //(K)
+    this.T_limit_upper_vap = 647.096; //(K)
+
+
+
 };
