@@ -5,7 +5,6 @@
 // Requires:
 // - p5.js or p5.min.js
 // - matter.js
-// - vce_utils.js
 // - vce_particle.js
 // - vce_ensemble.js
 //
@@ -22,6 +21,7 @@ var boundaries = [];
 var Engine = Matter.Engine,
     World = Matter.World,
     Bodies = Matter.Bodies,
+    Body = Matter.Body,
     Constraint = Matter.Constraint;
 var sid;
 var show_boundaries = false;
@@ -31,7 +31,7 @@ var show_boundaries = false;
 // --------------------------------------------------
 function preload() {
     var tank_URL = "../../../../lib/images/reactor_ni.svg";
-    tank = loadImage(tank_URL, pic => print(pic), loadImgErrFix);
+    tank = loadImage(tank_URL, pic => print(pic), utils.loadImgErrFix);
 };
 
 function setup() {
@@ -45,7 +45,7 @@ function setup() {
     ymax = 400;//dimensions.ymax;
     var canvas= createCanvas(xmax, ymax);
     canvas.parent("sim_container");
-    sid = getImgScaledDimensions(tank, 0.6, ymax);
+    sid = utils.getImgScaledDimensions(tank, 0.6, ymax);
     
     // set-up the physics engine
     engine = Engine.create();

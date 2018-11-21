@@ -24,6 +24,7 @@ var boundaries = [];
 var Engine = Matter.Engine,
     World = Matter.World,
     Bodies = Matter.Bodies,
+    Body = Matter.Body,
     Constraint = Matter.Constraint;
 var sid;
 var show_boundaries = false;
@@ -33,7 +34,7 @@ var show_boundaries = false;
 // --------------------------------------------------
 function preload() {
     var tank_URL = "../../../../lib/images/reactor_ni.svg";
-    tank = loadImage(tank_URL, pic => print(pic), loadImgErrFix);
+    tank = loadImage(tank_URL, pic => print(pic), utils.loadImgErrFix);
 };
 
 function setup() {
@@ -47,7 +48,7 @@ function setup() {
     ymax = 400;//dimensions.ymax;
     var canvas= createCanvas(xmax, ymax);
     canvas.parent("sim_container");
-    sid = getImgScaledDimensions(tank, 0.6, ymax);
+    sid = utils.getImgScaledDimensions(tank, 0.6, ymax);
     
     // set-up the physics engine
     engine = Engine.create();
@@ -108,7 +109,7 @@ function mousePressed() {
 	radius : 15.0,
 	colour : '#008CBA'
     };
-    ensemble.addParticle(new PhysEngineParticle(world, mouseX, mouseY, options));
+    ensemble.addParticle(new MatterParticle(world, mouseX, mouseY, options));
     //ensemble.addParticle(new DiatomicParticle(world, mouseX, mouseY, 20.0, 0.0, ['#008CBA','#BC0CDF'], '#BAACDF'));
     console.log(ensemble);
 };

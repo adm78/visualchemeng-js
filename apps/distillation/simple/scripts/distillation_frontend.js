@@ -1,4 +1,4 @@
-1// VCE Project - test_distillation_frontend.js
+// VCE Project - distillation_frontend.js
 //
 // This script facilitates the testing of a distillation simulation
 // module.
@@ -12,10 +12,8 @@
 // a.mcguire227@gmail.com
 //
 // To do:
-// - fix outflow
 // - walls show functionality should just be handled by the boundaries themselves
 // - add particles to conderser
-// - liquify tops outflow
 //
 // --------------------------------------------------
 //               set-up variables
@@ -31,12 +29,15 @@ var Graphics,
 // --------------------------------------------------
 function preload() {
     // load the canvas images
-    var column_img_URL = "../../images/distillation_grey.svg";
-    var feed_img_URL = "../../images/feed_pipe.svg";
-    var distillate_img_URL = "../../images/distillate_pipe.svg" 
+    if (vce_online) {
+	var column_img_URL = "../../images/distillation_grey.svg";
+	var feed_img_URL = "../../images/feed_pipe.svg";
+    } else {
+	var column_img_URL = "http://visualchemeng.com/wp-content/uploads/2018/10/distillation_grey.svg";
+	var feed_img_URL = "http://visualchemeng.com/wp-content/uploads/2018/10/feed_pipe.svg";
+    };
     images.column = loadImage(column_img_URL, pic => print(pic), utils.loadImgErrFix);
     images.feed = loadImage(feed_img_URL, pic => print(pic), utils.loadImgErrFix);
-    images.distillate = loadImage(distillate_img_URL, pic => print(pic), utils.loadImgErrFix);
 };
 
 function setup(first_time=true) {
@@ -68,6 +69,12 @@ function setup(first_time=true) {
     // Initialise the graphical column representation
     Graphics = new DistillationGraphics(canvas, column, images, debug);
     console.log(Graphics);
+
+    // Initialise the McCabe-Thiele plot
+    plot_mccabe_thiele_diagram('mccabe_thiele_container');
+
+    // Update any labels based on the initialised state
+    update_labels();
 
     
 }

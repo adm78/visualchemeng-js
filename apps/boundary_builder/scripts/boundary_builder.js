@@ -11,6 +11,7 @@
 // - p5.js or p5.min.js
 // - matter.js
 // - vce_utils.js
+// - vce_math.js
 // - vce_particle.js
 // - vce_ensemble.js
 // - vce_boundary.js
@@ -255,14 +256,14 @@ $('#cp_boundary').click(async function(){
 	    var coordinates = boundaries[i].get_coordinates();
 	    var x = 2.0*dimensions.x;
 	    while (!utils.is_on_canvas(x, coordinates.y)) {
-		var rnd_1 = utils.getRandomSigned();
+		var rnd_1 = vce_math.getRandomSigned();
 		var rnd_2 = -1;
 		if (rnd_1 > 0) {rnd_2 = 1};
 		x = coordinates.x + 50*rnd_2 + 200*rnd_1;
 	    };
 	    y = 2.0*dimensions.y;
 	    while (!utils.is_on_canvas(x, y)) {
-		var rnd_1 = utils.getRandomSigned();
+		var rnd_1 = vce_math.getRandomSigned();
 		var rnd_2 = -1;
 		if (rnd_1 > 0) {rnd_2 = 1};
 		y = coordinates.y + 50*rnd_2 + 200*rnd_1;

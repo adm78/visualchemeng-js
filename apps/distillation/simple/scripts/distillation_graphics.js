@@ -24,7 +24,9 @@ function DistillationGraphics(canvas, column, images, debug) {
       
     Args:
         cavas (p5.canvas) : The p5 canvas to render on top of.
-
+	column : The backend column object
+	images : a JSON object
+	debug : debug bool
     */
 
     // Set the main class attributes
@@ -46,7 +48,7 @@ function DistillationGraphics(canvas, column, images, debug) {
     this.column_width = column_int.w;
     this.column_height = column_int.h;
     this.column_bottom = this.column_top + this.column_height;
-    this.show_boundaries_log = true;
+    this.show_boundaries_log = false;
     this.Ensembles = {};
     this.debug = debug;
     this.valves = {}
@@ -106,7 +108,7 @@ function DistillationGraphics(canvas, column, images, debug) {
     // feed particles
     this.Ensembles.feed = new Ensemble([], this.world, 'feed');
     var feed_particle_feed_pos = {
-	x : this.feed_pipe_pos().x - 0.5*this.images.feed.width*this.column_sf,
+	x : this.column_left - 0.2*this.images.feed.width*this.column_sf,
 	y : this.feed_pipe_pos().y 
     };
     var full_feed_particle_options = [];
@@ -166,7 +168,7 @@ function DistillationGraphics(canvas, column, images, debug) {
     var reflux_valve_pos = utils.get_abs_coords(this.xmax, this.ymax, this.sid.width,
 							  this.sid.height, settings.reflux_valve_position)
     var feed_valve_pos = {
-	x: this.feed_pipe_pos().x - 0.9*this.images.feed.width*this.column_sf,
+	x: this.column_left - 0.27*this.images.feed.width*this.column_sf,
 	y : this.feed_pipe_pos().y
     }
     this.valves = {
