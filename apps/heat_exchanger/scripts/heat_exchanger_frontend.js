@@ -60,12 +60,7 @@ function setup() {
     // Update any labels based on the initialised state
     update_labels();
 
-
-    // test the backend
-    console.log("duty = ", exchanger.duty());
-    console.log("delta_h_shell = ", exchanger.delta_h_shell());
-    console.log("F_shell = ", exchanger.F_shell());
-}
+};
 
 function draw() {
 

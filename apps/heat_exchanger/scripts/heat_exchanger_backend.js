@@ -1,114 +1,57 @@
 // VCE Project - heat_exchanger_backend.js
 //
 // WIP Shell & Tube Heat Exchanger Backend Class
-// simplications for now:
-// - single component (methanol)
 //
 //
 // Requires:
-// - Nothing yet...
+// - vce_math.js
 //
 //
 // Andrew D. McGuire 2018
 // a.mcguire227@gmail.com
 //
 // To do:
-// - everything
+// - everything...
 //
 // --------------------------------------------------
 function HeatExchanger() {
 
-    // Assumption
+    // Assumptions
     // - inlet steam is not super-heated
 
-    // Tube side parameters
-    this.F_tube = 1.0; // molar flow rate (mol/s)
-    this.T_in_tube = 60 + 273.15; // Inlet temp (K)
-    this.T_out_tube = 160.5 + 273.15; // Outlet temp (K)
-    this.component_tube = new Methanol();
+    // Tube side input parameters
+    var tube_component_flowrates = [75.482, 5.6158, 13.907, 46.7592, 0.429, 0.258]; // (kmol/hr)
+    this.mole_flow_tube = vce_math.sum(tube_component_flowrates)*1000.0/3600; // Inlet tube molar flow (mol/s)
+    this.tube_x = get_x(tube_component_flowrates, this.mole_flow_tube); // input mole fractions (-)
+    this.T_in_tube = 333.0; // Inlet temp (K)
+    this.T_out_tube = 433.5; // Outlet temp (K)
+    this.component_tube = new Mixture([new Methanol(), new Water(), new Glycerol(),
+				       new FAME(), new Triglyceride(), new FFA()],
+				      this.tube_x);
 
-    // Shell side parameters
+    // Shell side input parameters
     this.component_shell = new Water();
     this.T_in_shell = 473.15 // Inlet temp (K)
     this.T_out_shell = 453.0 // Outlet temp (K)
-    
-    
-    // Methods
-    this.duty = function() {
-	// Exchanger duty (W)
-	return -this.F_tube*this.delta_h_tube();
-    };
-
-
-    this.F_shell = function() {
-	// Shell molar flowrate (mol/s)
-	return this.duty()/this.delta_h_shell();
-    };
 
     
-    this.delta_h_tube = function() {
-	// Enthalpy change (J)
-	return vce_math.integrator.simpson(this.component_tube.Cp_l, this.T_in_tube, this.T_out_tube, 50);
+    // Computed parameters
+    this.delta_h_tube = vce_math.integrator.simpson(this.component_tube.Cp_l, this.T_in_tube, this.T_out_tube, 50);// specific enthalpy change (J/mol)
+    this.duty = this.mole_flow_tube*this.delta_h_tube // Exchanger duty (W)
+    this.delta_h_liq_shell = vce_math.integrator.simpson(this.component_shell.Cp_l, this.T_in_shell, this.T_out_shell, 50); // (J/mol)
+    this.lambda_shell = this.component_shell.lambda_vap(this.T_in_shell) // (J/mol)
+    this.delta_h_v_shell = 0.0 // (J/mol)
+    this.delta_h_shell = this.delta_h_v_shell - this.lambda_shell + this.delta_h_liq_shell; // (J/mol)
+    this.mole_flow_shell = -this.duty/this.delta_h_shell; // Shell molar flowrate (mol/s)
+    this.mass_flow_shell = this.mole_flow_shell*this.component_shell.amw; // (kg/s)
+
+
+    // Initialisation methods
+    function get_x(component_flowrates, total_flowrate) {
+	var x = [];
+	for (var i=0; i < component_flowrates.length; i++) {
+	    x.push((component_flowrates[i]*1000.0/3600)/total_flowrate);
+	};
+	return x;
     };
-
-
-    this.delta_h_shell = function() {
-	return this.delta_h_v_shell() - this.lambda_shell() + this.delta_h_liq_shell(); 
-    };
-
-
-    this.delta_h_v_shell = function() {
-	// We assume that the incoming steam in saturated (not superheated)
-	return 0.0
-    };
-
-
-    this.lambda_shell = function() {
-	return this.component_shell.lambda_vap(this.T_in_shell)
-    };
-
-
-    this.delta_h_liq_shell = function() {
-	return vce_math.integrator.simpson(this.component_shell.Cp_l, this.T_in_shell, this.T_out_shell, 50);
-    };
-
-
-};
-
-function Methanol() {    
-    /* Methanol component */
-    Component.call(this);
-
-    // Liquid heat capacity parameters
-    this.A_l = 256040;
-    this.B_l = -2741.4;
-    this.C_l = 14.777;
-    this.D_l = -0.0351;
-    this.E_l = 0.00003;
-};
-
-
-function Water() {
-    // Water component
-    Component.call(this);
-
-    
-    // Liquid heat capacity parameters
-    this.A_l = 276370;
-    this.B_l = -2090.1;
-    this.C_l = 8.125;
-    this.D_l = -0.014116;
-    this.E_l = 9.37e-06;
-
-    
-    // Heat of vaporisation parameters
-    this.A_vap = 56600000;
-    this.B_vap = 0.612041;
-    this.C_vap = -0.625697;
-    this.D_vap = 0.398804;
-    this.T_limit_lower_vap = 273.16;  //(K)
-    this.T_limit_upper_vap = 647.096; //(K)
-
-
-
 };

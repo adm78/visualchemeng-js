@@ -32,6 +32,8 @@ function Water() {
     /* Water component */
     Component.call(this);
 
+    this.amw = 18.0e-03 // (kg/mol)
+    
     // Liquid heat capacity parameters
     this.A_l = 276370;
     this.B_l = -2090.1;
@@ -48,6 +50,53 @@ function Water() {
     this.T_limit_lower_vap = 273.16;  //(K)
     this.T_limit_upper_vap = 647.096; //(K)
 
+};
 
+
+function Glycerol() {
+    Component.call(this);    
+    // Liquid heat capacity parameters
+    this.A_l = 78468;
+    this.B_l = 480.71;
+    this.C_l = 0.0;
+    this.D_l = 0.0;
+    this.E_l = 0.0;
 
 };
+
+
+function FAME() {
+    Component.call(this);
+    // Liquid heat capacity parameters
+    this.A_l = 324000;
+    this.B_l = 928;
+    this.C_l = 0.0;
+    this.D_l = 0.0;
+    this.E_l = 0.0;
+
+};
+
+
+function Triglyceride() {
+    Component.call(this);
+    // Liquid heat capacity parameters
+    this.A_l = 5354.96;
+    this.B_l = 5014.624;
+    this.C_l = 0.0;
+    this.D_l = 0.0;
+    this.E_l = 0.0;
+};
+
+
+function FFA() {
+    Component.call(this);
+    // Liquid heat capacity parameters
+    this.A_l = 459000;
+    this.B_l = -866;
+    this.C_l = 3.74;
+    this.D_l = 0.0;
+    this.E_l = 0.0;
+};
+
+
+				    
