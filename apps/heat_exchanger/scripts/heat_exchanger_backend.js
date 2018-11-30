@@ -33,7 +33,7 @@ function HeatExchanger() {
     this.component_shell = new Water();
     this.T_in_shell = 473.15 // Inlet temp (K)
     this.T_out_shell = 453.0 // Outlet temp (K)
-
+    
 
     // Pipe properties 
     this.d_out = 30e-03 // (m)
@@ -45,31 +45,32 @@ function HeatExchanger() {
     this.A_tube = this.d_out*Math.PI*this.L; // (m2)
 
 
+    // --------------------------------
+    // Sequentially Computed parameters
+    // --------------------------------
     
-    // Sequnetially Computed parameters
-
-    // Tube specific enthanlpy and exchanger duty
+    // Tube specific enthanlpy and exchanger duty:
     this.delta_h_tube = vce_math.integrator.simpson(this.component_tube.Cp_l, this.T_in_tube, this.T_out_tube, 50);//  (J/mol)
     this.duty = this.mole_flow_tube*this.delta_h_tube // (W)
 
-    // Shell specific enthalpy change
+    // Shell specific enthalpy change:
     this.delta_h_liq_shell = vce_math.integrator.simpson(this.component_shell.Cp_l, this.T_in_shell, this.T_out_shell, 50); // (J/mol)
     this.lambda_shell = this.component_shell.lambda_vap(this.T_in_shell) // (J/mol)
     this.delta_h_v_shell = 0.0 // (J/mol)
     this.delta_h_shell = this.delta_h_v_shell - this.lambda_shell + this.delta_h_liq_shell; // (J/mol)
 
-    // Shell flow
+    // Shell flow:
     this.mole_flow_shell = -this.duty/this.delta_h_shell; // (mol/s)
     this.mass_flow_shell = this.mole_flow_shell*this.component_shell.amw; // (kg/s)
-
-    // Mean temperature difference
-
-    // Log mean temp difference
+    this.P_shell = this.component_shell.P_vap(this.T_in_shell); // (Pa)
+    
+    // Mean temperature difference:
+    // - Log mean temp difference
     var delta_T_lm_num = (this.T_in_shell - this.T_out_tube) - (this.T_out_shell - this.T_in_tube);
     var delta_T_lm_exp_num = (this.T_in_shell - this.T_out_tube)/(this.T_out_shell - this.T_in_tube);
     this.delta_T_lm = delta_T_lm_num/Math.log(delta_T_lm_exp_num); // (K)
 
-    // Corrected temperature diff
+    // - Corrected temperature diff
     this.R = (this.T_in_shell - this.T_out_shell)/(this.T_out_tube - this.T_in_tube); // (-)
     this.S = (this.T_out_tube - this.T_in_tube)/(this.T_in_shell - this.T_in_tube); // (-)
     var num_1 = Math.sqrt(Math.pow(this.R,2) + 1);
@@ -83,25 +84,29 @@ function HeatExchanger() {
 
     // Heat transfer coefficient
     var U_guess = 420 // (W/m2 K)
-    this.soln = solve_U(this, U_guess, rtol=0.01);
-
-
-    function solve_U(obj, U_guess, rtol) {
-
-	var A = obj.duty/(U_guess*obj.delta_T_m);
-	var N_tube = Math.ceil(A/obj.A_tube);
-	var D_bundle = obj.d_out*Math.pow(N_tube/obj.K_1,1.0/obj.n_1);
-
-	return {
-	    A : A,
-	    N_tube : N_tube,
-	    D_bundle : D_bundle
-	};
-    };
-
-
-    
+    //this.soln = solve_U(this, U_guess, rtol=0.01);
 
 };
 
 
+function solve(e, U_guess, U_c_guess) {
+
+    // Determine the number of tubes/bundle diameter
+    e.A = e.duty/(U_guess*e.delta_T_m); // require heat transfer area
+    e.N_tube = Math.ceil(e.A/e.A_tube); // number tubes
+    e.D_bundle = e.d_out*Math.pow(e.N_tube/e.K_1,1.0/e.n_1);
+    e.T_m_shell = 0.5*(e.T_in_shell + e.T_out_shell); // mean shell temp
+    e.T_m_tube = 0.5*(e.T_in_tube + e.T_out_tube); // mean tube temp
+	
+    // Compute the shell side heat transfer coefficient
+    e.T_wall = e.T_m_shell - (U_guess/U_c_guess)*(e.T_m_shell/e.T_m_tube); // tube wall temp
+    e.T_m_cond = 0.5*(e.T_wall + e.T_m_cond); // mean condensate temperatue
+    e.k_cond = e.component_shell.k(e.T_m_cond);
+    e.rho_v_cond = e.component_shell.rho_v(e.T_m_cond);
+    e.rho_l_cond = e.component_shell.rho_l(e.T_m_cond);
+    e.mu_l_cond = e.component_shell.mu_l(e.T_m_cond);
+//    e.h_shell_kerr = 0.95*e.k_cond*(
+
+    // pretend we solve it for now, return the update exchanger object
+    return e 
+    };

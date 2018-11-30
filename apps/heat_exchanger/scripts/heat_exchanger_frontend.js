@@ -51,11 +51,11 @@ function setup() {
     // Initialise the backend exchanger
     options = {};
     exchanger = new HeatExchanger(options);
+    exchanger = solve(exchanger, 420.0, 4163.0);
     console.log(exchanger);
     
     // Initialise the graphical column representation
     graphics = new HeatExchangerGraphics(canvas, exchanger, images, debug);
-    console.log(graphics);
 
     // Update any labels based on the initialised state
     update_labels();
