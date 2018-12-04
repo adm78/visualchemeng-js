@@ -58,7 +58,7 @@ function Water() {
     this.D_rho_l = 1.8211e-06;
     this.T_limit_lower_rho_l = 273.16; // (K)
     this.T_limit_upper_rho_l = 353.15; // (K)
-
+    this.rho_l_eqn = 2;
 
     // Vapour pressure parameters
     this.A_vap_p = 73.649;

@@ -99,8 +99,8 @@ function solve(e, U_guess, U_c_guess) {
     e.T_m_tube = 0.5*(e.T_in_tube + e.T_out_tube); // mean tube temp
 	
     // Compute the shell side heat transfer coefficient
-    e.T_wall = e.T_m_shell - (U_guess/U_c_guess)*(e.T_m_shell/e.T_m_tube); // tube wall temp
-    e.T_m_cond = 0.5*(e.T_wall + e.T_m_cond); // mean condensate temperatue
+    e.T_wall = e.T_m_shell - (U_guess/U_c_guess)*(e.T_m_shell - e.T_m_tube); // tube wall temp
+    e.T_m_cond = 0.5*(e.T_wall + e.T_m_shell); // mean condensate temperatue
     e.k_cond = e.component_shell.k(e.T_m_cond);
     e.rho_v_cond = e.component_shell.rho_v(e.T_m_cond);
     e.rho_l_cond = e.component_shell.rho_l(e.T_m_cond);
