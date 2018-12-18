@@ -102,11 +102,13 @@ function solve(e, U_guess, U_c_guess) {
     e.T_wall = e.T_m_shell - (U_guess/U_c_guess)*(e.T_m_shell - e.T_m_tube); // tube wall temp
     e.T_m_cond = 0.5*(e.T_wall + e.T_m_shell); // mean condensate temperatue
     e.k_cond = e.component_shell.k(e.T_m_cond);
-    e.rho_v_cond = e.component_shell.rho_v(e.T_m_cond);
+    e.rho_v_cond = e.component_shell.rho_v(e.P_shell, e.T_m_cond);
     e.rho_l_cond = e.component_shell.rho_l(e.T_m_cond);
     e.mu_l_cond = e.component_shell.mu_l(e.T_m_cond);
-//    e.h_shell_kerr = 0.95*e.k_cond*(
-
+    e.vert_tube_loading = e.mass_flow_shell/(e.N_tube*Math.PI*e.d_out);
+    e.h_shell_kerr = 0.95*e.k_cond*Math.pow((e.rho_l_cond*(e.rho_l_cond - e.rho_v_cond)*vce_constants.g)/
+					    (e.mu_l_cond*e.vert_tube_loading), 1/3);
+	
     // pretend we solve it for now, return the update exchanger object
     return e 
     };
