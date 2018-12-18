@@ -12,6 +12,7 @@
 // Requires:
 // matter.min.js
 // vce_utils.js
+// vce_math.js
 // p5.min.js
 // boundary.js
 // vce_ensemble.js
@@ -63,13 +64,13 @@ function ReactorGraphics(canvas, Reac, n_init, Tank, imp_array=[], isf=0.8, debu
 
     // Build the ensemble array (one ensemble for each component)
     this.Ensembles = [];
-    var cT = utils.sum(this.Reac.conc);
+    var cT = vce_math.sum(this.Reac.conc);
     for (var i = 0; i < Reac.components.length; i++) {
 	var component_ensemble = new Ensemble([],this.world);
 	var component_n_init = Math.round(this.Reac.conc[i]*n_init/cT);
 	for (j = 0; j < component_n_init; j++) {
-	    var inlet_x = 0.5*(this.xmax + 0.8*utils.getRandomSigned()*this.sid.width); 
-	    var inlet_y = (this.ymax)*0.7 + 0.2*utils.getRandomSigned()*this.sid.height;
+	    var inlet_x = 0.5*(this.xmax + 0.8*vce_math.getRandomSigned()*this.sid.width); 
+	    var inlet_y = (this.ymax)*0.7 + 0.2*vce_math.getRandomSigned()*this.sid.height;
 	    var Part = ParticleFactory(this.world, inlet_x, inlet_y, settings.particle_options[i]);
 	    component_ensemble.addParticle(Part);
 	};
@@ -139,8 +140,8 @@ function ReactorGraphics(canvas, Reac, n_init, Tank, imp_array=[], isf=0.8, debu
 	 * outliers and reactor concentration changes. */
 	
 	Engine.update(this.engine);
-	var inlet_x = 0.5*(this.xmax + 0.8*utils.getRandomSigned()*this.sid.width); 
-	var inlet_y = (this.ymax)*0.7 + 0.2*utils.getRandomSigned()*this.sid.height;
+	var inlet_x = 0.5*(this.xmax + 0.8*vce_math.getRandomSigned()*this.sid.width); 
+	var inlet_y = (this.ymax)*0.7 + 0.2*vce_math.getRandomSigned()*this.sid.height;
 	for (var i = 0; i < this.Ensembles.length; i++) {
 	    var dN = this.get_dN_int(i);
 	    if (dN < 0) {

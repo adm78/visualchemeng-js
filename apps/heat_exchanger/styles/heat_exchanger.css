@@ -1,0 +1,43 @@
+* {
+    margin : 0;
+    padding : 0
+}
+
+.wrapper {
+    display: grid;
+    grid-gap: 10px;
+    grid-template-columns: 1.5fr 3fr 1fr;
+    background-color: #fff;
+    color: #444;
+}
+
+
+.vce_info {
+    grid-column: 3;
+    grid-row: 1;
+}
+
+
+.sim_container {
+    grid-column: 1 / 3;
+    grid-row: 1 / 4;
+}
+
+
+.button_container {
+    grid-column: 3 ;
+    grid-row: 2 / 3;
+}
+
+
+.system_id_container {
+    grid-column: 3 ;
+    grid-row: 3 / 4;
+    text-align: center;
+}
+
+
+/* hide the plotly toolbar */
+.modebar {
+    display: none !important;
+}
