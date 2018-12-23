@@ -10,24 +10,9 @@
   </head>
   <body style="background-color:white;">
     <div class="wrapper" id="target">
-      <div class="box conversion_plot_container" title="Reactor component conversion: 
-This is based on the limiting reactant. Let the limiting reactant be
-z, then the conversion (%) is given by
-
-conversion(t) = 100.0%[c(z,0) - c(z,t)]/c(z,0),
-
-where c(z,t) is the concentration of component z at time t." id="conversion_plot_container"></div>
-      <div class="box duty_plot_container" title="Reactor duty:
-This is the power output of reactor as a result of the heat of reaction.
-For this simple reaction the duty (kW) is given by
-
-Q = &#916;h_r.r.V,
-
-where &#916;h_r is the heat of reaction (kJ/mol), r is the reaction
-rate (mol/m^3/s) and V is the reactor volume (m^3)." id="duty_plot_container"></div>
-      <div class="box conc_plot_container" title="The reactor component concentrations as a function of time: 
-For simple reactions such as this one, there is an analytical solution
-to the set of component material balances. More details on this soon."id="conc_plot_container"></div>
+      <div class="box conversion_plot_container" id="conversion_plot_container"></div>
+      <div class="box duty_plot_container" id="duty_plot_container"></div>
+      <div class="box conc_plot_container" id="conc_plot_container"></div>
       <div class="box sim_container" title="Simulation box:
 Click anywhere in the box to pause the reaction." id="sim_container">
       </div>
