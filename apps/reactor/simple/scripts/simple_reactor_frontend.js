@@ -26,7 +26,7 @@
 //               set-up variables
 // --------------------------------------------------
 var debug = settings.debug,
-    paused_log = false,
+    paused_log = true,
     canvas,
     Reac,
     Graphics,
@@ -106,7 +106,9 @@ function setup(first_time=true) {
     // Re-size plots where required
     utils.resizePlotly('duty_plot_container');
     utils.resizePlotly('conversion_plot_container');
-    
+
+    // Update button labels as required
+    update_labels();
 }
 
 function draw() {
@@ -155,9 +157,22 @@ function save_data(Reac) {
 //                 Styling updaters
 // --------------------------------------------------
 function update_labels() {
-    // Update the UI labels so that they are conistant wit the
+    // Update the UI labels so that they are consistant wiht the
     // application state.
+    update_run_button_label();
     update_bounds_button_label();
+};
+
+
+function update_run_button_label() {
+    if (paused_log) {
+	$("#run").text('Start');
+	$('#run').prop('title', 'Un-pause the reaction');
+    }
+    else {
+	$("#run").text('Pause');
+	$('#run').prop('title', 'Pause the reaction');
+    };
 };
 
 
@@ -265,14 +280,7 @@ function update_Cc0() {
 $('#run').click(async function(){
     console.log("You just clicked stream/pause!");
     paused_log = !(paused_log);
-    if (paused_log) {
-	$("#run").text('Run');
-	$('#run').prop('title', 'Un-pause the reaction');
-    }
-    else {
-	$("#run").text('Pause');
-	$('#run').prop('title', 'Pause the reaction');
-    }
+    update_run_button_label();
 });
 
 // save button
@@ -297,7 +305,6 @@ $('#restart').click(async function(){
     console.log("You just clicked reset!");
     reactor_options = utils.deep_copy(default_reactor_options);
     setup();
-    update_labels();
 });
 
 
