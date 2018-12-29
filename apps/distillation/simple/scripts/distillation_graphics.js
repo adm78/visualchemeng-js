@@ -4,7 +4,7 @@
 // distillation column.  
 //
 // Requires:
-
+//
 //
 // Andrew D. McGuire 2018
 // a.mcguire227@gmail.com
@@ -91,11 +91,12 @@ function DistillationGraphics(canvas, column, images, debug) {
     };
 
 
-    this.update_feed_rates = function() {
-	// adjust the particle feed rates to match the backend flowrates
-	this.Ensembles.feed.feeds[0].set_rate(this.column.F*this.pm); 
-	this.Ensembles.bottoms.feeds[0].set_rate(this.column.L()*this.pm); 
-	this.Ensembles.tops.feeds[0].set_rate(this.column.V()*this.pm); 
+    this.update_particle_source_rates = function() {
+	// adjust the particle generation rates at each source to
+	// match the backend flowrates
+	this.Ensembles.feed.sources[0].set_rate(this.column.F*this.pm); 
+	this.Ensembles.bottoms.sources[0].set_rate(this.column.L()*this.pm); 
+	this.Ensembles.tops.sources[0].set_rate(this.column.V()*this.pm); 
     };
 
 
@@ -103,52 +104,50 @@ function DistillationGraphics(canvas, column, images, debug) {
     // THE NEED FOR SOME OF THE METHODS IN CONSTRUCTION. MIGHT HAVE TO
     // EXTRACT THESE AS PROTOTYPE FUNCTIONS.
     
-    // Build the ensemble array (need one for each feed, since some have different boundaries)
+    // Build the ensemble array (need one for each input/output stream, since some have different boundaries)
     
     // feed particles
     this.Ensembles.feed = new Ensemble([], this.world, 'feed');
-    var feed_particle_feed_pos = {
+    var feed_particle_source_pos = {
 	x : this.column_left - 0.2*this.images.feed.width*this.column_sf,
 	y : this.feed_pipe_pos().y 
     };
     var full_feed_particle_options = [];
     for (var i = 0; i < settings.particles.length; i++) {
-	full_feed_particle_options[i] = utils.merge_options(settings.particles[i], settings.particle_feeds.feed.options);
+	full_feed_particle_options[i] = utils.merge_options(settings.particles[i], settings.particle_sources.feed.options);
     };
-    var feed_particle_feed_rate = null; // will be set later
-    this.Ensembles.feed.addFeed(new ParticleFeed(feed_particle_feed_pos.x, feed_particle_feed_pos.y,
-						 feed_particle_feed_rate, full_feed_particle_options));
+    var feed_particle_source_rate = null; // will be set later
+    this.Ensembles.feed.addSource(new ParticleSource(feed_particle_source_pos.x, feed_particle_source_pos.y,
+						     feed_particle_source_rate, full_feed_particle_options));
 
 
     
     // bottoms particles
     this.Ensembles.bottoms = new Ensemble([], this.world, 'bottoms');
-    var bottoms_particle_feed_pos = utils.get_abs_coords(this.xmax, this.ymax, this.sid.width,
-							      this.sid.height, settings.particle_feeds.bottoms.position)
+    var bottoms_particle_source_pos = utils.get_abs_coords(this.xmax, this.ymax, this.sid.width,
+							 this.sid.height, settings.particle_sources.bottoms.position)
     var full_bottoms_particle_options = [];
     for (var i = 0; i < settings.particles.length; i++) {
-	full_bottoms_particle_options[i] = utils.merge_options(settings.particles[i], settings.particle_feeds.bottoms.options);
+	full_bottoms_particle_options[i] = utils.merge_options(settings.particles[i], settings.particle_sources.bottoms.options);
     };
-    var bottoms_particle_feed_rate = null; // will be set later
-    this.Ensembles.bottoms.addFeed(new ParticleFeed(bottoms_particle_feed_pos.x, bottoms_particle_feed_pos.y,
-						    bottoms_particle_feed_rate, full_bottoms_particle_options));
+    var bottoms_particle_source_rate = null; // will be set later
+    this.Ensembles.bottoms.addSource(new ParticleSource(bottoms_particle_source_pos.x, bottoms_particle_source_pos.y,
+							bottoms_particle_source_rate, full_bottoms_particle_options));
 
     
     // tops particles
     this.Ensembles.tops = new Ensemble([], this.world, 'tops');
     var tops_pos = utils.get_abs_coords(this.xmax, this.ymax, this.sid.width,
-					     this.sid.height, settings.particle_feeds.tops.position)
+					     this.sid.height, settings.particle_sources.tops.position)
     var full_tops_particle_options = [];
     for (var i = 0; i < settings.particles.length; i++) {
-	full_tops_particle_options[i] = utils.merge_options(settings.particles[i], settings.particle_feeds.tops.options);
+	full_tops_particle_options[i] = utils.merge_options(settings.particles[i], settings.particle_sources.tops.options);
     };
-    var tops_particle_feed_rate = null; // will be set later
-    this.Ensembles.tops.addFeed(new ParticleFeed(tops_pos.x, tops_pos.y,
-						 tops_particle_feed_rate,
-						 full_tops_particle_options));
+    var tops_particle_source_rate = null; // will be set later
+    this.Ensembles.tops.addSource(new ParticleSource(tops_pos.x, tops_pos.y, tops_particle_source_rate, full_tops_particle_options));
 
-    // set the feed rates all together
-    this.update_feed_rates();
+    // set the particle source rates all together
+    this.update_particle_source_rates();
     
     // Build the boundaries
     this.Boundaries = [];
@@ -201,13 +200,13 @@ function DistillationGraphics(canvas, column, images, debug) {
 	    };
 	    if (key == 'feed') {
 		update_options.xmax = this.column_left;
-		update_options.feed_args = [[x_feed, 1.0 - x_feed]];
+		update_options.source_args = [[x_feed, 1.0 - x_feed]];
 	    } else if (key == 'bottoms') {
-		update_options.feed_args = [[x_bottoms, 1.0 - x_bottoms]];
+		update_options.source_args = [[x_bottoms, 1.0 - x_bottoms]];
 	    } else if (key == 'tops') {
 		update_options.ymax = utils.get_abs_coords(this.xmax, this.ymax, this.sid.width,
 							   this.sid.height, settings.tops_boundary_position).y;
-		update_options.feed_args = [[x_tops, 1.0 - x_tops]];
+		update_options.source_args = [[x_tops, 1.0 - x_tops]];
 	    } else {
 		throw new RangeError("No ensemble with key", key);
 	    };

@@ -165,7 +165,7 @@ function mouseDragged() {
 	    };
 	};
 	Graphics.update_backend();
-	Graphics.update_feed_rates();
+	Graphics.update_particle_source_rates();
     };
 };
 

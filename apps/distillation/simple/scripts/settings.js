@@ -32,8 +32,8 @@ var settings = {
     },
     
 
-    // particle feed
-    particle_feeds : {
+    // particle sources
+    particle_sources : {
 	feed : {
 	    options : {
 		init_force : { x : 0.0003, y : 0.0},
