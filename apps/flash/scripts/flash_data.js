@@ -16,9 +16,9 @@
 // Chemical system index
 //
 // sys:
-// 1 - methanol, water, glycerol, methyl-ester (biodiesel), triglyceride
-// 2 - pentane, hexane, cyclohexane
-// 3 - methanol, ethanol, water
+// 0 - methanol, water, glycerol, methyl-ester (biodiesel), triglyceride
+// 1 - pentane, hexane, cyclohexane
+// 2 - methanol, ethanol, water
 //---------------------------------------------------------
 
 function getInitialConditions(sys=1,debug=false) {
@@ -30,7 +30,7 @@ function getInitialConditions(sys=1,debug=false) {
     // sys - chemical system id
     
     var ic;
-    if (sys === 2) {
+    if (sys === 1) {
 	ic = {
 	    x : null,
 	    y : null,
@@ -47,7 +47,7 @@ function getInitialConditions(sys=1,debug=false) {
 	    components : ['PENTANE','HEXANE','CYCLOHEXANE']
 	};
     }
-    else if (sys === 3) {
+    else if (sys === 2) {
 	// methanol, ethanol, water
 	// data: http://webbook.nist.gov/cgi/cbook.cgi?ID=C67561&Mask=4&Type=ANTOINE&Plot=on
 	//
@@ -67,7 +67,7 @@ function getInitialConditions(sys=1,debug=false) {
 	    components : ['MeOH','EtOH','H2O']
 	};	
     }
-    else if (sys === 1) {
+    else if (sys === 0) {
 	// methanol, water, glycerol, methyl-ester (biodiesel), triglyceride
 	// data: http://webbook.nist.gov/cgi/cbook.cgi?ID=C67561&Mask=4&Type=ANTOINE&Plot=on
 	//
@@ -178,18 +178,3 @@ function getRanges(sys=1) {
     return range;
 };
 
-function getColours(sys) {
-
-    if (sys === 2) {
-	return ['#2e8ade','#de912e','#2ede71'];
-    }
-    else if (sys === 3) {
-	// return ['#DF310C', '#ffffff', '#2e8ade'];
-	//return ['#858585', '#ffffff', '#2e8ade'];
-	return ['#BC0CDF','#DFBC0C','#0CDFBC'];
-    }
-    else if (sys === 1) {
-	return ['#BC0CDF','#DFBC0C','#0CDFBC','#2e8ade','#de912e','#2ede71'];
-    };    
-
-};

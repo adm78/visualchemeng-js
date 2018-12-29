@@ -27,9 +27,7 @@ function FlashGraphics(canvas, flash, images, debug) {
     this.debug = debug;
     this.ndraws = 0;
 
-    // graphical config (can be tuned)
-    this.rpart = 1.5; // stream particle radii (float)
-    this.outlet_freq = 1; // # draws/stream replenish (int)
+    // graphical config (can be tuned, could be moved to settings.js)
     this.gravity = 0.02;  // what it says on the tin
     this.pout = 0.5; // controls number of particle to output at a time
     this.pspeed = 1.0; // dt between particle updates
@@ -57,6 +55,17 @@ function FlashGraphics(canvas, flash, images, debug) {
     this.bottoms_pos = createVector(tops_x,tops_y);
 
     // Add particle sources to the ensembles
+    // @TODO: this will take much of the work away from the update method
+    // var full_feed_particle_options = [];
+    // for (var i = 0; i < settings.particles.length; i++) {
+    // 	full_feed_particle_options[i] = utils.merge_options(settings.particles[i], settings.particle_sources.feed.options);
+    // };
+    // var feed_particle_source_rate = null; // will be set later
+    // this.Ensembles.feed.addSource(new ParticleSource(feed_particle_source_pos.x, feed_particle_source_pos.y,
+    // 						     feed_particle_source_rate, full_feed_particle_options));
+    var feed_source_particle_options = null
+    var feed_source = new ParticleSource(feed_x, feed_y, this.pout*this.flash.F, particle_options)
+    this.Ensemble.feed.addSource();
 
     
     // intialise the valve
@@ -75,39 +84,65 @@ function FlashGraphics(canvas, flash, images, debug) {
     this.update = function() {
 
 	//@TODO: ensemble updates should be handled by the ensembles,
-	// not here. We shoudl just be computing the options objects
+	// not here. We should just be computing the options objects
 	// to pass to this.Ensembles.$name.update. Any of the static stuff
 	// should be moved to a settings.js file.
+	stream_specific_options = {
+	    feed : {
+		xmax : 0.5*(this.xmax-this.sid.width),
+		ymax : 2*this.ymax,
+		dt : this.pseed,
+		perturb : false
+	    },
+	    tops : {
+		xmax : this.xmax,
+		ymax : this.ymax,
+		dx_max : this.kpert,
+		dy_max : this.kpert,
+		dt : this.pseed
+	    },
+	    bottoms : {
+		xmax : this.xmax,
+		ymax : 2.0*this.ymax,
+		dx_max : 0.25*this.kpert,
+		dy_max : 0.25*this.kpert,
+		apply_vbound : true,
+		vbound : 0.98*this.ymax,
+		ecoeff : this.ecoeff,
+		dt : this.pseed
+	    }
+	};
+	for (var key in this.Ensembles) {
+	    this.Ensembles[key].update(stream_specific_options[key]);
+	};
+	// this.Ensembles.bottoms.applyBoundary(,this.e_coeff);
 
 	// update exisiting particle positions
-	this.Ensembles.feed.update(pspeed);
-	this.Ensembles.tops.update(pspeed);
-	this.Ensembles.bottoms.update(pspeed);
-	feed_stream.removeOutliers(0.5*(xmax-sid.width),2*ymax);
-	tops_stream.removeOutliers(xmax,ymax);
-	bottoms_stream.applyBoundary(0.98*ymax,e_coeff);
-	bottoms_stream.removeOutliers(xmax,2*ymax);
-	tops_stream.perturb(kpert/1.0,kpert/1.0);
-	bottoms_stream.perturb(kpert/4.0,kpert/4.0);
+	// this.Ensembles.feed.update(pspeed);
+	// this.Ensembles.tops.update(pspeed);
+	// this.Ensembles.bottoms.update(pspeed);
+	// feed_stream.removeOutliers(,);
+	// tops_stream.removeOutliers(xmax,ymax);
+	// bottoms_stream.applyBoundary(0.98*ymax,e_coeff);
+	// bottoms_stream.removeOutliers(xmax,2*ymax);
+	// tops_stream.perturb(kpert/1.0,kpert/1.0);
+	// bottoms_stream.perturb(kpert/4.0,kpert/4.0);
 
 	// add new particles at desired freq
-    	if (ndraws % outlet_freq === 0) {
+    	// if (ndraws % outlet_freq === 0) {
 
-	    var colour = chooseColoursFromComposition(getColours(sys),flash)
+	    // var colour = chooseColoursFromComposition(getColours(sys),flash)
 
-	    // handle the feed stream
-	    for (i=0; i < pout*flash.F; i++) {
-		var feed_particle_options = {
-		    radius : rpart,
-		    energy : 1.0,
-		    v : { x : 2.0, y : 0.0 },
-		    colour : colour.z
-		}
-		var new_feed_part1 = new Particle(feed_pos.x,feed_pos.y+0.01*sid.height, feed_particle_options);
-		var new_feed_part2 = new Particle(feed_pos.x,feed_pos.y-0.01*sid.height, feed_particle_options);
-		feed_stream.addParticle(new_feed_part1);
-		feed_stream.addParticle(new_feed_part2);
-	    };
+	    // // handle the feed stream
+	    // for (i=0; i < pout*flash.F; i++) {
+	    // 	var feed_particle_options = {
+
+	    // 	}
+	    // 	var new_feed_part1 = new Particle(feed_pos.x,feed_pos.y+0.01*sid.height, feed_particle_options);
+	    // 	var new_feed_part2 = new Particle(feed_pos.x,feed_pos.y-0.01*sid.height, feed_particle_options);
+	    // 	feed_stream.addParticle(new_feed_part1);
+	    // 	feed_stream.addParticle(new_feed_part2);
+	    // };
 
 	    // handle the delayed outlet streams
 	    if (feed_stream.outliers >  output_delay) {
