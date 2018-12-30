@@ -11,7 +11,7 @@
 // a.mcguire227@gmail.com
 //----------------------------------------------------------
 var debug = false;
-var sys = 1;
+var sysid = 1;
 var flash;
 var Graphics;
 var paused_log = false; // logical to paused the stream updates
@@ -47,12 +47,12 @@ function setup() {
     canvas.parent("sim_container");
 
     // initialise the backend
-    var ic = getInitialConditions(sys);
+    var ic = getInitialConditions(sysid);
     flash = new Separator(ic.x,ic.y,ic.z,ic.L,ic.V,ic.F,ic.T,ic.P,ic.A,ic.components,debug);
     flash.solve_PTZF();
 
     // initialise the graphical representation object
-    Graphics = new FlashGraphics(canvas, flash, images, debug);  
+    Graphics = new FlashGraphics(canvas, flash, images, sysid, debug);  
 
     // draw the bar charts to screen and set slider values/ranges
     plotCompositionData(flash);
@@ -70,11 +70,6 @@ function draw() {
        lifetime of the scripts executions after setup()
        has completed. */
     
-    
-    //draw the operating param values to screen
-    updateCanvasText(flash,sid);
-
-
     // update particle streams
     if (!(paused_log)) {
 	Graphics.update();
@@ -83,42 +78,10 @@ function draw() {
     Graphics.show();
 };
 
-function updateCanvasText(flash, sid) {
-
-    // write/update the canvas text based on
-    // separator object 'flash' and scaled flash image
-    // dimensions 'sid'.
-    
-    var T_string = flash.T.toFixed(0)+" K";
-    var P_string = flash.P.toFixed(2)+" bar";
-    var F_string_pos_x = 0.5*(xmax-sid.width);
-    var F_string_pos_y = feed_pos.y-30;
-    var V_string_pos_x = tops_pos.x;
-    var V_string_pos_y = tops_pos.y-30;
-    var L_string_pos_x = bottoms_pos.x;
-    var L_string_pos_y = bottoms_pos.y+50;
-
-    textSize(32);
-    fill(255, 255, 255);
-    textAlign(LEFT);    
-    text(T_string, 10, 30);
-    text(P_string, 10, 65);
-    textAlign(CENTER);
-    textSize(24);
-    fill('#444');
-    ellipse(F_string_pos_x,F_string_pos_y-8,30);
-    ellipse(V_string_pos_x,V_string_pos_y-8,30);
-    ellipse(L_string_pos_x,L_string_pos_y-8,30);
-    fill(255, 255, 255);
-    text("F", F_string_pos_x,F_string_pos_y);
-    text("V", V_string_pos_x,V_string_pos_y);
-    text("L", L_string_pos_x,L_string_pos_y);
-
-    // update disabled sliders while we're here
+function update_disabled_sliders(flash) {
     $( "#k3_slider" ).slider( "value", flash.F);
     $( "#k4_slider" ).slider( "value", flash.V);
     $( "#k5_slider" ).slider( "value", flash.L);
-
 };
 
 function plotCompositionData(flash, debug=false) {
@@ -131,7 +94,7 @@ function plotCompositionData(flash, debug=false) {
 	y: flash.z,
 	type: 'bar',
 	marker: {
-	    color : getColours(sys)
+	    color : getColours(sysid)
 	},
 	text: flash.components,
 	width: 0.3
@@ -142,7 +105,7 @@ function plotCompositionData(flash, debug=false) {
 	y: flash.y,
 	type: 'bar',
 	marker: {
-	    color : getColours(sys)
+	    color : getColours(sysid)
 	},
 	text: flash.components,
 	width: 0.3
@@ -153,7 +116,7 @@ function plotCompositionData(flash, debug=false) {
 	y: flash.x,
 	type: 'bar',
 	marker: {
-	    color : getColours(sys)
+	    color : getColours(sysid)
 	},
 	text: flash.components,
 	width: 0.3
@@ -182,7 +145,7 @@ function restartFlash(debug=false) {
     feed_stream = new Ensemble();
     tops_stream = new Ensemble();
     bottoms_stream = new Ensemble();
-    ic = getInitialConditions(sys,debug);
+    ic = getInitialConditions(sysid,debug);
     if (debug) {console.log("flash.js: restartFlash: initial conditions before solve =", ic)};
     flash = new Separator(ic.x,ic.y,ic.z,ic.L,
 			  ic.V,ic.F,ic.T,ic.P,ic.A,ic.components,debug);
@@ -192,50 +155,7 @@ function restartFlash(debug=false) {
 };
 
 
-
-function chooseColoursFromComposition(colours, sep) {
-
-    // select a particle colour from a list, based on
-    // compositions on flash solution s (Output object).
-    var x_cum = [sep.x[0]];
-    var y_cum = [sep.y[0]];
-    var z_cum = [sep.z[0]];
-    var i_x = 0;
-    var i_y = 0;
-    var i_z = 0;
-
-    // generate cumulative composition lists
-    for (var i = 1; i < sep.x.length; i++) {
-	x_cum[i] = x_cum[i-1] + sep.x[i];
-	y_cum[i] = y_cum[i-1] + sep.y[i];
-	z_cum[i] = z_cum[i-1] + sep.z[i];
-    };
-    // choose a component
-    var rndx = Math.random();
-    for (var i = 0; i < x_cum.length; i++) {
-	if (rndx <= x_cum[i]) {
-	    var i_x = i;
-	    break;
-	}
-    };
-    var rndy = Math.random();
-    for (var i = 0; i < y_cum.length; i++) {
-	if (rndy <= y_cum[i]) {
-	    var i_y = i;
-	    break;
-	}
-    };
-    var rndz = Math.random();
-    for (var i = 0; i < z_cum.length; i++) {
-	if (rndz <= z_cum[i]) {
-	    var i_z = i;
-	    break;
-	}
-    };
-    return {x : colours[i_x],
-	    y : colours[i_y],
-	    z : colours[i_z]};
-};
+//@TODO: move composition plotting to a seperate js file
 // --------------------------------------------------
 //              composition graph layout
 // --------------------------------------------------
@@ -297,8 +217,10 @@ bottoms_bar_chart_layout.title = 'Bottoms';
 
 var flowrate_bar_chart_layout = jQuery.extend(true, {}, base_bar_chart_layout);
 flowrate_bar_chart_layout.title = 'Flowrate/ kmol/hr';
-var F_range = getRanges(sys).F;
+var F_range = getRanges(sysid).F;
 flowrate_bar_chart_layout.yaxis.range = [F_range.min, F_range.max];
+
+
 // --------------------------------------------------
 //              flash tank operations
 // --------------------------------------------------
@@ -320,7 +242,7 @@ function update_temp() {
 
 function update_F() {
     if (!resetting_log && !chem_sys_changing_log) {
-	var F_range = getRanges(sys).F
+	var F_range = getRanges(sysid).F
     	flash.F = F_range.min + valve.position*(F_range.max - F_range.min);
     	flash.solve_PTZF();
     	plotCompositionData(flash);
@@ -378,7 +300,7 @@ function updateAllSliders() {
 
 
 function updatePSlider() {
-    var P_range = getRanges(sys).P;
+    var P_range = getRanges(sysid).P;
     $( "#k1_slider" ).slider({
 	orientation: "vertical",
 	range: "min",
@@ -394,7 +316,7 @@ function updatePSlider() {
 };
 
 function updateTSlider() {
-    var T_range = getRanges(sys).T;
+    var T_range = getRanges(sysid).T;
     $( "#k2_slider" ).slider({
 	orientation: "vertical",
 	range: "min",
@@ -409,7 +331,7 @@ function updateTSlider() {
 };
 
 function updateFSlider() {
-    var F_range = getRanges(sys).F;
+    var F_range = getRanges(sysid).F;
     $( "#k3_slider" ).slider({
 	orientation: "vertical",
 	range: "min",
@@ -426,7 +348,7 @@ function updateFSlider() {
 
 function updateLSlider() {
     // bottoms flowrate slider
-    var L_range = getRanges(sys).L;
+    var L_range = getRanges(sysid).L;
     $( "#k4_slider" ).slider({
 	orientation: "vertical",
 	range: "min",
@@ -444,7 +366,7 @@ function updateLSlider() {
 
 function updateVSlider() {
     // tops flowrate slider
-    var V_range = getRanges(sys).V;
+    var V_range = getRanges(sysid).V;
     $( "#k5_slider" ).slider({
 	orientation: "vertical",
 	range: "min",
@@ -501,11 +423,11 @@ $('#system_id').on('change', function() {
     
     chem_sys_changing_log = true;
     console.log("-------potential chemical system change------");
-    var old_sys = sys;
-    console.log("old sys = ", old_sys);
-    sys = Number(this.value) + 1;
-    console.log("new sys = ", sys);   
-    if (old_sys != sys) {
+    var old_sysid = sysid;
+    console.log("old sysid = ", old_sysid);
+    sysid = Number(this.value);
+    console.log("new sys = ", sysid);   
+    if (old_sysid != sysid) {
 	restartFlash(debug);
 	plotCompositionData(flash, debug=false);
 	updateAllSliders();

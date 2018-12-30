@@ -13,7 +13,7 @@
 // @TODO: finish implementing the new update method
 //
 //----------------------------------------------------------
-function FlashGraphics(canvas, flash, images, debug) {
+function FlashGraphics(canvas, flash, images, sysid, debug) {
 
 
     // Set the main class attributes
@@ -26,9 +26,9 @@ function FlashGraphics(canvas, flash, images, debug) {
     this.sid = utils.utils.getImgScaledDimensions(this.images.tank, this.canvas_sf, this.ymax);
     this.debug = debug;
     this.ndraws = 0;
+    this.sysid = sysid // system identifier used for loading system-specific settings
 
     // graphical config (can be tuned, could be moved to settings.js)
-    this.gravity = 0.02;  // what it says on the tin
     this.pout = 0.5; // controls number of particle to output at a time
     this.pspeed = 1.0; // dt between particle updates
     this.kpert = 4.0; // particle perturbation scaling constant (float)
@@ -55,20 +55,35 @@ function FlashGraphics(canvas, flash, images, debug) {
     this.bottoms_pos = createVector(tops_x,tops_y);
 
     // Add particle sources to the ensembles
-    // @TODO: this will take much of the work away from the update method
-    // var full_feed_particle_options = [];
-    // for (var i = 0; i < settings.particles.length; i++) {
-    // 	full_feed_particle_options[i] = utils.merge_options(settings.particles[i], settings.particle_sources.feed.options);
-    // };
-    // var feed_particle_source_rate = null; // will be set later
-    // this.Ensembles.feed.addSource(new ParticleSource(feed_particle_source_pos.x, feed_particle_source_pos.y,
-    // 						     feed_particle_source_rate, full_feed_particle_options));
-    var feed_source_particle_options = null
-    var feed_source = new ParticleSource(feed_x, feed_y, this.pout*this.flash.F, particle_options)
-    this.Ensemble.feed.addSource();
+    // feed
+    var full_feed_particle_options = [];
+    for (var i = 0; i < settings.sys[this.sysid].particles.length; i++) {
+    	full_feed_particle_options[i] = utils.merge_options(settings.sys[this.sysid].particles[i],
+							    settings.sys[this.sysid].particle_sources.feed.options);
+    };
+    var feed_source = new ParticleSource(feed_x, feed_y, this.pout*this.flash.F, full_feed_particle_options);
+    this.Ensemble.feed.addSource(feed_source);
+
+    // tops
+    var full_tops_particle_options = [];
+    for (var i = 0; i < settings.sys[this.sysid].particles.length; i++) {
+    	full_tops_particle_options[i] = utils.merge_options(settings.sys[this.sysid].particles[i],
+							    settings.sys[this.sysid].particle_sources.tops.options);
+    };
+    var tops_source = new ParticleSource(tops_x, tops_y, this.pout*this.flash.F, full_tops_particle_options);
+    this.Ensemble.tops.addSource(tops_source);
+
+    // bottoms
+    var full_bottoms_particle_options = [];
+    for (var i = 0; i < settings.sys[this.sysid].particles.length; i++) {
+    	full_bottoms_particle_options[i] = utils.merge_options(settings.sys[this.sysid].particles[i],
+							    settings.sys[this.sysid].particle_sources.bottoms.options);
+    };
+    var bottoms_source = new ParticleSource(bottoms_x, bottoms_y, this.pout*this.flash.F, full_bottoms_particle_options);
+    this.Ensemble.bottoms.addSource(bottoms_source);
 
     
-    // intialise the valve
+    // initialise the valve
     var valve_options = {};
     if (!online) {
 	valve_options.body_img_URL = "../../../../lib/images/valve4.svg";
@@ -79,6 +94,33 @@ function FlashGraphics(canvas, flash, images, debug) {
     var F_range = getRanges(sys).F;
     valve.set_position(flash.F/(F_range.max - F_range.min));
 
+    
+    // set the stream-specific update options
+    stream_specific_options = {
+	feed : {
+	    xmax : 0.5*(this.xmax-this.sid.width),
+	    ymax : 2*this.ymax,
+	    dt : this.pseed,
+	    perturb : false
+	},
+	tops : {
+	    xmax : this.xmax,
+	    ymax : this.ymax,
+	    dx_max : this.kpert,
+	    dy_max : this.kpert,
+	    dt : this.pseed
+	},
+	bottoms : {
+	    xmax : this.xmax,
+	    ymax : 2.0*this.ymax,
+	    dx_max : 0.25*this.kpert,
+	    dy_max : 0.25*this.kpert,
+	    apply_vbound : true,
+	    vbound : 0.98*this.ymax,
+	    ecoeff : this.ecoeff,
+	    dt : this.pseed
+	}
+    };
 
     // public methods
     this.update = function() {
@@ -87,94 +129,16 @@ function FlashGraphics(canvas, flash, images, debug) {
 	// not here. We should just be computing the options objects
 	// to pass to this.Ensembles.$name.update. Any of the static stuff
 	// should be moved to a settings.js file.
-	stream_specific_options = {
-	    feed : {
-		xmax : 0.5*(this.xmax-this.sid.width),
-		ymax : 2*this.ymax,
-		dt : this.pseed,
-		perturb : false
-	    },
-	    tops : {
-		xmax : this.xmax,
-		ymax : this.ymax,
-		dx_max : this.kpert,
-		dy_max : this.kpert,
-		dt : this.pseed
-	    },
-	    bottoms : {
-		xmax : this.xmax,
-		ymax : 2.0*this.ymax,
-		dx_max : 0.25*this.kpert,
-		dy_max : 0.25*this.kpert,
-		apply_vbound : true,
-		vbound : 0.98*this.ymax,
-		ecoeff : this.ecoeff,
-		dt : this.pseed
-	    }
-	};
+
 	for (var key in this.Ensembles) {
 	    this.Ensembles[key].update(stream_specific_options[key]);
 	};
-	// this.Ensembles.bottoms.applyBoundary(,this.e_coeff);
-
-	// update exisiting particle positions
-	// this.Ensembles.feed.update(pspeed);
-	// this.Ensembles.tops.update(pspeed);
-	// this.Ensembles.bottoms.update(pspeed);
-	// feed_stream.removeOutliers(,);
-	// tops_stream.removeOutliers(xmax,ymax);
-	// bottoms_stream.applyBoundary(0.98*ymax,e_coeff);
-	// bottoms_stream.removeOutliers(xmax,2*ymax);
-	// tops_stream.perturb(kpert/1.0,kpert/1.0);
-	// bottoms_stream.perturb(kpert/4.0,kpert/4.0);
-
-	// add new particles at desired freq
-    	// if (ndraws % outlet_freq === 0) {
-
-	    // var colour = chooseColoursFromComposition(getColours(sys),flash)
-
-	    // // handle the feed stream
-	    // for (i=0; i < pout*flash.F; i++) {
-	    // 	var feed_particle_options = {
-
-	    // 	}
-	    // 	var new_feed_part1 = new Particle(feed_pos.x,feed_pos.y+0.01*sid.height, feed_particle_options);
-	    // 	var new_feed_part2 = new Particle(feed_pos.x,feed_pos.y-0.01*sid.height, feed_particle_options);
-	    // 	feed_stream.addParticle(new_feed_part1);
-	    // 	feed_stream.addParticle(new_feed_part2);
-	    // };
-
-	    // handle the delayed outlet streams
-	    if (feed_stream.outliers >  output_delay) {
-		for (i=0; i < pout*flash.V; i++) {
-		    var tops_particle_options = {
-			radius : rpart,
-			v : { x : 2.0, y : 0.0 },
-			colour : colour.y,
-			acc : createVector(0, -gravity)
-		    };
-		    var new_tops_part = new Particle(tops_pos.x, tops_pos.y, tops_particle_options);
-    		    tops_stream.addParticle(new_tops_part);
-
-		};
-		for (i=0; i < pout*flash.L; i++) {
-		    var bottoms_particle_options = {
-			radius : rpart,
-			v : { x : 2.0, y : 0.0 },
-			colour : colour.x,
-			acc : createVector(0, gravity)
-		    };
-		    var new_bottoms_part = new Particle(bottoms_pos.x, bottoms_pos.y, bottoms_particle_options);
-		    bottoms_stream.addParticle(new_bottoms_part);
-		};
-	    };
-    	};
-
-    	// prevent potential overflow
-    	this.ndraws = this.ndraws + 1;
-    	if (this.ndraws > 10000) {
-    	    this.ndraws = 0;
-    	};
+	
+    	// // prevent potential overflow
+    	// this.ndraws = this.ndraws + 1;
+    	// if (this.ndraws > 10000) {
+    	//     this.ndraws = 0;
+    	// };
 
     };
 
@@ -196,10 +160,56 @@ function FlashGraphics(canvas, flash, images, debug) {
     };
 
 
-    this._show_ensembles() = function() {
+    this._show_ensembles = function() {
 	for (var key in this.Ensembles) {
 	    this.Ensembles[key].show();
 	};
     };
+
+
+    this._show_temp = function() {
+	var T_string = flash.T.toFixed(0)+" K";
+	push()
+	textSize(32);
+	fill(255, 255, 255);
+	textAlign(LEFT);    
+	text(T_string, 10, 30);
+	pop()
+    };
+
+
+    this._show_pressure = function() {
+	var P_string = flash.P.toFixed(2)+" bar";
+	push()
+	textSize(32);
+	fill(255, 255, 255);
+	textAlign(LEFT);    
+	text(P_string, 10, 65);
+	pop()
+    };
+
+
+    this._show_stream_labels = function() {
+	var F_string_pos_x = 0.5*(this.xmax-this.sid.width);
+	var F_string_pos_y = this.feed_pos.y-30;
+	var V_string_pos_x = this.tops_pos.x;
+	var V_string_pos_y = this.tops_pos.y-30;
+	var L_string_pos_x = this.bottoms_pos.x;
+	var L_string_pos_y = this.bottoms_pos.y+50;
+	push();
+	textAlign(CENTER);
+	textSize(24);
+	fill('#444');
+	ellipse(F_string_pos_x,F_string_pos_y-8,30);
+	ellipse(V_string_pos_x,V_string_pos_y-8,30);
+	ellipse(L_string_pos_x,L_string_pos_y-8,30);
+	fill(255, 255, 255);
+	text("F", F_string_pos_x,F_string_pos_y);
+	text("V", V_string_pos_x,V_string_pos_y);
+	text("L", L_string_pos_x,L_string_pos_y);
+	pop();
+    };
+
+
     
 };

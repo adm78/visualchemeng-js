@@ -20,8 +20,7 @@
 // 1 - pentane, hexane, cyclohexane
 // 2 - methanol, ethanol, water
 //---------------------------------------------------------
-
-function getInitialConditions(sys=1,debug=false) {
+function getInitialConditions(sys=0,debug=false) {
 
     // return the intial conditions and property data
     // object
