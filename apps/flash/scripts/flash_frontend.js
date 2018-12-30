@@ -243,7 +243,7 @@ function update_temp() {
 function update_F() {
     if (!resetting_log && !chem_sys_changing_log) {
 	var F_range = getRanges(sysid).F
-    	flash.F = F_range.min + valve.position*(F_range.max - F_range.min);
+    	flash.F = F_range.min + Graphics.valve.position*(F_range.max - F_range.min);
     	flash.solve_PTZF();
     	plotCompositionData(flash);
     };
@@ -438,31 +438,31 @@ $('#system_id').on('change', function() {
 
 // drag/valve control
 function mouseClicked() {
-    if (valve.is_on_handle(mouseX, mouseY)) { valve.click(); }
-    else {valve.unclick();};
+    if (Graphics.valve.is_on_handle(mouseX, mouseY)) { Graphics.valve.click(); }
+    else {Graphics.valve.unclick();};
 };
 
 
 function mousePressed() {
     var m = createVector(mouseX, mouseY);
-    if (valve.is_on_handle(mouseX, mouseY)) {
+    if (Graphics.valve.is_on_handle(mouseX, mouseY)) {
 	isDragging = true;
-	valve.click();
+	Graphics.valve.click();
     };
 };
 
 
 function mouseReleased() {
     // Note: This is important! Other things can be dragged after
-    // clicking the valve... like all the sliders.
+    // clicking the Graphics.valve... like all the sliders.
     isDragging = false;
-    valve.unclick();
+    Graphics.valve.unclick();
 };
 
 
 function mouseDragged() {
   if (isDragging) {
-      valve.drag_handle(mouseX, mouseY);
+      Graphics.valve.drag_handle(mouseX, mouseY);
       update_F();
   };
 };

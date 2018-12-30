@@ -35,7 +35,7 @@ settings = {
 	},
 
 	{// system index 1
-	    particles : {
+	    particle_sources : {
 		feed : {
 		    options : {
 			// energy : 1.0,
@@ -56,7 +56,7 @@ settings = {
 		}
 	    },
 			
-	    particle_options : [
+	    particles : [
 		{type : 'single-body-manual', colour : '#2e8ade', radius : 1.5},
  		{type : 'single-body-manual', colour : '#de912e', radius : 1.5},
 		{type : 'single-body-manual', colour : '#2ede71', radius : 1.5}]

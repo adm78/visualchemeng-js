@@ -11,7 +11,7 @@
 // Andrew D. McGuire 2018
 // a.mcguire227@gmail.com
 //
-// @TODO: finish implementing the new update method
+// @TODO: compute source args for update method.
 //
 //----------------------------------------------------------
 function FlashGraphics(canvas, flash, images, sysid, debug) {
@@ -98,11 +98,14 @@ function FlashGraphics(canvas, flash, images, sysid, debug) {
 
     
     // set the stream-specific update options
+    // @TODO: the source args options need to be constructed and
+    // passed. These are related to the composition of the flash
+    // streams.
     stream_specific_options = {
 	feed : {
 	    xmax : 0.5*(this.xmax-this.sid.width),
 	    ymax : 2*this.ymax,
-	    dt : this.pseed,
+	    dt : this.pspeed,
 	    perturb : false
 	},
 	tops : {
@@ -110,7 +113,7 @@ function FlashGraphics(canvas, flash, images, sysid, debug) {
 	    ymax : this.ymax,
 	    dx_max : this.kpert,
 	    dy_max : this.kpert,
-	    dt : this.pseed
+	    dt : this.pspeed
 	},
 	bottoms : {
 	    xmax : this.xmax,
@@ -120,28 +123,15 @@ function FlashGraphics(canvas, flash, images, sysid, debug) {
 	    apply_vbound : true,
 	    vbound : 0.98*this.ymax,
 	    ecoeff : this.ecoeff,
-	    dt : this.pseed
+	    dt : this.pspeed
 	}
     };
 
     // public methods
     this.update = function() {
-
-	//@TODO: ensemble updates should be handled by the ensembles,
-	// not here. We should just be computing the options objects
-	// to pass to this.Ensembles.$name.update. Any of the static stuff
-	// should be moved to a settings.js file.
-
 	for (var key in this.Ensembles) {
 	    this.Ensembles[key].update(stream_specific_options[key]);
 	};
-	
-    	// // prevent potential overflow
-    	// this.ndraws = this.ndraws + 1;
-    	// if (this.ndraws > 10000) {
-    	//     this.ndraws = 0;
-    	// };
-
     };
 
 
@@ -149,6 +139,8 @@ function FlashGraphics(canvas, flash, images, sysid, debug) {
 	this._show_background();
 	this._show_ensembles();
 	this.valve.show();
+	this._show_fps();
+	this._show_number_particles();
     };
 
     
@@ -166,7 +158,7 @@ function FlashGraphics(canvas, flash, images, sysid, debug) {
 	push();
 	background(51);
 	imageMode(CENTER);
-	image(this.image.tank, this.xmax/2 , this.ymax/2, this.sid.width, this.sid.height);
+	image(this.images.tank, this.xmax/2 , this.ymax/2, this.sid.width, this.sid.height);
 	pop();
     };
 
@@ -218,6 +210,26 @@ function FlashGraphics(canvas, flash, images, sysid, debug) {
 	text("F", F_string_pos_x,F_string_pos_y);
 	text("V", V_string_pos_x,V_string_pos_y);
 	text("L", L_string_pos_x,L_string_pos_y);
+	pop();
+    };
+
+
+    this._show_fps = function() {
+	push()
+	textAlign(LEFT,BOTTOM);
+	text(frameRate().toFixed(0) + 'fps', this.canvas.width*0.02, this.canvas.height*0.98);
+	pop()
+    };
+
+
+    this._show_number_particles = function() {
+	var n = 0;
+	for (var key in this.Ensembles) {
+	    n = n + this.Ensembles[key].particles.length;
+	};
+	push();
+	textAlign(LEFT,BOTTOM);
+	text(n.toFixed(0) + ' particles', this.canvas.width*0.02, this.canvas.height*0.94);
 	pop();
     };
     

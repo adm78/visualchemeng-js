@@ -7,11 +7,11 @@
 // Requires:
 // no requirements
 //
-// Andrew D. McGuire 2017
+// Andrew D. McGuire 2018
 // a.mcguire227@gmail.com
 //
 // @ TODO: Refactor this into simple JSON and move the contents to
-// ./settings.js
+// ./data.js
 //----------------------------------------------------------
 // Chemical system index
 //
