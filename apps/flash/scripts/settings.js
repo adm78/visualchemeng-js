@@ -25,7 +25,6 @@ settings = {
 	
 	    particles : [
 		{type : 'single-body-manual', colour : '#BC0CDF', radius : 1.5},
-		{type : 'single-body-manual', colour : '#BC0CDF', radius : 1.5},
 		{type : 'single-body-manual', colour : '#DFBC0C', radius : 1.5},
 		{type : 'single-body-manual', colour : '#0CDFBC', radius : 1.5},
 		{type : 'single-body-manual', colour : '#2e8ade', radius : 1.5},

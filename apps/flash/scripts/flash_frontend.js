@@ -11,7 +11,7 @@
 // a.mcguire227@gmail.com
 //----------------------------------------------------------
 var debug = false;
-var sysid = 1;
+var sysid = 0;
 var flash;
 var Graphics;
 var paused_log = false; // logical to paused the stream updates
@@ -19,6 +19,7 @@ var resetting_log = false; // logical to indicate a reset is underway
 var chem_sys_changing_log = false; //logical to indicate that chemical system is being changed
 var isDragging = false; // valve variables
 var images = {};
+var canvas;
 
 
 function preload() {
@@ -43,7 +44,7 @@ function setup() {
     ymax = dimensions.ymax;
     console.log("xmax=",xmax);
     console.log("ymax=",ymax);
-    var canvas= createCanvas(xmax, ymax);
+    canvas = createCanvas(xmax, ymax);
     canvas.parent("sim_container");
 
     // initialise the backend
@@ -142,16 +143,12 @@ function plotCompositionData(flash, debug=false) {
 function restartFlash(debug=false) {
 
     // effectively reload the page
-    feed_stream = new Ensemble();
-    tops_stream = new Ensemble();
-    bottoms_stream = new Ensemble();
     ic = getInitialConditions(sysid,debug);
     if (debug) {console.log("flash.js: restartFlash: initial conditions before solve =", ic)};
     flash = new Separator(ic.x,ic.y,ic.z,ic.L,
 			  ic.V,ic.F,ic.T,ic.P,ic.A,ic.components,debug);
     flash.solve_PTZF();
     if (debug) {console.log("flash.js: restartFlash: flash after restart =", flash)};
-
 };
 
 
@@ -431,6 +428,7 @@ $('#system_id').on('change', function() {
 	restartFlash(debug);
 	plotCompositionData(flash, debug=false);
 	updateAllSliders();
+	Graphics = new FlashGraphics(canvas, flash, images, sysid, debug);
     };
     chem_sys_changing_log = false;
 })

@@ -93,7 +93,7 @@ function getInitialConditions(sys=0,debug=false) {
     return ic;	
 }
 
-function getRanges(sys=1) {
+function getRanges(sys=0) {
 
     // return an object containing
     // the limits of each slider prop
@@ -102,7 +102,7 @@ function getRanges(sys=1) {
     // sys - chemical system id
     
     var range;
-    if (sys === 2) {
+    if (sys === 1) {
 	range = {
 	    P: {
 		min: 4.6,
@@ -126,7 +126,7 @@ function getRanges(sys=1) {
 	    }
 	};
     }
-    else if (sys === 3) {
+    else if (sys === 2) {
 	range = {
 	    P: {
 		min: 0.2,
@@ -150,7 +150,7 @@ function getRanges(sys=1) {
 	    }
 	};
     }
-    else if (sys === 1) {
+    else if (sys === 0) {
 	range = {
 	    P: {
 		min: 0.05,

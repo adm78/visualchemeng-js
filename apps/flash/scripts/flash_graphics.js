@@ -55,14 +55,14 @@ function FlashGraphics(canvas, flash, images, sysid, debug) {
     var tops_y = (this.ymax/2.0) + 0.475*this.sid.height;
     this.bottoms_pos = createVector(tops_x, tops_y);
 
-    // Add particle sources to the ensembles
+    // Add particle sources to the ensembles, leave rates unitialised as this will be set on update. 
     // feed
     var full_feed_particle_options = [];
     for (var i = 0; i < settings.sys[this.sysid].particles.length; i++) {
     	full_feed_particle_options[i] = utils.merge_options(settings.sys[this.sysid].particles[i],
 							    settings.sys[this.sysid].particle_sources.feed.options);
     };
-    var feed_source = new ParticleSource(this.feed_pos.x, this.feed_pos.y, this.pout*this.flash.F, full_feed_particle_options);
+    var feed_source = new ParticleSource(this.feed_pos.x, this.feed_pos.y, null, full_feed_particle_options);
     this.Ensembles.feed.addSource(feed_source);
 
     // tops
@@ -71,7 +71,7 @@ function FlashGraphics(canvas, flash, images, sysid, debug) {
     	full_tops_particle_options[i] = utils.merge_options(settings.sys[this.sysid].particles[i],
 							    settings.sys[this.sysid].particle_sources.tops.options);
     };
-    var tops_source = new ParticleSource(this.tops_pos.x, this.tops_pos.y, this.pout*this.flash.F, full_tops_particle_options);
+    var tops_source = new ParticleSource(this.tops_pos.x, this.tops_pos.y, null, full_tops_particle_options);
     this.Ensembles.tops.addSource(tops_source);
 
     // bottoms
@@ -80,8 +80,7 @@ function FlashGraphics(canvas, flash, images, sysid, debug) {
     	full_bottoms_particle_options[i] = utils.merge_options(settings.sys[this.sysid].particles[i],
 							       settings.sys[this.sysid].particle_sources.bottoms.options);
     };
-    var bottoms_source = new ParticleSource(this.bottoms_pos.x, this.bottoms_pos.y, this.pout*this.flash.F,
-					    full_bottoms_particle_options);
+    var bottoms_source = new ParticleSource(this.bottoms_pos.x, this.bottoms_pos.y, null, full_bottoms_particle_options);
     this.Ensembles.bottoms.addSource(bottoms_source);
 
     
@@ -106,7 +105,8 @@ function FlashGraphics(canvas, flash, images, sysid, debug) {
 	    xmax : 0.5*(this.xmax-this.sid.width),
 	    ymax : 2*this.ymax,
 	    dt : this.pspeed,
-	    perturb : false
+	    dx_max : 0.1*this.kpert,
+	    dy_max : 0.1*this.kpert,
 	},
 	tops : {
 	    xmax : this.xmax,
@@ -129,6 +129,7 @@ function FlashGraphics(canvas, flash, images, sysid, debug) {
 
     // public methods
     this.update = function() {
+	this._update_particle_source_rates(); // @Performance: maybe only do this after the flash backend has updated?
 	for (var key in this.Ensembles) {
 	    this.Ensembles[key].update(stream_specific_options[key]);
 	};
@@ -147,13 +148,21 @@ function FlashGraphics(canvas, flash, images, sysid, debug) {
     this.colours = function() {
 	var c = []
 	var particles = settings.sys[this.sysid].particles
-	for (i=0; i < particles.length; i++) {
+	for (var i = 0; i < particles.length; i++) {
 	    c.push(particles[i].colour);
 	}
 	return c;
     };
+
     
     // private methods
+    this._update_particle_source_rates = function() {
+	this.Ensembles.feed.sources[0].set_rate(this.pout*this.flash.F);
+	this.Ensembles.tops.sources[0].set_rate(this.pout*this.flash.V);
+	this.Ensembles.bottoms.sources[0].set_rate(this.pout*this.flash.L);
+    };
+
+    
     this._show_background = function() {
 	push();
 	background(51);
