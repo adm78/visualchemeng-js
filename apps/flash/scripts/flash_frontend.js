@@ -94,7 +94,7 @@ function plotCompositionData(flash, debug=false) {
 	y: flash.z,
 	type: 'bar',
 	marker: {
-	    color : getColours(sysid)
+	    color : Graphics.colours()
 	},
 	text: flash.components,
 	width: 0.3
@@ -105,7 +105,7 @@ function plotCompositionData(flash, debug=false) {
 	y: flash.y,
 	type: 'bar',
 	marker: {
-	    color : getColours(sysid)
+	    color : Graphics.colours()
 	},
 	text: flash.components,
 	width: 0.3
@@ -116,7 +116,7 @@ function plotCompositionData(flash, debug=false) {
 	y: flash.x,
 	type: 'bar',
 	marker: {
-	    color : getColours(sysid)
+	    color : Graphics.colours()
 	},
 	text: flash.components,
 	width: 0.3

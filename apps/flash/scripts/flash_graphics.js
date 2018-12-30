@@ -6,6 +6,7 @@
 // - p5.js or p5.min.js
 // - vce_utils.js
 // - vce_particle.js
+// - vce_particle_source.js
 //
 // Andrew D. McGuire 2018
 // a.mcguire227@gmail.com
@@ -23,7 +24,7 @@ function FlashGraphics(canvas, flash, images, sysid, debug) {
     this.ymax = canvas.height;
     this.canvas_sf = 0.6;
     this.images = images;
-    this.sid = utils.utils.getImgScaledDimensions(this.images.tank, this.canvas_sf, this.ymax);
+    this.sid = utils.getImgScaledDimensions(this.images.tank, this.canvas_sf, this.ymax);
     this.debug = debug;
     this.ndraws = 0;
     this.sysid = sysid // system identifier used for loading system-specific settings
@@ -46,13 +47,13 @@ function FlashGraphics(canvas, flash, images, sysid, debug) {
     var feed_y = (this.ymax/2.0) + 0.05*this.sid.height;
     this.feed_pos = createVector(feed_x, feed_y);
 
-    var tops_x = (xmax/2) + 0.5*sid.width;
-    var tops_y = (ymax/2.0) - 0.475*sid.height;
-    this.tops_pos = createVector(tops_x,tops_y);
+    var tops_x = (this.xmax/2) + 0.5*this.sid.width;
+    var tops_y = (this.ymax/2.0) - 0.475*this.sid.height;
+    this.tops_pos = createVector(tops_x, tops_y);
 
-    var tops_x = (xmax/2.0) + 0.5*sid.width;
-    var tops_y = (ymax/2.0) + 0.475*sid.height;
-    this.bottoms_pos = createVector(tops_x,tops_y);
+    var tops_x = (this.xmax/2.0) + 0.5*this.sid.width;
+    var tops_y = (this.ymax/2.0) + 0.475*this.sid.height;
+    this.bottoms_pos = createVector(tops_x, tops_y);
 
     // Add particle sources to the ensembles
     // feed
@@ -61,8 +62,8 @@ function FlashGraphics(canvas, flash, images, sysid, debug) {
     	full_feed_particle_options[i] = utils.merge_options(settings.sys[this.sysid].particles[i],
 							    settings.sys[this.sysid].particle_sources.feed.options);
     };
-    var feed_source = new ParticleSource(feed_x, feed_y, this.pout*this.flash.F, full_feed_particle_options);
-    this.Ensemble.feed.addSource(feed_source);
+    var feed_source = new ParticleSource(this.feed_pos.x, this.feed_pos.y, this.pout*this.flash.F, full_feed_particle_options);
+    this.Ensembles.feed.addSource(feed_source);
 
     // tops
     var full_tops_particle_options = [];
@@ -70,29 +71,30 @@ function FlashGraphics(canvas, flash, images, sysid, debug) {
     	full_tops_particle_options[i] = utils.merge_options(settings.sys[this.sysid].particles[i],
 							    settings.sys[this.sysid].particle_sources.tops.options);
     };
-    var tops_source = new ParticleSource(tops_x, tops_y, this.pout*this.flash.F, full_tops_particle_options);
-    this.Ensemble.tops.addSource(tops_source);
+    var tops_source = new ParticleSource(this.tops_pos.x, this.tops_pos.y, this.pout*this.flash.F, full_tops_particle_options);
+    this.Ensembles.tops.addSource(tops_source);
 
     // bottoms
     var full_bottoms_particle_options = [];
     for (var i = 0; i < settings.sys[this.sysid].particles.length; i++) {
     	full_bottoms_particle_options[i] = utils.merge_options(settings.sys[this.sysid].particles[i],
-							    settings.sys[this.sysid].particle_sources.bottoms.options);
+							       settings.sys[this.sysid].particle_sources.bottoms.options);
     };
-    var bottoms_source = new ParticleSource(bottoms_x, bottoms_y, this.pout*this.flash.F, full_bottoms_particle_options);
-    this.Ensemble.bottoms.addSource(bottoms_source);
+    var bottoms_source = new ParticleSource(this.bottoms_pos.x, this.bottoms_pos.y, this.pout*this.flash.F,
+					    full_bottoms_particle_options);
+    this.Ensembles.bottoms.addSource(bottoms_source);
 
     
     // initialise the valve
     var valve_options = {};
-    if (!online) {
+    if (!vce_online) {
 	valve_options.body_img_URL = "../../../../lib/images/valve4.svg";
 	valve_options.handle_img_URL = "../../../../lib/images/valve_handle.svg";
 	valve_options.highlight_img_URL = "../../../../lib/images/valve_handle_highlight.svg";
     }
     this.valve = new Valve(this.feed_pos.x, this.feed_pos.y, valve_options)
-    var F_range = getRanges(sys).F;
-    valve.set_position(flash.F/(F_range.max - F_range.min));
+    var F_range = getRanges(this.sysid).F;
+    this.valve.set_position(flash.F/(F_range.max - F_range.min));
 
     
     // set the stream-specific update options
@@ -149,7 +151,16 @@ function FlashGraphics(canvas, flash, images, sysid, debug) {
 	this.valve.show();
     };
 
-
+    
+    this.colours = function() {
+	var c = []
+	var particles = settings.sys[this.sysid].particles
+	for (i=0; i < particles.length; i++) {
+	    c.push(particles[i].colour);
+	}
+	return c;
+    };
+    
     // private methods
     this._show_background = function() {
 	push();
@@ -209,7 +220,5 @@ function FlashGraphics(canvas, flash, images, sysid, debug) {
 	text("L", L_string_pos_x,L_string_pos_y);
 	pop();
     };
-
-
     
 };
