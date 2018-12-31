@@ -426,9 +426,9 @@ $('#system_id').on('change', function() {
     console.log("new sys = ", sysid);   
     if (old_sysid != sysid) {
 	restartFlash(debug);
+	Graphics = new FlashGraphics(canvas, flash, images, sysid, debug);
 	plotCompositionData(flash, debug=false);
 	updateAllSliders();
-	Graphics = new FlashGraphics(canvas, flash, images, sysid, debug);
     };
     chem_sys_changing_log = false;
 })

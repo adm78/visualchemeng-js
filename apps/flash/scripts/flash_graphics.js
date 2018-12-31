@@ -100,20 +100,22 @@ function FlashGraphics(canvas, flash, images, sysid, debug) {
     // @TODO: the source args options need to be constructed and
     // passed. These are related to the composition of the flash
     // streams.
-    stream_specific_options = {
+    this.stream_specific_options = {
 	feed : {
 	    xmax : 0.5*(this.xmax-this.sid.width),
 	    ymax : 2*this.ymax,
 	    dt : this.pspeed,
 	    dx_max : 0.1*this.kpert,
 	    dy_max : 0.1*this.kpert,
+	    source_args : this.flash.z
 	},
 	tops : {
 	    xmax : this.xmax,
 	    ymax : this.ymax,
 	    dx_max : this.kpert,
 	    dy_max : this.kpert,
-	    dt : this.pspeed
+	    dt : this.pspeed,
+	    source_args : this.flash.y
 	},
 	bottoms : {
 	    xmax : this.xmax,
@@ -123,7 +125,8 @@ function FlashGraphics(canvas, flash, images, sysid, debug) {
 	    apply_vbound : true,
 	    vbound : 0.98*this.ymax,
 	    ecoeff : this.ecoeff,
-	    dt : this.pspeed
+	    dt : this.pspeed,
+	    source_args : this.flash.x
 	}
     };
 
@@ -131,7 +134,7 @@ function FlashGraphics(canvas, flash, images, sysid, debug) {
     this.update = function() {
 	this._update_particle_source_rates(); // @Performance: maybe only do this after the flash backend has updated?
 	for (var key in this.Ensembles) {
-	    this.Ensembles[key].update(stream_specific_options[key]);
+	    this.Ensembles[key].update(this.stream_specific_options[key]);
 	};
     };
 
