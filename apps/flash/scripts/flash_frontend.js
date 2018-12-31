@@ -7,6 +7,8 @@
 // - vce_utils.js
 // - vce_particle.js
 //
+// @TODO: Reconnect disabled sliders to the flash backend state
+// 
 // Andrew D. McGuire 2017
 // a.mcguire227@gmail.com
 //----------------------------------------------------------
@@ -85,6 +87,8 @@ function update_disabled_sliders(flash) {
     $( "#k5_slider" ).slider( "value", flash.L);
 };
 
+
+// @TODO: Move the plotting stuff to its own js file
 function plotCompositionData(flash, debug=false) {
 
     if (debug) { console.log("flash.js: plotCompositionData: running plotCompositionData with input", flash) }

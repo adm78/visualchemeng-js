@@ -10,9 +10,6 @@
 //
 // Andrew D. McGuire 2018
 // a.mcguire227@gmail.com
-//
-// @TODO: compute source args for update method.
-//
 //----------------------------------------------------------
 function FlashGraphics(canvas, flash, images, sysid, debug) {
 
@@ -96,10 +93,7 @@ function FlashGraphics(canvas, flash, images, sysid, debug) {
     this.valve.set_position(flash.F/(F_range.max - F_range.min));
 
     
-    // set the stream-specific update options
-    // @TODO: the source args options need to be constructed and
-    // passed. These are related to the composition of the flash
-    // streams.
+    // set the stream-specific update options.
     this.stream_specific_options = {
 	feed : {
 	    xmax : 0.5*(this.xmax-this.sid.width),
@@ -132,6 +126,7 @@ function FlashGraphics(canvas, flash, images, sysid, debug) {
 
     // public methods
     this.update = function() {
+	this._update_stream_specific_options();
 	this._update_particle_source_rates(); // @Performance: maybe only do this after the flash backend has updated?
 	for (var key in this.Ensembles) {
 	    this.Ensembles[key].update(this.stream_specific_options[key]);
@@ -144,7 +139,9 @@ function FlashGraphics(canvas, flash, images, sysid, debug) {
 	this._show_ensembles();
 	this.valve.show();
 	this._show_fps();
-	this._show_number_particles();
+	if (this.debug) {
+	    this._show_number_particles();
+	};
     };
 
     
@@ -159,6 +156,16 @@ function FlashGraphics(canvas, flash, images, sysid, debug) {
 
     
     // private methods
+    this._update_stream_specific_options = function() {
+	// update source args options to reflect current stream
+	// compositions, handling cases where the composition is
+	// undefined.
+	this.stream_specific_options.feed.source_args = (this.flash.z.every(element => element === null)) ? null : this.flash.z;
+	this.stream_specific_options.tops.source_args = (this.flash.y.every(element => element === null)) ? null : this.flash.y;
+	this.stream_specific_options.bottoms.source_args = (this.flash.x.every(element => element === null)) ? null : this.flash.x;
+    };
+
+    
     this._update_particle_source_rates = function() {
 	this.Ensembles.feed.sources[0].set_rate(this.pout*this.flash.F);
 	this.Ensembles.tops.sources[0].set_rate(this.pout*this.flash.V);
