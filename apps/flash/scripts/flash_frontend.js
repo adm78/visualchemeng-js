@@ -50,7 +50,7 @@ function setup() {
     canvas.parent("sim_container");
 
     // initialise the backend
-    var ic = getInitialConditions(sysid);
+    var ic = data.sys[sysid].initial_conditions;
     flash = new Separator(ic.x,ic.y,ic.z,ic.L,ic.V,ic.F,ic.T,ic.P,ic.A,ic.components,debug);
     flash.solve_PTZF();
 
@@ -147,10 +147,9 @@ function plotCompositionData(flash, debug=false) {
 function restartFlash(debug=false) {
 
     // effectively reload the page
-    ic = getInitialConditions(sysid,debug);
+    ic = data.sys[sysid].initial_conditions;
     if (debug) {console.log("flash.js: restartFlash: initial conditions before solve =", ic)};
-    flash = new Separator(ic.x,ic.y,ic.z,ic.L,
-			  ic.V,ic.F,ic.T,ic.P,ic.A,ic.components,debug);
+    flash = new Separator(ic.x,ic.y,ic.z,ic.L, ic.V,ic.F,ic.T,ic.P,ic.A,ic.components,debug);
     flash.solve_PTZF();
     if (debug) {console.log("flash.js: restartFlash: flash after restart =", flash)};
 };
@@ -218,7 +217,7 @@ bottoms_bar_chart_layout.title = 'Bottoms';
 
 var flowrate_bar_chart_layout = jQuery.extend(true, {}, base_bar_chart_layout);
 flowrate_bar_chart_layout.title = 'Flowrate/ kmol/hr';
-var F_range = getRanges(sysid).F;
+var F_range = data.sys[sysid].range.F;
 flowrate_bar_chart_layout.yaxis.range = [F_range.min, F_range.max];
 
 
@@ -243,7 +242,7 @@ function update_temp() {
 
 function update_F() {
     if (!resetting_log && !chem_sys_changing_log) {
-	var F_range = getRanges(sysid).F
+	var F_range = data.sys[sysid].range.F
     	flash.F = F_range.min + Graphics.valve.position*(F_range.max - F_range.min);
     	flash.solve_PTZF();
     	plotCompositionData(flash);
@@ -301,7 +300,7 @@ function updateAllSliders() {
 
 
 function updatePSlider() {
-    var P_range = getRanges(sysid).P;
+    var P_range = data.sys[sysid].range.P;
     $( "#k1_slider" ).slider({
 	orientation: "vertical",
 	range: "min",
@@ -317,7 +316,7 @@ function updatePSlider() {
 };
 
 function updateTSlider() {
-    var T_range = getRanges(sysid).T;
+    var T_range = data.sys[sysid].range.T;
     $( "#k2_slider" ).slider({
 	orientation: "vertical",
 	range: "min",
@@ -332,7 +331,7 @@ function updateTSlider() {
 };
 
 function updateFSlider() {
-    var F_range = getRanges(sysid).F;
+    var F_range = data.sys[sysid].range.F;
     $( "#k3_slider" ).slider({
 	orientation: "vertical",
 	range: "min",
@@ -349,7 +348,7 @@ function updateFSlider() {
 
 function updateLSlider() {
     // bottoms flowrate slider
-    var L_range = getRanges(sysid).L;
+    var L_range = data.sys[sysid].range.L;
     $( "#k4_slider" ).slider({
 	orientation: "vertical",
 	range: "min",
@@ -367,7 +366,7 @@ function updateLSlider() {
 
 function updateVSlider() {
     // tops flowrate slider
-    var V_range = getRanges(sysid).V;
+    var V_range = data.sys[sysid].range.V;
     $( "#k5_slider" ).slider({
 	orientation: "vertical",
 	range: "min",

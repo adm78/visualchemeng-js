@@ -7,6 +7,7 @@
 // - vce_utils.js
 // - vce_particle.js
 // - vce_particle_source.js
+// - data.js
 //
 // Andrew D. McGuire 2018
 // a.mcguire227@gmail.com
@@ -89,7 +90,7 @@ function FlashGraphics(canvas, flash, images, sysid, debug) {
 	valve_options.highlight_img_URL = "../../../../lib/images/valve_handle_highlight.svg";
     }
     this.valve = new Valve(this.feed_pos.x, this.feed_pos.y, valve_options)
-    var F_range = getRanges(this.sysid).F;
+    var F_range = data.sys[this.sysid].range.F;
     this.valve.set_position(flash.F/(F_range.max - F_range.min));
 
     
@@ -138,6 +139,8 @@ function FlashGraphics(canvas, flash, images, sysid, debug) {
 	this._show_background();
 	this._show_ensembles();
 	this.valve.show();
+	this._show_temp();
+	this._show_pressure();
 	this._show_fps();
 	if (this.debug) {
 	    this._show_number_particles();
