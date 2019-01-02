@@ -15,7 +15,7 @@
 var debug = false;
 var sysid = 0;
 var flash;
-var Graphics;
+var graphics;
 var paused_log = false; // logical to paused the stream updates
 var resetting_log = false; // logical to indicate a reset is underway
 var chem_sys_changing_log = false; //logical to indicate that chemical system is being changed
@@ -55,10 +55,10 @@ function setup() {
     flash.solve_PTZF();
 
     // initialise the graphical representation object
-    Graphics = new FlashGraphics(canvas, flash, images, sysid, debug);  
+    graphics = new FlashGraphics(canvas, flash, images, sysid, debug);  
 
     // draw the bar charts to screen and set slider values/ranges
-    plotCompositionData(flash);
+    plot_stream_compositions(flash, graphics);
     resizePlotlyContainers();
     
     // initialise the sliders
@@ -67,7 +67,6 @@ function setup() {
 };
 
 function draw() {
-
     /* Draws background and img to the canvas.
        This function is continuously called for the
        lifetime of the scripts executions after setup()
@@ -75,10 +74,10 @@ function draw() {
     
     // update particle streams
     if (!(paused_log)) {
-	Graphics.update();
+	graphics.update();
     };
 
-    Graphics.show();
+    graphics.show();
 };
 
 function update_disabled_sliders(flash) {
@@ -88,138 +87,15 @@ function update_disabled_sliders(flash) {
 };
 
 
-// @TODO: Move the plotting stuff to its own js file
-function plotCompositionData(flash, debug=false) {
-
-    if (debug) { console.log("flash.js: plotCompositionData: running plotCompositionData with input", flash) }
-
-
-    var feed_data = [{
-    x: utils.generateLabels(flash.z,'z'),
-	y: flash.z,
-	type: 'bar',
-	marker: {
-	    color : Graphics.colours()
-	},
-	text: flash.components,
-	width: 0.3
-    }];
-
-    var tops_data = [{
-	x: utils.generateLabels(flash.y,'y'),
-	y: flash.y,
-	type: 'bar',
-	marker: {
-	    color : Graphics.colours()
-	},
-	text: flash.components,
-	width: 0.3
-    }];
-
-    var bottoms_data = [{
-	x: utils.generateLabels(flash.x,'x'),
-	y: flash.x,
-	type: 'bar',
-	marker: {
-	    color : Graphics.colours()
-	},
-	text: flash.components,
-	width: 0.3
-    }];
-
-    var flowrate_data = [{
-	x: ['F', 'V', 'L'],
-	y: [flash.F, flash.V, flash.L],
-	type: 'bar',
-	marker: {
-	    color : '#2e8ade'
-	},
-	text: ['FEED','VAPOUR', 'LIQUID'],
-	width: 0.3
-    }];
-
-    Plotly.newPlot('feedplotDiv', feed_data, feed_bar_chart_layout);
-    Plotly.newPlot('topsplotDiv', tops_data, tops_bar_chart_layout);
-    Plotly.newPlot('bottomsplotDiv', bottoms_data, bottoms_bar_chart_layout);
-    Plotly.newPlot('flow_chart_container', flowrate_data, flowrate_bar_chart_layout);
-};
-
-function restartFlash(debug=false) {
+function restart_flash(debug=false) {
 
     // effectively reload the page
     ic = data.sys[sysid].initial_conditions;
-    if (debug) {console.log("flash.js: restartFlash: initial conditions before solve =", ic)};
+    if (debug) {console.log("flash.js: restart_flash: initial conditions before solve =", ic)};
     flash = new Separator(ic.x,ic.y,ic.z,ic.L, ic.V,ic.F,ic.T,ic.P,ic.A,ic.components,debug);
     flash.solve_PTZF();
-    if (debug) {console.log("flash.js: restartFlash: flash after restart =", flash)};
+    if (debug) {console.log("flash.js: restart_flash: flash after restart =", flash)};
 };
-
-
-//@TODO: move composition plotting to a seperate js file
-// --------------------------------------------------
-//              composition graph layout
-// --------------------------------------------------
-var base_bar_chart_layout = {
-
-    margin : {
-	l: 30,
-	r: 30,
-	b: 30,
-	t: 35,
-	pad: 5
-    },
-    titlefont: {
-	family: 'Roboto, serif',
-	size: 16,
-	color: 'white'
-    },
-    hoverlabel: {bordercolor:'#333438'},
-    plot_bgcolor: '#333438',
-    paper_bgcolor: '#333438',
-    height:200,
-    xaxis: {
-	fixedrange: true,
-	showgrid: false,
-	gridcolor: '#44474c',
-	tickmode: 'auto',
-	titlefont: {
-	    family: 'Roboto, serif',
-	    size: 18,
-	    color: 'white'
-	},
-	tickfont: {color:'white'}
-    },
-    yaxis: {
-	fixedrange: true,
-	showgrid: true,
-	gridcolor: '#44474c',
-	tickmode: 'auto',
-	titlefont: {
-	    family: 'Roboto, serif',
-	    size: 18,
-	    color: 'white'
-	},
-	tickfont: {color:'white'}
-    },
-};
-
-var feed_bar_chart_layout = jQuery.extend(true, {}, base_bar_chart_layout);
-feed_bar_chart_layout.yaxis.range = [0,1.0];
-feed_bar_chart_layout.title = 'Feed';
-
-var tops_bar_chart_layout = jQuery.extend(true, {}, base_bar_chart_layout);
-tops_bar_chart_layout.yaxis.range = [0,1.0];
-tops_bar_chart_layout.title = 'Tops';
-
-var bottoms_bar_chart_layout = jQuery.extend(true, {}, base_bar_chart_layout);
-bottoms_bar_chart_layout.yaxis.range = [0,1.0];
-bottoms_bar_chart_layout.title = 'Bottoms';
-
-var flowrate_bar_chart_layout = jQuery.extend(true, {}, base_bar_chart_layout);
-flowrate_bar_chart_layout.title = 'Flowrate/ kmol/hr';
-var F_range = data.sys[sysid].range.F;
-flowrate_bar_chart_layout.yaxis.range = [F_range.min, F_range.max];
-
 
 // --------------------------------------------------
 //              flash tank operations
@@ -228,7 +104,7 @@ function update_pressure() {
     if (!resetting_log && !chem_sys_changing_log) {
 	flash.updateP($( "#k1_slider" ).slider( "value"));
 	flash.solve_PTZF(debug=debug);
-	plotCompositionData(flash,debug=debug);
+	plot_stream_compositions(flash, graphics);
     };
 };
 
@@ -236,16 +112,16 @@ function update_temp() {
     if (!resetting_log && !chem_sys_changing_log) {
 	flash.updateT($( "#k2_slider" ).slider( "value"));
 	flash.solve_PTZF();
-	plotCompositionData(flash);
+	plot_stream_compositions(flash, graphics);
     };
 };
 
 function update_F() {
     if (!resetting_log && !chem_sys_changing_log) {
 	var F_range = data.sys[sysid].range.F
-    	flash.F = F_range.min + Graphics.valve.position*(F_range.max - F_range.min);
+    	flash.F = F_range.min + graphics.valve.position*(F_range.max - F_range.min);
     	flash.solve_PTZF();
-    	plotCompositionData(flash);
+	plot_stream_compositions(flash, graphics);
     };
 };
 
@@ -280,10 +156,10 @@ $('#restart').click(async function(){
     // restart button functionality
     resetting_log = true;
     console.log("You just clicked restart!");
-    restartFlash(debug);
+    restart_flash(debug);
     updateAllSliders();
     resetting_log = false;
-    plotCompositionData(flash, debug=false);
+    plot_stream_compositions(flash, graphics)
 });
 
 function updateAllSliders() {
@@ -400,7 +276,7 @@ function resizePlotlyContainers() {
 // resize on window resize
 window.onresize = function() {
     resizePlotlyContainers();
-    plotCompositionData(flash, debug);
+    plot_stream_compositions(flash, graphics)
 };
 
 // render selectors on full page load (jquery)
@@ -428,9 +304,9 @@ $('#system_id').on('change', function() {
     sysid = Number(this.value);
     console.log("new sys = ", sysid);   
     if (old_sysid != sysid) {
-	restartFlash(debug);
-	Graphics = new FlashGraphics(canvas, flash, images, sysid, debug);
-	plotCompositionData(flash, debug=false);
+	restart_flash(debug);
+	graphics = new FlashGraphics(canvas, flash, images, sysid, debug);
+	plot_stream_compositions(flash, graphics)
 	updateAllSliders();
     };
     chem_sys_changing_log = false;
@@ -439,31 +315,31 @@ $('#system_id').on('change', function() {
 
 // drag/valve control
 function mouseClicked() {
-    if (Graphics.valve.is_on_handle(mouseX, mouseY)) { Graphics.valve.click(); }
-    else {Graphics.valve.unclick();};
+    if (graphics.valve.is_on_handle(mouseX, mouseY)) { graphics.valve.click(); }
+    else {graphics.valve.unclick();};
 };
 
 
 function mousePressed() {
     var m = createVector(mouseX, mouseY);
-    if (Graphics.valve.is_on_handle(mouseX, mouseY)) {
+    if (graphics.valve.is_on_handle(mouseX, mouseY)) {
 	isDragging = true;
-	Graphics.valve.click();
+	graphics.valve.click();
     };
 };
 
 
 function mouseReleased() {
     // Note: This is important! Other things can be dragged after
-    // clicking the Graphics.valve... like all the sliders.
+    // clicking the graphics.valve... like all the sliders.
     isDragging = false;
-    Graphics.valve.unclick();
+    graphics.valve.unclick();
 };
 
 
 function mouseDragged() {
   if (isDragging) {
-      Graphics.valve.drag_handle(mouseX, mouseY);
+      graphics.valve.drag_handle(mouseX, mouseY);
       update_F();
   };
 };
