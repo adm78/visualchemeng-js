@@ -11,24 +11,35 @@
 // a.mcguire227@gmail.com
 //----------------------------------------------------------
 function plot_stream_compositions(flash, graphics) {
-    Plotly.newPlot('feedplotDiv', get_comp_data(flash, graphics, 'z'), get_comp_layout('Feed'));
-    Plotly.newPlot('topsplotDiv', get_comp_data(flash, graphics, 'y'), get_comp_layout('Tops'));
-    Plotly.newPlot('bottomsplotDiv', get_comp_data(flash, graphics, 'x'), get_comp_layout('Bottoms'));
-    Plotly.newPlot('flow_chart_container', get_flowrate_data(flash), get_flowrate_layout());
+    Plotly.react('feedplotDiv', get_comp_data(flash, graphics, 'z'), get_comp_layout('Feed', 'feedplotDiv'));
+    Plotly.react('topsplotDiv', get_comp_data(flash, graphics, 'y'), get_comp_layout('Tops', 'topsplotDiv'));
+    Plotly.react('bottomsplotDiv', get_comp_data(flash, graphics, 'x'), get_comp_layout('Bottoms', 'bottomsplotDiv'));
+    Plotly.react('flow_chart_container', get_flowrate_data(flash), get_flowrate_layout('flow_chart_container'));
 };
 
 
-function get_comp_layout(title) {
+function update_stream_composition_plots() {
+    Plotly.react('feedplotDiv', get_comp_data(flash, graphics, 'z'));
+    Plotly.react('topsplotDiv', get_comp_data(flash, graphics, 'y'));
+    Plotly.react('bottomsplotDiv', get_comp_data(flash, graphics, 'x'));
+    Plotly.react('flow_chart_container', get_flowrate_data(flash));
+};
+
+
+function get_comp_layout(title, div_id) {
     var layout = jQuery.extend(true, {}, base_bar_chart_layout); // make a copy
+    layout.height = 200;
+    layout.width = document.getElementById(div_id).offsetWidth*0.95;
     layout.yaxis.range = [0,1.0];
     layout.title = title;
-    return layout
+    return layout;
 };
 
 
-function get_flowrate_layout() {
+function get_flowrate_layout(div_id) {
     var layout = jQuery.extend(true, {}, base_bar_chart_layout); // make a copy
     layout.title = 'Flowrate/ kmol/hr';
+    layout.width = document.getElementById(div_id).offsetWidth*0.9;
     var F_range = data.sys[sysid].range.F;
     layout.yaxis.range = [F_range.min, F_range.max];
     return layout;
@@ -37,7 +48,7 @@ function get_flowrate_layout() {
 
 function get_comp_data(flash, graphics, param) {
     return [{
-	x: utils.generateLabels(flash[param],param),
+	x: utils.generateLabels(flash[param], param),// always use z, in case flash outlet streams undefined comp (failed flash)
 	y: flash[param],
 	type: 'bar',
 	marker: {
@@ -79,7 +90,6 @@ var base_bar_chart_layout = {
     hoverlabel: {bordercolor:'#333438'},
     plot_bgcolor: '#333438',
     paper_bgcolor: '#333438',
-    height:200,
     xaxis: {
 	fixedrange: true,
 	showgrid: false,
