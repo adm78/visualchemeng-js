@@ -102,7 +102,7 @@ function FlashGraphics(canvas, flash, images, sysid, debug) {
 	    dt : this.pspeed,
 	    dx_max : 0.1*this.kpert,
 	    dy_max : 0.1*this.kpert,
-	    source_args : this.flash.z
+	    source_args : [this.flash.z]
 	},
 	tops : {
 	    xmax : this.xmax,
@@ -110,7 +110,7 @@ function FlashGraphics(canvas, flash, images, sysid, debug) {
 	    dx_max : this.kpert,
 	    dy_max : this.kpert,
 	    dt : this.pspeed,
-	    source_args : this.flash.y
+	    source_args : [this.flash.y]
 	},
 	bottoms : {
 	    xmax : this.xmax,
@@ -121,7 +121,7 @@ function FlashGraphics(canvas, flash, images, sysid, debug) {
 	    vbound : 0.98*this.ymax,
 	    ecoeff : this.ecoeff,
 	    dt : this.pspeed,
-	    source_args : this.flash.x
+	    source_args : [this.flash.x]
 	}
     };
 
@@ -163,9 +163,9 @@ function FlashGraphics(canvas, flash, images, sysid, debug) {
 	// update source args options to reflect current stream
 	// compositions, handling cases where the composition is
 	// undefined.
-	this.stream_specific_options.feed.source_args = (this.flash.z.every(element => element === null)) ? null : this.flash.z;
-	this.stream_specific_options.tops.source_args = (this.flash.y.every(element => element === null)) ? null : this.flash.y;
-	this.stream_specific_options.bottoms.source_args = (this.flash.x.every(element => element === null)) ? null : this.flash.x;
+	this.stream_specific_options.feed.source_args = (this.flash.z.every(element => element === null)) ? null : [this.flash.z];
+	this.stream_specific_options.tops.source_args = (this.flash.y.every(element => element === null)) ? null : [this.flash.y];
+	this.stream_specific_options.bottoms.source_args = (this.flash.x.every(element => element === null)) ? null : [this.flash.x];
     };
 
     
