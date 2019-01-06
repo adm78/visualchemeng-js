@@ -18,18 +18,9 @@ function plot_stream_compositions(flash, graphics) {
 };
 
 
-function update_stream_composition_plots() {
-    Plotly.react('feedplotDiv', get_comp_data(flash, graphics, 'z'));
-    Plotly.react('topsplotDiv', get_comp_data(flash, graphics, 'y'));
-    Plotly.react('bottomsplotDiv', get_comp_data(flash, graphics, 'x'));
-    Plotly.react('flow_chart_container', get_flowrate_data(flash));
-};
-
-
 function get_comp_layout(title, div_id) {
     var layout = jQuery.extend(true, {}, base_bar_chart_layout); // make a copy
     layout.height = 200;
-    layout.width = document.getElementById(div_id).offsetWidth*0.95;
     layout.yaxis.range = [0,1.0];
     layout.title = title;
     return layout;
@@ -39,7 +30,6 @@ function get_comp_layout(title, div_id) {
 function get_flowrate_layout(div_id) {
     var layout = jQuery.extend(true, {}, base_bar_chart_layout); // make a copy
     layout.title = 'Flowrate/ kmol/hr';
-    layout.width = document.getElementById(div_id).offsetWidth*0.9;
     var F_range = data.sys[sysid].range.F;
     layout.yaxis.range = [F_range.min, F_range.max];
     return layout;

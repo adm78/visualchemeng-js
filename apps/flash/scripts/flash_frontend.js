@@ -256,9 +256,17 @@ function updateVSlider() {
 };
 
 
+function resize_all_plots() {
+    utils.resizePlotlyHeight('flow_chart_container');
+    utils.resizePlotlyWidth('feedplotDiv');
+    utils.resizePlotlyWidth('topsplotDiv');
+    utils.resizePlotlyWidth('bottomsplotDiv');
+};
+
+
 // resize on window resize
 window.onresize = function() {
-    plot_stream_compositions(flash, graphics);
+    resize_all_plots();
 };
 
 // render selectors on full page load (jquery)
@@ -273,8 +281,8 @@ $('#fullscreen').on('click', () => {
     console.log("fullscreen requested");
     if (screenfull.enabled) {
 	screenfull.toggle(target);
-    }
-    plot_stream_compositions(flash, graphics);
+    };
+    resize_all_plots();
 });
 
 // chemical system selector
