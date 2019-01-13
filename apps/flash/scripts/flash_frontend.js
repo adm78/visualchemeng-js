@@ -9,7 +9,7 @@
 //
 // @TODO: Reconnect disabled sliders to the flash backend state
 // 
-// Andrew D. McGuire 2017
+// Andrew D. McGuire 2019
 // a.mcguire227@gmail.com
 //----------------------------------------------------------
 var debug = false;
@@ -89,8 +89,7 @@ function reset_canvas() {
 
 
 function initialise_flash() {
-    var ic = data.sys[sysid].initial_conditions;
-    flash = new Separator(ic.x,ic.y,ic.z,ic.L,ic.V,ic.F,ic.T,ic.P,ic.A,ic.components,debug);
+    flash = new Separator(data.sys[sysid].initial_conditions, debug);
     flash.solve_PTZF();
 };
 
