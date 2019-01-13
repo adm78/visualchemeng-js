@@ -21,7 +21,7 @@ var resetting_log = false; // logical to indicate a reset is underway
 var chem_sys_changing_log = false; //logical to indicate that chemical system is being changed
 var isDragging = false; // valve variables
 var images = {};
-var canvas;
+var canvas, initial_xmax, initial_ymax;
 
 
 function preload() {
@@ -39,28 +39,10 @@ function setup() {
     /* This function is called upon entry to create the
        simulation canvas which we draw onto and run
        a very simple flash unit test */
-
-    // create the canvas
-    var dimensions = utils.getSimBoxDimensions();
-    xmax = dimensions.xmax;
-    ymax = dimensions.ymax;
-    console.log("xmax=",xmax);
-    console.log("ymax=",ymax);
-    canvas = createCanvas(xmax, ymax);
-    canvas.parent("sim_container");
-
-    // initialise the backend
-    var ic = data.sys[sysid].initial_conditions;
-    flash = new Separator(ic.x,ic.y,ic.z,ic.L,ic.V,ic.F,ic.T,ic.P,ic.A,ic.components,debug);
-    flash.solve_PTZF();
-
-    // initialise the graphical representation object
-    graphics = new FlashGraphics(canvas, flash, images, sysid, debug);  
-
-    // draw the bar charts to screen and set slider values/ranges
+    initialise_canvas();
+    initialise_flash();
+    initialise_graphics();
     plot_stream_compositions(flash, graphics);
-    
-    // initialise the sliders
     updateAllSliders();
 
 };
@@ -70,13 +52,52 @@ function draw() {
        This function is continuously called for the
        lifetime of the scripts executions after setup()
        has completed. */
-    
     // update particle streams
     if (!(paused_log)) {
 	graphics.update();
     };
-
     graphics.show();
+};
+
+
+function initialise_canvas() {
+    // intialse the canvas and set the global reference dimensions
+    console.log("initialising canvas...");
+    var dimensions = utils.getSimBoxDimensions();
+    initial_xmax = dimensions.xmax;
+    initial_ymax = dimensions.ymax;
+    canvas = createCanvas(initial_xmax, initial_ymax);
+    canvas.parent("sim_container");
+};
+
+
+function stretch_canvas() {
+    // stretch the canvas to fit the screen
+    console.log("stretching canvas...");
+    var dimensions = utils.getSimBoxDimensions();
+    canvas = createCanvas(dimensions.xmax, dimensions.ymax);
+    canvas.parent("sim_container");
+};
+
+
+function reset_canvas() {
+    // reset the canvas to its original dimensions
+    console.log("resetting canvas...");
+    canvas = createCanvas(initial_xmax, initial_ymax);
+    canvas.parent("sim_container");
+};
+
+
+function initialise_flash() {
+    var ic = data.sys[sysid].initial_conditions;
+    flash = new Separator(ic.x,ic.y,ic.z,ic.L,ic.V,ic.F,ic.T,ic.P,ic.A,ic.components,debug);
+    flash.solve_PTZF();
+};
+
+
+function initialise_graphics() {
+    console.log("initialising graphics...");
+    graphics = new FlashGraphics(canvas, flash, images, sysid, debug);  
 };
 
 function update_disabled_sliders(flash) {
@@ -85,16 +106,6 @@ function update_disabled_sliders(flash) {
     $( "#k5_slider" ).slider( "value", flash.L);
 };
 
-
-function restart_flash(debug=false) {
-
-    // effectively reload the page
-    ic = data.sys[sysid].initial_conditions;
-    if (debug) {console.log("flash.js: restart_flash: initial conditions before solve =", ic)};
-    flash = new Separator(ic.x,ic.y,ic.z,ic.L, ic.V,ic.F,ic.T,ic.P,ic.A,ic.components,debug);
-    flash.solve_PTZF();
-    if (debug) {console.log("flash.js: restart_flash: flash after restart =", flash)};
-};
 
 // --------------------------------------------------
 //              flash tank operations
@@ -124,13 +135,7 @@ function update_F() {
     };
 };
 
-
 function do_nothing() {};
-
-function update_V() {};
-
-function update_L() {};
-
 
 //--------------------------------------------------------------------
 //                  UI event listners
@@ -155,22 +160,20 @@ $('#restart').click(async function(){
     // restart button functionality
     resetting_log = true;
     console.log("You just clicked restart!");
-    restart_flash(debug);
+    initialise_flash(debug);
     updateAllSliders();
+    plot_stream_compositions(flash, graphics);
     resetting_log = false;
-    plot_stream_compositions(flash, graphics)
 });
 
 function updateAllSliders() {
     // update all sliders based on the initial
-    // conditions of chemical system index 'sys'
-    
+    // conditions of chemical system index 'sys'   
     updatePSlider(); // pressure slider
     updateTSlider(); // temp slider
     updateFSlider(); // F slider
     updateVSlider(); // V slider
     updateLSlider(); // L slider  
-
 };
 
 
@@ -231,8 +234,8 @@ function updateLSlider() {
 	max: L_range.max,
 	step: (L_range.max-L_range.min)/20.0,
 	value: L_range.min,
-	slide: update_L,
-	change: update_L,
+	slide: do_nothing,
+	change: do_nothing,
 	disabled: true
     });
     $( "#k4_slider" ).slider( "value", flash.L );
@@ -248,8 +251,8 @@ function updateVSlider() {
 	min: V_range.min,
 	max: V_range.max,
 	step: (V_range.max-V_range.min)/20.0,
-	value: V_range.min,
-	slide: update_V,
+	value: do_nothing,
+	slide: do_nothing,
 	disabled: true
     });
     $( "#k5_slider" ).slider( "value", flash.L );
@@ -264,8 +267,14 @@ function resize_all_plots() {
 };
 
 
-// resize on window resize
+// resize elements on window resize
 window.onresize = function() {
+    if (screenfull.isFullscreen) {
+	stretch_canvas();
+    } else {
+	reset_canvas();
+    };
+    initialise_graphics();
     resize_all_plots();
 };
 
@@ -278,16 +287,15 @@ $(document).ready(function () {
 // fullscreen functionality
 const target = $('#target')[0]; // Get DOM element from jQuery collection
 $('#fullscreen').on('click', () => {
-    console.log("fullscreen requested");
+    console.log("fullscreen toggle");
     if (screenfull.enabled) {
 	screenfull.toggle(target);
     };
-    resize_all_plots();
+
 });
 
 // chemical system selector
 $('#system_id').on('change', function() {
-    
     chem_sys_changing_log = true;
     console.log("-------potential chemical system change------");
     var old_sysid = sysid;
@@ -295,8 +303,8 @@ $('#system_id').on('change', function() {
     sysid = Number(this.value);
     console.log("new sys = ", sysid);   
     if (old_sysid != sysid) {
-	restart_flash(debug);
-	graphics = new FlashGraphics(canvas, flash, images, sysid, debug);
+	initialise_flash(debug);
+	initialise_graphics();
 	plot_stream_compositions(flash, graphics)
 	updateAllSliders();
     };
