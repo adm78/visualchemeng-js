@@ -21,7 +21,7 @@ var resetting_log = false; // logical to indicate a reset is underway
 var chem_sys_changing_log = false; //logical to indicate that chemical system is being changed
 var isDragging = false; // valve variables
 var images = {};
-var canvas, initial_xmax, initial_ymax;
+var canvas;
 
 
 function preload() {
@@ -39,7 +39,7 @@ function setup() {
     /* This function is called upon entry to create the
        simulation canvas which we draw onto and run
        a very simple flash unit test */
-    initialise_canvas();
+    canvas = new vceCanvas();
     initialise_flash();
     initialise_graphics();
     plot_stream_compositions(flash, graphics);
@@ -60,34 +60,6 @@ function draw() {
 };
 
 
-function initialise_canvas() {
-    // intialse the canvas and set the global reference dimensions
-    console.log("initialising canvas...");
-    var dimensions = utils.getSimBoxDimensions();
-    initial_xmax = dimensions.xmax;
-    initial_ymax = dimensions.ymax;
-    canvas = createCanvas(initial_xmax, initial_ymax);
-    canvas.parent("sim_container");
-};
-
-
-function stretch_canvas() {
-    // stretch the canvas to fit the screen
-    console.log("stretching canvas...");
-    var dimensions = utils.getSimBoxDimensions();
-    canvas = createCanvas(dimensions.xmax, dimensions.ymax);
-    canvas.parent("sim_container");
-};
-
-
-function reset_canvas() {
-    // reset the canvas to its original dimensions
-    console.log("resetting canvas...");
-    canvas = createCanvas(initial_xmax, initial_ymax);
-    canvas.parent("sim_container");
-};
-
-
 function initialise_flash() {
     flash = new Separator(data.sys[sysid].initial_conditions, debug);
     flash.solve_PTZF();
@@ -98,6 +70,7 @@ function initialise_graphics() {
     console.log("initialising graphics...");
     graphics = new FlashGraphics(canvas, flash, images, sysid, debug);  
 };
+
 
 function update_disabled_sliders(flash) {
     $( "#k3_slider" ).slider( "value", flash.F);
@@ -269,9 +242,9 @@ function resize_all_plots() {
 // resize elements on window resize
 window.onresize = function() {
     if (screenfull.isFullscreen) {
-	stretch_canvas();
+	canvas.stretch();
     } else {
-	reset_canvas();
+	canvas.reset();
     };
     initialise_graphics();
     resize_all_plots();
@@ -290,7 +263,6 @@ $('#fullscreen').on('click', () => {
     if (screenfull.enabled) {
 	screenfull.toggle(target);
     };
-
 });
 
 // chemical system selector
