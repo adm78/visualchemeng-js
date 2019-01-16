@@ -5,6 +5,7 @@
 // Requires:
 // - plotly.js or plotly.min.js
 // - jquery
+// - vce_utils.js
 // - data.js
 //
 // Andrew D. McGuire 2018
@@ -15,6 +16,14 @@ function plot_stream_compositions(flash, graphics) {
     Plotly.react('topsplotDiv', get_comp_data(flash, graphics, 'y'), get_comp_layout('Tops', 'topsplotDiv'));
     Plotly.react('bottomsplotDiv', get_comp_data(flash, graphics, 'x'), get_comp_layout('Bottoms', 'bottomsplotDiv'));
     Plotly.react('flow_chart_container', get_flowrate_data(flash), get_flowrate_layout('flow_chart_container'));
+};
+
+
+function resize_all_plots() {
+    utils.resizePlotlyHeight('flow_chart_container');
+    utils.resizePlotlyWidth('feedplotDiv');
+    utils.resizePlotlyWidth('topsplotDiv');
+    utils.resizePlotlyWidth('bottomsplotDiv');
 };
 
 

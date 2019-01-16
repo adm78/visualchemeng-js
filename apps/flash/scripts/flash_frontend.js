@@ -69,16 +69,9 @@ function initialise_graphics() {
 
 function initialise_sliders() {
     resetting_log = true; // can't change values on un-initialised sliders, so don't perform the usual actions
-    updateAllSliders();
+    update_all_sliders();
     resetting_log = false;
     update_disabled_sliders(flash);
-};
-
-
-function update_disabled_sliders(flash) {
-    $( "#k3_slider" ).slider( "value", flash.F);
-    $( "#k4_slider" ).slider( "value", flash.V);
-    $( "#k5_slider" ).slider( "value", flash.L);
 };
 
 
@@ -138,12 +131,59 @@ $('#restart').click(async function(){
     resetting_log = true;
     console.log("You just clicked restart!");
     initialise_flash(debug);
-    updateAllSliders();
+    update_all_sliders();
     plot_stream_compositions(flash, graphics);
     resetting_log = false;
 });
 
-function updateAllSliders() {
+// resize elements on window resize
+window.onresize = function() {
+    if (screenfull.isFullscreen) {
+	canvas.stretch();
+    } else {
+	canvas.reset();
+    };
+    initialise_graphics();
+    resize_all_plots();
+};
+
+
+// render selectors on full page load (jquery)
+$(document).ready(function () {
+    $('#system_id').niceSelect();
+    $('#flash_type').niceSelect();
+});
+
+
+// fullscreen functionality
+const target = $('#target')[0]; // Get DOM element from jQuery collection
+$('#fullscreen').on('click', () => {
+    console.log("fullscreen toggle");
+    if (screenfull.enabled) {
+	screenfull.toggle(target);
+    };
+});
+
+
+// chemical system selector
+$('#system_id').on('change', function() {
+    chem_sys_changing_log = true;
+    console.log("-------potential chemical system change------");
+    var old_sysid = sysid;
+    console.log("old sysid = ", old_sysid);
+    sysid = Number(this.value);
+    console.log("new sys = ", sysid);   
+    if (old_sysid != sysid) {
+	initialise_flash(debug);
+	initialise_graphics();
+	plot_stream_compositions(flash, graphics)
+	update_all_sliders();
+    };
+    chem_sys_changing_log = false;
+})
+
+
+function update_all_sliders() {
     // update all sliders based on the initial
     // conditions of chemical system index 'sys'   
     updatePSlider(); // pressure slider
@@ -151,6 +191,13 @@ function updateAllSliders() {
     updateFSlider(); // F slider
     updateVSlider(); // V slider
     updateLSlider(); // L slider  
+};
+
+
+function update_disabled_sliders(flash) {
+    $( "#k3_slider" ).slider( "value", flash.F);
+    $( "#k4_slider" ).slider( "value", flash.V);
+    $( "#k5_slider" ).slider( "value", flash.L);
 };
 
 
@@ -229,58 +276,6 @@ function updateVSlider() {
     });
     $( "#k5_slider" ).slider( "value", flash.L );
 };
-
-
-function resize_all_plots() {
-    utils.resizePlotlyHeight('flow_chart_container');
-    utils.resizePlotlyWidth('feedplotDiv');
-    utils.resizePlotlyWidth('topsplotDiv');
-    utils.resizePlotlyWidth('bottomsplotDiv');
-};
-
-
-// resize elements on window resize
-window.onresize = function() {
-    if (screenfull.isFullscreen) {
-	canvas.stretch();
-    } else {
-	canvas.reset();
-    };
-    initialise_graphics();
-    resize_all_plots();
-};
-
-// render selectors on full page load (jquery)
-$(document).ready(function () {
-    $('#system_id').niceSelect();
-    $('#flash_type').niceSelect();
-});
-
-// fullscreen functionality
-const target = $('#target')[0]; // Get DOM element from jQuery collection
-$('#fullscreen').on('click', () => {
-    console.log("fullscreen toggle");
-    if (screenfull.enabled) {
-	screenfull.toggle(target);
-    };
-});
-
-// chemical system selector
-$('#system_id').on('change', function() {
-    chem_sys_changing_log = true;
-    console.log("-------potential chemical system change------");
-    var old_sysid = sysid;
-    console.log("old sysid = ", old_sysid);
-    sysid = Number(this.value);
-    console.log("new sys = ", sysid);   
-    if (old_sysid != sysid) {
-	initialise_flash(debug);
-	initialise_graphics();
-	plot_stream_compositions(flash, graphics)
-	updateAllSliders();
-    };
-    chem_sys_changing_log = false;
-})
 
 
 // drag/valve control
