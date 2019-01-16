@@ -6,8 +6,6 @@
 // - p5.js or p5.min.js
 // - vce_utils.js
 // - vce_particle.js
-//
-// @TODO: Reconnect disabled sliders to the flash backend state
 // 
 // Andrew D. McGuire 2019
 // a.mcguire227@gmail.com
@@ -36,23 +34,20 @@ function preload() {
 
 
 function setup() {
-    /* This function is called upon entry to create the
-       simulation canvas which we draw onto and run
-       a very simple flash unit test */
+    /* This function is called upon entry to create the simulation
+       canvas which we draw onto and run a very simple flash unit test
+    */
     canvas = new vceCanvas();
     initialise_flash();
     initialise_graphics();
     plot_stream_compositions(flash, graphics);
-    updateAllSliders();
-
+    initialise_sliders();
 };
 
 function draw() {
-    /* Draws background and img to the canvas.
-       This function is continuously called for the
-       lifetime of the scripts executions after setup()
-       has completed. */
-    // update particle streams
+    /* This function is continuously called for the lifetime of the
+       scripts executions after setup() has completed. We use it to
+       update the particle stream */
     if (!(paused_log)) {
 	graphics.update();
     };
@@ -72,6 +67,14 @@ function initialise_graphics() {
 };
 
 
+function initialise_sliders() {
+    resetting_log = true; // can't change values on un-initialised sliders, so don't perform the usual actions
+    updateAllSliders();
+    resetting_log = false;
+    update_disabled_sliders(flash);
+};
+
+
 function update_disabled_sliders(flash) {
     $( "#k3_slider" ).slider( "value", flash.F);
     $( "#k4_slider" ).slider( "value", flash.V);
@@ -86,6 +89,7 @@ function update_pressure() {
     if (!resetting_log && !chem_sys_changing_log) {
 	flash.updateP($( "#k1_slider" ).slider( "value"));
 	flash.solve_PTZF(debug=debug);
+	update_disabled_sliders(flash);
 	plot_stream_compositions(flash, graphics);	
     };
 };
@@ -94,6 +98,7 @@ function update_temp() {
     if (!resetting_log && !chem_sys_changing_log) {
 	flash.updateT($( "#k2_slider" ).slider( "value"));
 	flash.solve_PTZF();
+	update_disabled_sliders(flash);
 	plot_stream_compositions(flash, graphics);
     };
 };
@@ -103,11 +108,11 @@ function update_F() {
 	var F_range = data.sys[sysid].range.F
     	flash.F = F_range.min + graphics.valve.position*(F_range.max - F_range.min);
     	flash.solve_PTZF();
+	update_disabled_sliders(flash);
 	plot_stream_compositions(flash, graphics);
     };
 };
 
-function do_nothing() {};
 
 //--------------------------------------------------------------------
 //                  UI event listners
@@ -188,9 +193,7 @@ function updateFSlider() {
 	min: F_range.min,
 	max: F_range.max,
 	step: (F_range.max-F_range.min)/50.0,
-	value: F_range.min,
-	slide: do_nothing,
-	change: do_nothing,
+	value: flash.F,
 	disabled: true
     });
     $( "#k3_slider" ).slider( "value", flash.F );
@@ -205,9 +208,7 @@ function updateLSlider() {
 	min: L_range.min,
 	max: L_range.max,
 	step: (L_range.max-L_range.min)/20.0,
-	value: L_range.min,
-	slide: do_nothing,
-	change: do_nothing,
+	value: flash.L,
 	disabled: true
     });
     $( "#k4_slider" ).slider( "value", flash.L );
@@ -223,8 +224,7 @@ function updateVSlider() {
 	min: V_range.min,
 	max: V_range.max,
 	step: (V_range.max-V_range.min)/20.0,
-	value: do_nothing,
-	slide: do_nothing,
+	value: flash.V,
 	disabled: true
     });
     $( "#k5_slider" ).slider( "value", flash.L );
