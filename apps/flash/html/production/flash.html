@@ -1,12 +1,12 @@
 <html>
   <head>
-    <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/adm78/visualchemeng_js/13eee3e6db99109bf0f01f8a113b6e72efec3bbf/css/buttons.css">
-    <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/adm78/visualchemeng_js/13eee3e6db99109bf0f01f8a113b6e72efec3bbf/css/slider.css">
-    <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/adm78/visualchemeng_js/13eee3e6db99109bf0f01f8a113b6e72efec3bbf/css/vce.css">
-    <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/adm78/visualchemeng_js/13eee3e6db99109bf0f01f8a113b6e72efec3bbf/css/flash.css">
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/adm78/visualchemeng_js/13eee3e6db99109bf0f01f8a113b6e72efec3bbf/css/nice-select.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/adm78/visualchemeng_js/62e49f1e99e0011e7762a4760c6f8e0ff5b439f4/lib/styles/jquery-ui.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/adm78/visualchemeng_js/62e49f1e99e0011e7762a4760c6f8e0ff5b439f4/lib/styles/nice-select.css">
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto">
+    <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/adm78/visualchemeng_js/62e49f1e99e0011e7762a4760c6f8e0ff5b439f4/lib/styles/buttons.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/adm78/visualchemeng_js/62e49f1e99e0011e7762a4760c6f8e0ff5b439f4/lib/styles/slider.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/adm78/visualchemeng_js/62e49f1e99e0011e7762a4760c6f8e0ff5b439f4/lib/styles/vce.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/adm78/visualchemeng_js/62e49f1e99e0011e7762a4760c6f8e0ff5b439f4/apps/flash/styles/flash.css">
   </head>
   <body style="background-color:white;">
     <div class="wrapper" id="target">
@@ -21,7 +21,7 @@
       </div>
       <div class="box vce_info">
 	<a href="http://visualchemeng.com">
-          <img class="vce_logo" src="https://user-images.githubusercontent.com/17439476/31101095-20e39cb4-a7c4-11e7-95b4-1cccde15a8c0.png" />
+          <img class="vce_logo" src="https://cdn.rawgit.com/adm78/visualchemeng_js/62e49f1e99e0011e7762a4760c6f8e0ff5b439f4/lib/images/vcelogo.png" />
 	</a>
 	<a href="http://visualchemeng.com/molecular-simulation/kinetic-monte-carlo-kmc/"
 	   style="text-decoration:none">
@@ -61,16 +61,18 @@
        src="https://code.jquery.com/jquery-3.2.1.min.js"
        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
        crossorigin="anonymous"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/13eee3e6db99109bf0f01f8a113b6e72efec3bbf/libraries/jquery.nice-select.min.js"></script>
-    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/13eee3e6db99109bf0f01f8a113b6e72efec3bbf/libraries/p5.min.js"></script>
-    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/13eee3e6db99109bf0f01f8a113b6e72efec3bbf/libraries/vce_utils.js"></script>
-    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/13eee3e6db99109bf0f01f8a113b6e72efec3bbf/libraries/screenfull.js"></script>
-    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/13eee3e6db99109bf0f01f8a113b6e72efec3bbf/libraries/plotly-latest.min.js"></script>
-    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/13eee3e6db99109bf0f01f8a113b6e72efec3bbf/libraries/vce_separator.js"></script>
-    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/13eee3e6db99109bf0f01f8a113b6e72efec3bbf/libraries/vce_particle.js"></script>
-    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/13eee3e6db99109bf0f01f8a113b6e72efec3bbf/libraries/vce_ensemble.js"></script>
-    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/13eee3e6db99109bf0f01f8a113b6e72efec3bbf/modules/flash/flash_data.js"></script>
-    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/13eee3e6db99109bf0f01f8a113b6e72efec3bbf/modules/flash/flash.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/62e49f1e99e0011e7762a4760c6f8e0ff5b439f4/lib/js/third-party/jquery-ui.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/62e49f1e99e0011e7762a4760c6f8e0ff5b439f4/lib/js/third-party/jquery.nice-select.min.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/62e49f1e99e0011e7762a4760c6f8e0ff5b439f4/lib/js/third-party/p5.min.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/62e49f1e99e0011e7762a4760c6f8e0ff5b439f4/lib/js/vce/vce_utils.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/62e49f1e99e0011e7762a4760c6f8e0ff5b439f4/lib/js/vce/vce_math.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/62e49f1e99e0011e7762a4760c6f8e0ff5b439f4/lib/js/third-party/screenfull.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/62e49f1e99e0011e7762a4760c6f8e0ff5b439f4/lib/js/third-party/plotly-latest.min.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/62e49f1e99e0011e7762a4760c6f8e0ff5b439f4/lib/js/vce/vce_separator.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/62e49f1e99e0011e7762a4760c6f8e0ff5b439f4/lib/js/vce/vce_particle.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/62e49f1e99e0011e7762a4760c6f8e0ff5b439f4/lib/js/vce/vce_ensemble.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/62e49f1e99e0011e7762a4760c6f8e0ff5b439f4/lib/js/vce/vce_valve.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/62e49f1e99e0011e7762a4760c6f8e0ff5b439f4/apps/flash/scripts/flash_data.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/62e49f1e99e0011e7762a4760c6f8e0ff5b439f4/apps/flash/scripts/flash.js"></script>
   </body>
 </html>

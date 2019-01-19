@@ -40,7 +40,7 @@ var sid;
 var show_boundaries = true;
 var my_image;
 var y_max;
-var feed_blocks = [];
+var source_blocks = [];
 
 // --------------------------------------------------
 //             Visualisation functionality
@@ -95,7 +95,7 @@ function draw() {
     imageMode(CENTER);
     image(my_image, xmax/2 , ymax/2, sid.width, sid.height);
     if (particles_log) {
-	ensemble.updateFeeds();
+	ensemble.updateSources();
     };
     Engine.update(engine);
     ensemble.removeOutliers(xmax,ymax);
@@ -105,15 +105,15 @@ function draw() {
 		boundaries[i].show();
 	    };
     };
-    for (var i = 0; i < feed_blocks.length; i++) {
-	feed_blocks[i].show();
+    for (var i = 0; i < source_blocks.length; i++) {
+	source_blocks[i].show();
     };
 };
 
 
 function deactivateAll() {
     deactiveAllBoundaries();
-    deactivateAllFeedBlocks();
+    deactivateAllSourceBlocks();
 };
 
 
@@ -124,9 +124,9 @@ function deactiveAllBoundaries() {
 };
 
 
-function deactivateAllFeedBlocks() {
-    for (var i = 0; i < feed_blocks.length; i++) {
-	feed_blocks[i].active = false;
+function deactivateAllSourceBlocks() {
+    for (var i = 0; i < source_blocks.length; i++) {
+	source_blocks[i].active = false;
     };
 };
 
@@ -134,9 +134,9 @@ function deactivateAllFeedBlocks() {
 function mouseClicked() {
     if (utils.is_on_canvas(mouseX, mouseY, canvas)) {
 	deactivateAll();
-	for (var i = 0; i < feed_blocks.length; i++) {
-	    feed_blocks[i].mousePressed(mouseX, mouseY);
-	    if (feed_blocks[i].active) {
+	for (var i = 0; i < source_blocks.length; i++) {
+	    source_blocks[i].mousePressed(mouseX, mouseY);
+	    if (source_blocks[i].active) {
 		return; // only allow a single active feed block
 	    };
 	};
@@ -152,10 +152,10 @@ function mouseClicked() {
 
 function mouseDragged() {
     if (utils.is_on_canvas(mouseX, mouseY, canvas)) {
-	for (var i = 0; i < feed_blocks.length; i++) {
-	    feed_blocks[i].mouseDragged(mouseX, mouseY);
-	    ensemble.feeds[i].x = feed_blocks[i].body.position.x;
-	    ensemble.feeds[i].y = feed_blocks[i].body.position.y;
+	for (var i = 0; i < source_blocks.length; i++) {
+	    source_blocks[i].mouseDragged(mouseX, mouseY);
+	    ensemble.sources[i].x = source_blocks[i].body.position.x;
+	    ensemble.sources[i].y = source_blocks[i].body.position.y;
 	};
 
 	
@@ -187,10 +187,10 @@ $('#feed_on').click(async function(){
     console.log("You just clicked the particle switch!");
     particles_log = !(particles_log);
     if (particles_log) {
-	$("#feed_on").text('Particles Feed Off');
+	$("#feed_on").text('Particles Source Off');
     }
     else {
-	$("#feed_on").text('Particles Feed On');
+	$("#feed_on").text('Particles Source On');
     }
 });
 
@@ -202,12 +202,12 @@ $('#add_feed').click(async function(){
     var feed_block = new Boundary(Math.random()*dimensions.xmax, Math.random()*dimensions.ymax, 20.0, 20.0, 0.0, undefined);
     feed_block.colour.active = 'rgba(0, 255, 0, 0.5)';
     feed_block.colour.inactive = 'rgba(0, 0, 255, 0.5)';
-    feed_block.name = 'F' + feed_blocks.length;
+    feed_block.name = 'F' + source_blocks.length;
     var particle_options = {type :'single-body', radius : 2.0}
-    var feed = new ParticleFeed(feed_block.body.position.x, feed_block.body.position.y, 0.1, particle_options);
+    var feed = new ParticleSource(feed_block.body.position.x, feed_block.body.position.y, 0.1, particle_options);
     console.log(feed);
-    feed_blocks.push(feed_block);
-    ensemble.feeds.push(feed);
+    source_blocks.push(feed_block);
+    ensemble.sources.push(feed);
     console.log(ensemble);
 });
 
@@ -310,21 +310,21 @@ $('#rm_all_boundary').click(async function(){
 $('#rm_feed').click(async function(){
 
     console.log("Deleting active feeds!");
-    var updated_feed_blocks = [];
-    var updated_feeds = [];
-    for (var i = 0; i < feed_blocks.length; i++) {
-	var feed_block = feed_blocks[i];
-	var feed = ensemble.feeds[i];
-	if (feed_block.active) {
-	    feed_block.removeFromWorld();
+    var updated_source_blocks = [];
+    var updated_sources = [];
+    for (var i = 0; i < source_blocks.length; i++) {
+	var source_block = source_blocks[i];
+	var source = ensemble.sources[i];
+	if (source_block.active) {
+	    source_block.removeFromWorld();
 	}
 	else {
-	    updated_feed_blocks.push(feed_block);
-	    updated_feeds.push(feed);
+	    updated_source_blocks.push(source_block);
+	    updated_sources.push(source);
 	};
     };
-    feed_blocks = updated_feed_blocks;
-    ensemble.feeds = updated_feeds;
+    source_blocks = updated_source_blocks;
+    ensemble.sources = updated_sources;
 	
 });
 
@@ -332,11 +332,11 @@ $('#rm_feed').click(async function(){
 // remove all feeds
 $('#rm_all_feed').click(async function(){
     console.log("Deleting all feeds!");
-    for (var i = 0; i < feed_blocks.length; i++) {
-	feed_blocks[i].removeFromWorld();
+    for (var i = 0; i < source_blocks.length; i++) {
+	source_blocks[i].removeFromWorld();
     };
-    feed_blocks = [];
-    ensemble.feeds = [];
+    source_blocks = [];
+    ensemble.sources = [];
 });
 
 
@@ -356,9 +356,9 @@ $('#output_coords').click(async function(){
 
     var all_f_coordindates = [];
     var all_f_scaling = [];
-    for (var i = 0; i < feed_blocks.length; i++) {
-	all_f_coordindates.push(feed_blocks[i].get_coordinates());
-	all_f_scaling.push(feed_blocks[i].get_positional_scale_factors(dimensions.xmax, dimensions.ymax,
+    for (var i = 0; i < source_blocks.length; i++) {
+	all_f_coordindates.push(source_blocks[i].get_coordinates());
+	all_f_scaling.push(source_blocks[i].get_positional_scale_factors(dimensions.xmax, dimensions.ymax,
 								       sid.width, sid.height));
     };
     $('#f_coords').text(JSON.stringify(all_f_coordindates));

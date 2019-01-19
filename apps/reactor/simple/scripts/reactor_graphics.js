@@ -69,8 +69,8 @@ function ReactorGraphics(canvas, Reac, n_init, Tank, imp_array=[], isf=0.8, debu
 	var component_ensemble = new Ensemble([],this.world);
 	var component_n_init = Math.round(this.Reac.conc[i]*n_init/cT);
 	for (j = 0; j < component_n_init; j++) {
-	    var inlet_x = 0.5*(this.xmax + 0.8*vce_math.getRandomSigned()*this.sid.width); 
-	    var inlet_y = (this.ymax)*0.7 + 0.2*vce_math.getRandomSigned()*this.sid.height;
+	    var inlet_x = 0.5*(this.xmax + 0.6*vce_math.getRandomSigned()*this.sid.width); 
+	    var inlet_y = (this.ymax)*0.6 + 0.2*vce_math.getRandomSigned()*this.sid.height;
 	    var Part = ParticleFactory(this.world, inlet_x, inlet_y, settings.particle_options[i]);
 	    component_ensemble.addParticle(Part);
 	};
