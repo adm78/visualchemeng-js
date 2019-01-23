@@ -1,0 +1,14 @@
+* {
+    margin : 0;
+    padding : 0
+}
+
+
+#mccabe_thiele_container {
+
+}
+
+/* hide the plotly toolbar */
+.modebar {
+    display: none !important;
+}
