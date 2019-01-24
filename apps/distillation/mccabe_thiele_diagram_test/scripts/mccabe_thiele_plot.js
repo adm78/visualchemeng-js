@@ -44,13 +44,13 @@ function _get_mccabe_thiele_traces(column) {
 	    color : '#008CBA'
 	}
     };
-    var x_feed_op = [0.0, 1.0]; 
+    var intersect = column.op_line_intersect();
     var feed_op_line = {
 	name: 'Feed op. line',
 	type: "scatter",
 	mode: "lines",
-	x: x_feed_op,
-	y: column.feed_op(x_feed_op),
+	x: [column.xf, intersect.x],
+	y: [column.xf, intersect.y],
 	line: {
 	    color : '#32c143'
 	}
@@ -60,13 +60,23 @@ function _get_mccabe_thiele_traces(column) {
 	name: 'Rectifying op. line',
 	type: "scatter",
 	mode: "lines",
-	x: x_rect_op,
-	y: column.rect_op(x_rect_op),
+	x: [intersect.x, column.xd],
+	y: [intersect.y, column.xd],
 	line: {
 	    color : '#ef9921'
 	}
     };
-    return [center_line, equilib_line, feed_op_line, rect_op_line];
+    var stripping_op_line = {
+	name: 'Stripping op. line',
+	type: "scatter",
+	mode: "lines",
+	x: [column.xb, intersect.x],
+	y: [column.xb, intersect.y],
+	line: {
+	    color : '#c932d1'
+	}
+    };
+    return [center_line, equilib_line, feed_op_line, rect_op_line, stripping_op_line];
 };
 
 

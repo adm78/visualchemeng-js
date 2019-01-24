@@ -67,15 +67,29 @@ function DistMcCabeTheile(options) {
 	    };
 	} else {
 	    // find where the rect line meets the feed op line
-	    return 0.5;
+	    var intersect = this.op_line_intersect();
+	    var m = (intersect.y - this.xb)/(intersect.x - this.xb);
+	    var c = this.xb*(1 - m);
+	    y = m*x + c; 
 	};
 	return y;
 
     };
 
-    this.rect_feed_intersect = function() {
-	// find the intersection between the rectifying and feed op lines
-	// @WIP
+    this.op_line_intersect = function() {
+	/* Find the intersection between the the three lines.
+	
+	 The intersection is:
+	 y_feed = y_op
+	 => x = (b_feed - b_rect)/(m_feed - m_rect) 
+	
+	*/
+	var x, y;
+	var num = - (this.xf/(this.q-1)) - (this.xd/(this.R+1));
+	var den = (this.R/(this.R+1)) - (this.q/(this.q-1));
+	x = num/den;
+	y = this.rect_op(x);
+	return	{x : x, y : y};
     };
 };
 
