@@ -35,7 +35,7 @@ function _get_mccabe_thiele_traces(column) {
 	}
     };
     var equilib_line = {
-	name: 'Vapour-Liquid Equilibirum',
+	name: 'VLE',
 	type: "scatter",
 	mode: "lines",
 	x: data.equilibrium_data.x,
@@ -43,8 +43,30 @@ function _get_mccabe_thiele_traces(column) {
 	line: {
 	    color : '#008CBA'
 	}
-    }
-    return [center_line, equilib_line];
+    };
+    var x_feed_op = [0.0, 1.0]; 
+    var feed_op_line = {
+	name: 'Feed op. line',
+	type: "scatter",
+	mode: "lines",
+	x: x_feed_op,
+	y: column.feed_op(x_feed_op),
+	line: {
+	    color : '#32c143'
+	}
+    };
+    var x_rect_op = [0.0, 1.0]; 
+    var rect_op_line = {
+	name: 'Rectifying op. line',
+	type: "scatter",
+	mode: "lines",
+	x: x_rect_op,
+	y: column.rect_op(x_rect_op),
+	line: {
+	    color : '#ef9921'
+	}
+    };
+    return [center_line, equilib_line, feed_op_line, rect_op_line];
 };
 
 
