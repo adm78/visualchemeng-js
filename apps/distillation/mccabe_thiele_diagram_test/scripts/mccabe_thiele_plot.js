@@ -76,7 +76,25 @@ function _get_mccabe_thiele_traces(column) {
 	    color : '#c932d1'
 	}
     };
-    return [center_line, equilib_line, feed_op_line, rect_op_line, stripping_op_line];
+    var stage_data = column.stage_data();
+    var stage_line = {
+	name: 'Stage line',
+	type: "scatter",
+	mode: "lines+text",
+	x: stage_data.x,
+	y: stage_data.y,
+	line: {
+	    color : '#f73131'
+	},
+	text : _get_stage_labels(stage_data),
+	textposition : 'top left',
+	textfont: {
+	    family: 'Roboto, serif',
+	    size: 14,
+	    color: 'grey'
+	},
+    };
+    return [center_line, equilib_line, feed_op_line, rect_op_line, stripping_op_line, stage_line];
 };
 
 
@@ -136,4 +154,15 @@ function _get_mccabe_thiele_layout() {
 	}
     };
     return layout
+};
+
+function _get_stage_labels(stage_data) {
+    // Generate an arrays of labels that can be used with the stage
+    // data.  Note that we only wish to label the points that lie on
+    // the equilibrium line (i.e. every second point).
+    labels = [];
+    for (var i = 0; i < stage_data.n_stages; i++) {
+	labels.push('',i+1)
+    };
+    return labels;
 };
