@@ -23,6 +23,7 @@ function plot_mccabe_thiele_diagram(column, container) {
 
 
 function _get_mccabe_thiele_traces(column) {
+    var traces = [];
     // central line
     var center_line = {
 	name : 'x=y',
@@ -34,6 +35,7 @@ function _get_mccabe_thiele_traces(column) {
 	    color : '#aeb1b7'
 	}
     };
+    traces.push(center_line);
     var equilib_line = {
 	name: 'VLE',
 	type: "scatter",
@@ -44,6 +46,7 @@ function _get_mccabe_thiele_traces(column) {
 	    color : '#008CBA'
 	}
     };
+    traces.push(equilib_line);
     var intersect = column.op_line_intersect();
     var feed_op_line = {
 	name: 'Feed op. line',
@@ -55,6 +58,7 @@ function _get_mccabe_thiele_traces(column) {
 	    color : '#32c143'
 	}
     };
+    traces.push(feed_op_line);
     var x_rect_op = [0.0, 1.0]; 
     var rect_op_line = {
 	name: 'Rectifying op. line',
@@ -66,6 +70,7 @@ function _get_mccabe_thiele_traces(column) {
 	    color : '#ef9921'
 	}
     };
+    traces.push(rect_op_line);
     var stripping_op_line = {
 	name: 'Stripping op. line',
 	type: "scatter",
@@ -76,25 +81,28 @@ function _get_mccabe_thiele_traces(column) {
 	    color : '#c932d1'
 	}
     };
-    var stage_data = column.stage_data();
-    var stage_line = {
-	name: 'Stage line',
-	type: "scatter",
-	mode: "lines+text",
-	x: stage_data.x,
-	y: stage_data.y,
-	line: {
-	    color : '#f73131'
-	},
-	text : _get_stage_labels(stage_data),
-	textposition : 'top left',
-	textfont: {
-	    family: 'Roboto, serif',
-	    size: 14,
-	    color: 'grey'
-	},
+    traces.push(stripping_op_line);
+    if (column.stage_data != null) {
+	var stage_line = {
+	    name: 'Stage line',
+	    type: "scatter",
+	    mode: "lines+text",
+	    x: column.stage_data.x,
+	    y: column.stage_data.y,
+	    line: {
+		color : '#f73131'
+	    },
+	    text : _get_stage_labels(column),
+	    textposition : 'top left',
+	    textfont: {
+		family: 'Roboto, serif',
+		size: 14,
+		color: 'grey'
+	    },
+	};
+	traces.push(stage_line);
     };
-    return [center_line, equilib_line, feed_op_line, rect_op_line, stripping_op_line, stage_line];
+    return traces;
 };
 
 
@@ -156,12 +164,12 @@ function _get_mccabe_thiele_layout() {
     return layout
 };
 
-function _get_stage_labels(stage_data) {
+function _get_stage_labels(column) {
     // Generate an arrays of labels that can be used with the stage
     // data.  Note that we only wish to label the points that lie on
     // the equilibrium line (i.e. every second point).
     labels = [];
-    for (var i = 0; i < stage_data.n_stages; i++) {
+    for (var i = 0; i < column.n_stages; i++) {
 	labels.push('',i+1)
     };
     return labels;

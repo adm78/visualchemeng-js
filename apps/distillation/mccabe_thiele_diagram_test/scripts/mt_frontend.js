@@ -17,9 +17,11 @@ var options = {
     q : 7.0/6.0,
     R : 6.692,
     x_eq_data : data.equilibrium_data.x,
-    y_eq_data : data.equilibrium_data.y
+    y_eq_data : data.equilibrium_data.y,
+    F : 100.0,
 };
 var column = new DistMcCabeTheile(options);
+column.F_max = 200.0; //@TODO: clean this up!
 plot_mccabe_thiele_diagram(column, 'mccabe_thiele_container');
  
 

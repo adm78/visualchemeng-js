@@ -51,27 +51,39 @@ function setup(first_time=true) {
     canvas.parent("sim_container");
 
     // Initialise the backend column properties THIS IS A TEST
-    options = {};
-    column = new DistTestBackend(options);
-    column.n_stages = 20;
-    column.feed_pos = 10;
-    for (var i=0; i < column.n_stages; i++) {
-	var stage = new Stage();
-	stage.x = i/column.n_stages;
-	stage.y = 1.0 - stage.x;
-	column.stages.push(stage);
+    // options = {};
+    // column = new DistTestBackend(options);
+    // column.n_stages = 20;
+    // column.feed_pos = 10;
+    // for (var i=0; i < column.n_stages; i++) {
+    // 	var stage = new Stage();
+    // 	stage.x = i/column.n_stages;
+    // 	stage.y = 1.0 - stage.x;
+    // 	column.stages.push(stage);
+    // };
+    // column.R = 0.5;
+    // console.log(column);
+    var options = {
+	xf : 0.5,
+	xd : 0.95,
+	xb : 0.05,
+	P : 101.3e3, // Pa
+	q : 7.0/6.0,
+	R : 6.692,
+	x_eq_data : data.equilibrium_data.x,
+	y_eq_data : data.equilibrium_data.y,
+	F : 100.0,
     };
-    column.F = 100.0;
-    column.Fmax = 200.0;
-    column.R = 0.5;
-    console.log(column);
+    var column = new DistMcCabeTheile(options);
+    column.F_max = 200.0; //@TODO: clean this up!
+    column.solve();
     
     // Initialise the graphical column representation
     Graphics = new DistillationGraphics(canvas, column, images, debug);
     console.log(Graphics);
 
     // Initialise the McCabe-Thiele plot
-    plot_mccabe_thiele_diagram('mccabe_thiele_container');
+    plot_mccabe_thiele_diagram(column, 'mccabe_thiele_container');
 
     // Update any labels based on the initialised state
     update_labels();

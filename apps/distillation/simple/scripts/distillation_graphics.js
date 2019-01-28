@@ -51,8 +51,8 @@ function DistillationGraphics(canvas, column, images, debug) {
     this.show_boundaries_log = false;
     this.Ensembles = {};
     this.debug = debug;
-    this.valves = {}
-    
+    this.valves = {};
+   
     this.stage_pos = function(i) {
 	// Return the centre position of stage number i.
 	// Note stages number is the stage index + 1, i.e.
@@ -95,8 +95,8 @@ function DistillationGraphics(canvas, column, images, debug) {
 	// adjust the particle generation rates at each source to
 	// match the backend flowrates
 	this.Ensembles.feed.sources[0].set_rate(this.column.F*this.pm); 
-	this.Ensembles.bottoms.sources[0].set_rate(this.column.L()*this.pm); 
-	this.Ensembles.tops.sources[0].set_rate(this.column.V()*this.pm); 
+	this.Ensembles.bottoms.sources[0].set_rate(this.column.B()*this.pm); 
+	this.Ensembles.tops.sources[0].set_rate(this.column.D()*this.pm); 
     };
 
 
@@ -174,7 +174,7 @@ function DistillationGraphics(canvas, column, images, debug) {
 	reflux : new Valve(reflux_valve_pos.x, reflux_valve_pos.y),
 	feed : new Valve(feed_valve_pos.x, feed_valve_pos.y)
     };
-    this.valves.reflux.set_position(this.column.R);
+    this.valves.reflux.set_position(this.column.R/(this.column.R + 1));
     this.valves.feed.set_position(this.column.F/settings.Fmax);
 
     
@@ -190,9 +190,9 @@ function DistillationGraphics(canvas, column, images, debug) {
 	// Update each ensemble in sequence.
 	for (var key in this.Ensembles) {
 	    var ensemble = this.Ensembles[key];
-	    var x_feed = this.column.stages[this.column.feed_pos-1].x;
-	    var x_bottoms = this.column.stages[0].x;
-	    var x_tops = this.column.stages[this.column.stages.length-1].x;
+	    var x_feed = this.column.xf;
+	    var x_bottoms = this.column.xb;
+	    var x_tops = this.column.xd;
 	    var update_options = {
 		xmax : this.xmax,
 		ymax : this.ymax,
@@ -219,6 +219,7 @@ function DistillationGraphics(canvas, column, images, debug) {
 	// update the column based on any UI controls
 	this.column.F = this.valves.feed.position*settings.Fmax;
 	this.column.R = this.valves.reflux.position;
+	this.column.solve();
     };
 
 
@@ -252,7 +253,7 @@ function DistillationGraphics(canvas, column, images, debug) {
 	var c1 = color(settings.components[0].colour);
 	var c2 = color(settings.components[1].colour);
 	for (var i=0; i < this.column.n_stages; i++) {
-	    var c = lerpColor(c1, c2, column.stages[i].y);
+	    var c = lerpColor(c1, c2, this.column.stages[i].y);
 	    fill(c);
 	    var stage_top = this.column_bottom - (i+1)*this.stage_height();
 	    rect(this.column_left, stage_top, this.column_width, this.stage_height());
