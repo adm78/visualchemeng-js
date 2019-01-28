@@ -229,6 +229,7 @@ function DistillationGraphics(canvas, column, images, debug) {
 	this.show_walls();
 	this.show_column();
 	this.show_stages();
+	this.show_R();
 	this.show_feed();
 	this.show_boundaries();
 	this.show_ensembles();
@@ -261,7 +262,6 @@ function DistillationGraphics(canvas, column, images, debug) {
 	pop();
     };
    
-
     this.show_column = function() {
 	push();
 	imageMode(CENTER);
@@ -310,6 +310,14 @@ function DistillationGraphics(canvas, column, images, debug) {
 	};
     };
 
+    this.show_R = function() {
+	push()
+	textSize(32);
+	fill(255, 255, 255);
+	textAlign(LEFT, TOP);
+	text('R = '+ this.column.R.toFixed(2), this.canvas.width*0.02, this.canvas.height*0.02);
+	pop()
+    };
     
     this.show_fps = function() {
 	push()
