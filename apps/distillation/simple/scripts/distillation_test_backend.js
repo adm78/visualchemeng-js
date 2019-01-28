@@ -24,6 +24,26 @@ function DistMcCabeTheile(options) {
     	return this.F - this.D();
     };
 
+
+    this.R_min = function() {
+
+	// step 1: determine where the feed op crosses the equi-line
+	var soln = vce_math.solver.newtonsMethod(this._f_rmin,0.5);
+	if (soln[0]) {
+	    var x_intersect = soln[1];
+	    var y_intersect = this.feed_op(x_intersect);
+	} else {
+	    throw new Error("Could not find intersection between op-line and equilibrium line!");
+	};
+
+	// step 2: compute the gradient of the rectifying line with this.
+	var m_rect = (this.xd - y_intersect)/(this.xd - x_intersect);
+	var R = m_rect/(1.0 - m_rect);
+	return R;
+	
+    };
+
+
     // solve the column
     this.solve = function() {
 	this.stage_data = this.get_stage_data();
@@ -32,7 +52,6 @@ function DistMcCabeTheile(options) {
     };
 
     
-
     this.feed_op = function(x) {
 	// feed operating line
 	var y;
@@ -144,6 +163,12 @@ function DistMcCabeTheile(options) {
 	};
 	return stages;
     };
+
+
+
+    this._f_rmin = (function(x) {
+	return this.feed_op(x) - this.y_eq(x);
+    }).bind(this);
 };
 
 	
