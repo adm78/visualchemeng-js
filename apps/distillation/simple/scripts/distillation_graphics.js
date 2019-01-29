@@ -10,8 +10,9 @@
 // a.mcguire227@gmail.com
 //
 // To do:
-// - act on ensembles by name rather than index
-// - separate methods from constructor
+// - separate methods from constructor (general clean-up)
+// - feed pipe value should move with feed position
+// - feed particle source should move with feed position
 //----------------------------------------------------------
 var Engine = Matter.Engine,
     World = Matter.World,
@@ -60,7 +61,7 @@ function DistillationGraphics(canvas, column, images, debug) {
 	// stages start counting at 1 not 0.
 	return {
 	    x : this.column_left + 0.5*this.column_width,
-	    y : this.column_bottom - (i-0.5)*this.stage_height()
+	    y : this.column_top + (i-0.5)*this.stage_height()
 	};
     };
 

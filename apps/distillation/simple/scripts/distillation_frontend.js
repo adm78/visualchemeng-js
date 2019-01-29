@@ -14,6 +14,7 @@
 // To do:
 // - walls show functionality should just be handled by the boundaries themselves
 // - add particles to conderser
+// - fix positioning of the feed pipe
 //
 // --------------------------------------------------
 //               set-up variables
