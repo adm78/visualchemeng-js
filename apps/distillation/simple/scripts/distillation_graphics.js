@@ -51,6 +51,7 @@ function DistillationGraphics(canvas, column, images, debug) {
     this.show_boundaries_log = false;
     this.Ensembles = {};
     this.debug = debug;
+    this.alpha_R_min = 1.1; // controls how close we can push to column towards Rmin (1.1 == with 10%)
     this.valves = {};
    
     this.stage_pos = function(i) {
@@ -174,7 +175,7 @@ function DistillationGraphics(canvas, column, images, debug) {
 	reflux : new Valve(reflux_valve_pos.x, reflux_valve_pos.y),
 	feed : new Valve(feed_valve_pos.x, feed_valve_pos.y)
     };
-    this.valves.reflux.set_position(this.column.R/(this.column.R + 1));
+    this.valves.reflux.set_position((this.column.R - this.alpha_R_min*this.column.R_min())/(1 + this.column.R - this.alpha_R_min*this.column.R_min()));
     this.valves.feed.set_position(this.column.F/settings.Fmax);
 
     
@@ -218,7 +219,7 @@ function DistillationGraphics(canvas, column, images, debug) {
     this.update_backend = function() {
 	// update the column based on any UI controls
 	this.column.F = this.valves.feed.position*settings.Fmax;
-	this.column.R = this.valves.reflux.position;
+	this.column.R = this.valves.reflux.position/(1.0 - this.valves.reflux.position) + column.R_min()*this.alpha_R_min;
 	this.column.solve();
     };
 

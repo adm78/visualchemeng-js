@@ -21,7 +21,7 @@
 var paused_log = false;
 var debug = true;
 var isDragging = false;
-var Graphics,
+var Graphics, column, 
     images = {};
 
 // --------------------------------------------------
@@ -51,18 +51,6 @@ function setup(first_time=true) {
     canvas.parent("sim_container");
 
     // Initialise the backend column properties THIS IS A TEST
-    // options = {};
-    // column = new DistTestBackend(options);
-    // column.n_stages = 20;
-    // column.feed_pos = 10;
-    // for (var i=0; i < column.n_stages; i++) {
-    // 	var stage = new Stage();
-    // 	stage.x = i/column.n_stages;
-    // 	stage.y = 1.0 - stage.x;
-    // 	column.stages.push(stage);
-    // };
-    // column.R = 0.5;
-    // console.log(column);
     var options = {
 	xf : 0.5,
 	xd : 0.95,
@@ -74,7 +62,7 @@ function setup(first_time=true) {
 	y_eq_data : data.equilibrium_data.y,
 	F : 100.0,
     };
-    var column = new DistMcCabeTheile(options);
+    column = new DistMcCabeTheile(options);
     column.F_max = 200.0; //@TODO: clean this up!
     column.solve();
     
@@ -178,6 +166,7 @@ function mouseDragged() {
 	};
 	Graphics.update_backend();
 	Graphics.update_particle_source_rates();
+	plot_mccabe_thiele_diagram(column, 'mccabe_thiele_container');
     };
 };
 
