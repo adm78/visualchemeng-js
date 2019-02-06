@@ -6,13 +6,13 @@
 // Requires:
 //
 //
-// Andrew D. McGuire 2018
+// Andrew D. McGuire 2019
 // a.mcguire227@gmail.com
 //
 // To do:
 // - separate methods from constructor (general clean-up)
-// - feed pipe value should move with feed position
-// - feed particle source should move with feed position
+// - feed valve movement should not reset feed ensemble
+// - relfux valve not always in sync with mccabe
 //----------------------------------------------------------
 var Engine = Matter.Engine,
     World = Matter.World,
@@ -83,16 +83,20 @@ function DistillationGraphics(canvas, column, images, debug) {
     };
 
 
-    this.reset_feed_boundaries = function() {
-	// Move the feed boundaries so they line up with the feed pipe
-	// position.
+    this.realign_objects_with_feed = function() {
+	// Move objectcs that are aligned with the feed position, such as
+	// particle source, particle stream, feed pipe image, feed pipe
+	// boundaries.
+	this.Ensembles.feed.empty(); // clear the ensemble, since it doesn't translate well at speed...
+	this.Ensembles.feed.sources[0].y = this.feed_pipe_pos().y;
+	this.valves.feed.y = this.feed_pipe_pos().y;
 	var dy = this.feed_pipe_pos().y - this.feed_boundaries[0].body.position.y;
 	for (var i=0; i < this.feed_boundaries.length; i++) {
 	    this.feed_boundaries[i].translate(0, dy);
 	};
     };
 
-
+    
     this.update_particle_source_rates = function() {
 	// adjust the particle generation rates at each source to
 	// match the backend flowrates
@@ -162,7 +166,6 @@ function DistillationGraphics(canvas, column, images, debug) {
     // generate the feed pipe boundaries and translate them 
     this.feed_boundaries = makeBoundaries(settings.feed_boundary_positions, this.xmax, this.ymax,
 					  this.sid.width, this.sid.height, this.world);
-    this.reset_feed_boundaries();
 
     
     // Set-up the valves
@@ -179,6 +182,9 @@ function DistillationGraphics(canvas, column, images, debug) {
     this.valves.reflux.set_position((this.column.R - this.alpha_R_min*this.column.R_min())/(1 + this.column.R - this.alpha_R_min*this.column.R_min()));
     this.valves.feed.set_position(this.column.F/settings.Fmax);
 
+
+    // reposition some parts relative to the feed
+    this.realign_objects_with_feed();
     
     // Class Methods
     this.update = function() {
@@ -218,10 +224,13 @@ function DistillationGraphics(canvas, column, images, debug) {
 
 
     this.update_backend = function() {
-	// update the column based on any UI controls
+	// update the column based on any UI controls and reset any
+	// graphics elements as required.
 	this.column.F = this.valves.feed.position*settings.Fmax;
 	this.column.R = this.valves.reflux.position/(1.0 - this.valves.reflux.position) + column.R_min()*this.alpha_R_min;
 	this.column.solve();
+
+	this.realign_objects_with_feed();
     };
 
 
