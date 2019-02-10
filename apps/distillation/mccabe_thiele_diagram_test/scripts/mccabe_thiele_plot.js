@@ -10,7 +10,7 @@
 // a.mcguire227@gmail.com
 //
 // To do:
-//
+// - stop labeling stages if n stages exceeds some number
 //
 // --------------------------------------------------
 

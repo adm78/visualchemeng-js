@@ -12,6 +12,7 @@
 // To do:
 // - separate public and private methods
 // - relfux valve not always in sync with mccabe
+// - switch canvas type to vceCanvas
 //----------------------------------------------------------
 var Engine = Matter.Engine,
     World = Matter.World,
@@ -20,47 +21,54 @@ var Engine = Matter.Engine,
     Body = Matter.Body;
 
 function DistillationGraphics(canvas, column, images, debug) {
-    /*
-      
-    Args:
-        cavas (p5.canvas) : The p5 canvas to render on top of.
-	column : The backend column object
-	images : a JSON object
-	debug : debug bool
-    */
-        this.__init__ = function(canvas, column, images, debug) {
-	    // Set the main class attributes
-	    this.canvas = canvas;
-	    this.column = column;
-	    this.xmax = canvas.width;
-	    this.ymax = canvas.height;
-	    this.canvas_sf = 0.85; // fraction of canvas height to be take up by the image
-	    this.images = images;
-	    this.sid = utils.getImgScaledDimensions(this.images.column, this.canvas_sf, this.ymax);
-	    this.column_sf = this.sid.width/this.images.column.width; // col scale factor
-	    this.pm = 0.01; // particle multiplier 
-	    this.engine = Engine.create();
-	    this.world = this.engine.world;
-	    var column_int = utils.get_abs_coords(this.xmax, this.ymax, this.sid.width,
-						  this.sid.height, settings.column_interior_position)
-	    this.column_top = column_int.y - 0.5*column_int.h;
-	    this.column_left = column_int.x - 0.5*column_int.w;
-	    this.column_width = column_int.w;
-	    this.column_height = column_int.h;
-	    this.column_bottom = this.column_top + this.column_height;
-	    this.show_boundaries_log = false;
-	    this.Ensembles = {};
-	    this.debug = debug;
-	    this.alpha_R_min = 1.1; // controls how close we can push to column towards Rmin (1.1 == with 10%)
-	    this.valves = {};
-	    this.Boundaries = [];
 
-	    // Initialse the complex stuff
-	    this._init_ensembles();
-	    this.update_particle_source_rates();
-	    this._init_boundaries();
-	    this._init_valves();
-	    this.realign_objects_with_feed();
+    this.__init__ = function(canvas, column, images, debug) {
+	/*
+	  Args:
+              cavas (p5.canvas) : The p5 canvas to render on top of.
+	      column : The backend column object
+	      images : a JSON object
+	      debug : debug bool
+	*/
+	
+	// Set the main class attributes
+	this.debug = debug;
+	this.canvas = canvas;
+	this.column = column;
+	this.xmax = canvas.width;
+	this.ymax = canvas.height;
+	this.canvas_sf = 0.85; // fraction of canvas height to be take up by the image
+	this.images = images;
+	this.sid = utils.getImgScaledDimensions(this.images.column, this.canvas_sf, this.ymax);
+	this.column_sf = this.sid.width/this.images.column.width; // col scale factor
+	this.pm = 0.01; // particle multiplier 
+	this.engine = Engine.create();
+	this.world = this.engine.world;
+	this.Ensembles = {};
+	this.valves = {};
+	this.Boundaries = [];
+	this.show_boundaries_log = false;
+	this.alpha_R_min = 1.1; // controls how close we can push to column towards Rmin (1.1 == with 10%)
+
+	// Initalise everything else
+	this._init_column_positions();
+	this._init_ensembles();
+	this._update_particle_source_rates();
+	this._init_boundaries();
+	this._init_valves();
+	this.realign_objects_with_feed();
+    };
+
+
+    this._init_column_positions = function() {
+	// Initialise the column positions
+	var column_int = utils.get_abs_coords(this.xmax, this.ymax, this.sid.width,
+					      this.sid.height, settings.column_interior_position);
+	this.column_top = column_int.y - 0.5*column_int.h;
+	this.column_left = column_int.x - 0.5*column_int.w;
+	this.column_width = column_int.w;
+	this.column_height = column_int.h;
+	this.column_bottom = this.column_top + this.column_height;
     };
 
 
@@ -173,7 +181,7 @@ function DistillationGraphics(canvas, column, images, debug) {
     };
 
     
-    this.update_particle_source_rates = function() {
+    this._update_particle_source_rates = function() {
 	// adjust the particle generation rates at each source to
 	// match the backend flowrates
 	this.Ensembles.feed.sources[0].set_rate(this.column.F*this.pm); 
@@ -232,13 +240,13 @@ function DistillationGraphics(canvas, column, images, debug) {
     this.reflux_update = function() {
 	// Update graphics based on a change in the reflux valve position
 	this.realign_objects_with_feed();
-	this.update_particle_source_rates();
+	this._update_particle_source_rates();
     };
 
 
     this.feed_flow_update = function() {
 	// Update graphics based on a change in the feed valve position
-	this.update_particle_source_rates();
+	this._update_particle_source_rates();
     };
 
     
