@@ -14,7 +14,6 @@
 // To do:
 // - walls show functionality should just be handled by the boundaries themselves
 // - add particles to conderser
-// - fix positioning of the feed pipe
 //
 // --------------------------------------------------
 //               set-up variables
@@ -163,10 +162,18 @@ function mouseDragged() {
 	    var valve = Graphics.valves[key];
 	    if (valve.active) {
 		valve.drag_handle(mouseX, mouseY);
+		if (valve.name == 'reflux') {
+		    column.R = Graphics.valves.reflux.position/(1.0 - Graphics.valves.reflux.position)
+			       + column.R_min()*Graphics.alpha_R_min;
+		    column.solve();
+		    Graphics.reflux_update();
+		} else if (valve.name == 'feed') {
+		    column.F = Graphics.valves.feed.position*settings.Fmax;
+		    column.solve();
+		    Graphics.feed_flow_update();
+		};
 	    };
 	};
-	Graphics.update_backend();
-	Graphics.update_particle_source_rates();
 	plot_mccabe_thiele_diagram(column, 'mccabe_thiele_container');
     };
 };
