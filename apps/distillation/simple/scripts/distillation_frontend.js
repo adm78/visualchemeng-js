@@ -162,12 +162,12 @@ function mouseDragged() {
 	    var valve = Graphics.valves[key];
 	    if (valve.active) {
 		valve.drag_handle(mouseX, mouseY);
-		if (valve.name == 'reflux') {
+		if (key == 'reflux') {
 		    column.R = Graphics.valves.reflux.position/(1.0 - Graphics.valves.reflux.position)
 			       + column.R_min()*Graphics.alpha_R_min;
 		    column.solve();
 		    Graphics.reflux_update();
-		} else if (valve.name == 'feed') {
+		} else if (key == 'feed') {
 		    column.F = Graphics.valves.feed.position*settings.Fmax;
 		    column.solve();
 		    Graphics.feed_flow_update();

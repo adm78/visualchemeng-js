@@ -169,8 +169,10 @@ function _get_stage_labels(column) {
     // data.  Note that we only wish to label the points that lie on
     // the equilibrium line (i.e. every second point).
     labels = [];
-    for (var i = 0; i < column.n_stages; i++) {
-	labels.push('',i+1)
+    if (column.n_stages <= 20) {
+	for (var i = 0; i < column.n_stages; i++) {
+	    labels.push('',i+1)
+	};
     };
     return labels;
 };

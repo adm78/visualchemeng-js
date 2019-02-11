@@ -140,8 +140,8 @@ function DistillationGraphics(canvas, column, images, debug) {
 	    y : this.feed_pipe_pos().y
 	}
 	this.valves = {
-	    reflux : new Valve(reflux_valve_pos.x, reflux_valve_pos.y, {'name' : 'reflux'}),
-	    feed : new Valve(feed_valve_pos.x, feed_valve_pos.y, {'name' : 'feed'})
+	    reflux : new Valve(reflux_valve_pos.x, reflux_valve_pos.y),
+	    feed : new Valve(feed_valve_pos.x, feed_valve_pos.y)
 	};
 	this.valves.reflux.set_position((this.column.R - this.alpha_R_min*this.column.R_min())/
 					(1 + this.column.R - this.alpha_R_min*this.column.R_min()));
@@ -257,6 +257,8 @@ function DistillationGraphics(canvas, column, images, debug) {
 	this.show_column();
 	this.show_stages();
 	this.show_R();
+	this.show_n_stages();
+	this.show_feed_stage_label();
 	this.show_feed();
 	this.show_boundaries();
 	this.show_ensembles();
@@ -313,7 +315,18 @@ function DistillationGraphics(canvas, column, images, debug) {
 
     };
 
- 
+    
+    this.show_feed_stage_label = function() {
+	push();
+	var x = this.column_left + 0.5*this.column_width;
+	var y = this.feed_pipe_pos().y;
+	fill(255);
+	textAlign(CENTER, CENTER);
+	text(this.column.feed_pos.toFixed(0), x, y);
+	pop();
+    };
+
+    
     this.show_walls = function() {
 	push();
 	fill(128);
@@ -338,19 +351,28 @@ function DistillationGraphics(canvas, column, images, debug) {
     };
 
     this.show_R = function() {
-	push()
-	textSize(32);
+	push();
+	textSize(24);
 	fill(255, 255, 255);
 	textAlign(LEFT, TOP);
 	text('R = '+ this.column.R.toFixed(2), this.canvas.width*0.02, this.canvas.height*0.02);
+	pop();
+    };
+
+    this.show_n_stages = function() {
+	push();
+	textSize(24);
+	fill(255, 255, 255);
+	textAlign(LEFT, TOP);
+	text(this.column.n_stages.toFixed(0) + ' stages', this.canvas.width*0.02, this.canvas.height*0.06);
 	pop()
     };
     
     this.show_fps = function() {
-	push()
+	push();
 	textAlign(LEFT,BOTTOM);
 	text(frameRate().toFixed(0) + 'fps', this.canvas.width*0.02, this.canvas.height*0.98);
-	pop()
+	pop();
     };
 
     // Now that everything is defined, we can initialise everything.
