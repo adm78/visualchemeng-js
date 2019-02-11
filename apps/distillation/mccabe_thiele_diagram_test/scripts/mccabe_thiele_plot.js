@@ -19,6 +19,7 @@ function plot_mccabe_thiele_diagram(column, container) {
 		   _get_mccabe_thiele_traces(column),
 		   _get_mccabe_thiele_layout(),
 		   {responsive: true}) // scale with the screen size changes
+    utils.resizePlotlyHeight(container);
 };
 
 

@@ -8,7 +8,7 @@
 // - p5.js or p5.min.js
 // - vce_utils.js
 //
-// Andrew D. McGuire 2018
+// Andrew D. McGuire 2019
 // a.mcguire227@gmail.com
 //
 // To do:
@@ -50,7 +50,7 @@ function setup(first_time=true) {
     var canvas= createCanvas(dimensions.xmax, screen.height*0.95);
     canvas.parent("sim_container");
 
-    // Initialise the backend column properties THIS IS A TEST
+    // Initialise the backend column properties
     var options = {
 	xf : 0.5,
 	xd : 0.95,
@@ -61,21 +61,19 @@ function setup(first_time=true) {
 	x_eq_data : data.equilibrium_data.x,
 	y_eq_data : data.equilibrium_data.y,
 	F : 100.0,
+	F_max : 200.0
     };
     column = new DistMcCabeTheile(options);
-    column.F_max = 200.0; //@TODO: clean this up!
     column.solve();
     
     // Initialise the graphical column representation
     Graphics = new DistillationGraphics(canvas, column, images, debug);
-    console.log(Graphics);
 
     // Initialise the McCabe-Thiele plot
     plot_mccabe_thiele_diagram(column, 'mccabe_thiele_container');
-
+    
     // Update any labels based on the initialised state
     update_labels();
-
     
 }
 
@@ -154,6 +152,12 @@ $('#fullscreen').on('click', () => {
 	screenfull.toggle(target);
     };
 });
+
+
+// resize elements on window resize
+window.onresize = function() {
+    utils.resizePlotlyHeight('mccabe_thiele_container');
+};
 
 
 function mouseDragged() {
