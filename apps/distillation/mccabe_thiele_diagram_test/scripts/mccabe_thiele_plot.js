@@ -116,9 +116,9 @@ function _get_mccabe_thiele_layout() {
 	    t: 35,
 	    pad: 5
 	},
-	//autosize: true,
-	width: 500,
-	height: 500,
+	autosize: true,
+	// width: 500,
+	// height: 500,
 	titlefont: {
 	    family: 'Roboto, serif',
 	    color: 'white',

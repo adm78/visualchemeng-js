@@ -50,7 +50,6 @@ var settings = {
     particles : [
 	{
 	    type: 'single-body',
-	    shape : {type:'polygon', sides:6},
 	    radius : 3,
 	    colour : '#cc6600',
 	    matter_options : {
@@ -60,7 +59,6 @@ var settings = {
 	},
 	{
 	    type: 'single-body',
-	    shape : {type:'polygon', sides:6},
 	    radius : 3,
 	    colour : '#006699',
 	    matter_options : {
