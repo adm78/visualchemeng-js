@@ -47,7 +47,6 @@ function setup(first_time=true) {
 
     // Create the canvas
     var dimensions = utils.getSimBoxDimensions();
-    console.log("dimensions = ", dimensions);
     var canvas= createCanvas(dimensions.xmax, window.innerHeight*0.75);
     canvas.parent("sim_container");
 

@@ -366,7 +366,7 @@ function DistillationGraphics(canvas, column, images, debug) {
 	textSize(24);
 	fill(255, 255, 255);
 	textAlign(LEFT, TOP);
-	text(this.column.n_stages.toFixed(0) + ' stages', this.canvas.width*0.02, this.canvas.height*0.06);
+	text(this.column.n_stages.toFixed(0) + ' stages', this.canvas.width*0.02, this.canvas.height*0.02 + 30);
 	pop()
     };
     

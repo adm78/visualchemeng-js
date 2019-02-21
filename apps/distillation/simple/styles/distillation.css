@@ -39,19 +39,19 @@
 
 #run {
     grid-row: 1;
-    grid-column: 1;	
+    grid-column: 1;
 }
 #restart {
     grid-row: 1;
-    grid-column: 2;	
+    grid-column: 2;
 }
 #fullscreen {
     grid-row: 1;
-    grid-column: 3;	
+    grid-column: 3;
 }
 #bounds {
     grid-row: 1;
-    grid-column: 4;	
+    grid-column: 4;
 }
 
 .vce_logo {
