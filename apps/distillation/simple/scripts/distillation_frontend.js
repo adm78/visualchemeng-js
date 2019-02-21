@@ -47,7 +47,8 @@ function setup(first_time=true) {
 
     // Create the canvas
     var dimensions = utils.getSimBoxDimensions();
-    var canvas= createCanvas(dimensions.xmax, screen.height*0.95);
+    console.log("dimensions = ", dimensions);
+    var canvas= createCanvas(dimensions.xmax, window.innerHeight*0.75);
     canvas.parent("sim_container");
 
     // Initialise the backend column properties

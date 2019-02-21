@@ -46,6 +46,7 @@ function DistillationGraphics(canvas, column, images, debug) {
 	this.world = this.engine.world;
 	this.Ensembles = {};
 	this.valves = {};
+	this.valve_scaling_factor = 0.0005; // control size of valve relative to the column
 	this.Boundaries = [];
 	this.show_boundaries_log = false;
 	this.alpha_R_min = 1.1; // controls how close we can push to column towards Rmin (1.1 == with 10%)
@@ -133,6 +134,7 @@ function DistillationGraphics(canvas, column, images, debug) {
 
     this._init_valves = function() {
 	this.valves = {};
+	var valve_options = { scaling : this.valve_scaling_factor*this.column_height}
 	var reflux_valve_pos = utils.get_abs_coords(this.xmax, this.ymax, this.sid.width,
 						    this.sid.height, settings.reflux_valve_position)
 	var feed_valve_pos = {
@@ -140,8 +142,8 @@ function DistillationGraphics(canvas, column, images, debug) {
 	    y : this.feed_pipe_pos().y
 	}
 	this.valves = {
-	    reflux : new Valve(reflux_valve_pos.x, reflux_valve_pos.y),
-	    feed : new Valve(feed_valve_pos.x, feed_valve_pos.y)
+	    reflux : new Valve(reflux_valve_pos.x, reflux_valve_pos.y, valve_options),
+	    feed : new Valve(feed_valve_pos.x, feed_valve_pos.y, valve_options)
 	};
 	this.valves.reflux.set_position((this.column.R - this.alpha_R_min*this.column.R_min())/
 					(1 + this.column.R - this.alpha_R_min*this.column.R_min()));
