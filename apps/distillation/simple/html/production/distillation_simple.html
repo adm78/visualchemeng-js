@@ -1,61 +1,59 @@
 <html>
   <head>
     <script>var vce_online = true;</script>
-    <link rel="stylesheet" type="text/css" href="https://rawcdn.githack.com/adm78/visualchemeng-js/8482f90f188f805c85a2bfab47fc42ec8fa54014/lib/styles/jquery-ui.css">
-    <link rel="stylesheet" type="text/css" href="https://rawcdn.githack.com/adm78/visualchemeng-js/8482f90f188f805c85a2bfab47fc42ec8fa54014/lib/styles/nice-select.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/adm78/visualchemeng_js/1c922dff376fc85a047e359b620f129c3c6b1ee3/lib/styles/jquery-ui.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/adm78/visualchemeng_js/1c922dff376fc85a047e359b620f129c3c6b1ee3/lib/styles/nice-select.css">
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto">
-    <link rel="stylesheet" type="text/css" href="https://rawcdn.githack.com/adm78/visualchemeng-js/8482f90f188f805c85a2bfab47fc42ec8fa54014/lib/styles/buttons.css">
-    <link rel="stylesheet" type="text/css" href="https://rawcdn.githack.com/adm78/visualchemeng-js/8482f90f188f805c85a2bfab47fc42ec8fa54014/lib/styles/slider.css">
-    <link rel="stylesheet" type="text/css" href="https://rawcdn.githack.com/adm78/visualchemeng-js/8482f90f188f805c85a2bfab47fc42ec8fa54014/lib/styles/vce.css">
-    <link rel="stylesheet" type="text/css" href="../../styles/distillation.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/adm78/visualchemeng_js/1c922dff376fc85a047e359b620f129c3c6b1ee3/lib/styles/buttons.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/adm78/visualchemeng_js/1c922dff376fc85a047e359b620f129c3c6b1ee3/lib/styles/slider.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/adm78/visualchemeng_js/1c922dff376fc85a047e359b620f129c3c6b1ee3/lib/styles/vce.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/adm78/visualchemeng_js/1c922dff376fc85a047e359b620f129c3c6b1ee3/apps/distillation/simple/styles/distillation.css">
   </head>
   <body style="background-color:white;">
     <div class="wrapper" id="target">
-      <div class="box conversion_plot_container" id="conversion_plot_container"></div>
-      <div class="box duty_plot_container" id="duty_plot_container"></div>
-      <div class="box conc_plot_container" id="conc_plot_container"></div>
-      <div class="box sim_container" id="sim_container">
-      </div>
+      <div class="box" id="mccabe_thiele_container"></div>
+      <div class="box sim_container" id="sim_container"></div>
       <div class="box vce_info">
-	<a href="http://visualchemeng.com" title="Go to VCE homepage">
-          <img class="vce_logo" src="https://rawcdn.githack.com/adm78/visualchemeng-js/8482f90f188f805c85a2bfab47fc42ec8fa54014/lib/images/vcelogo.png" />
-	</a>
-	<a href="http://visualchemeng.com"
-	   style="text-decoration:none" title="Go to VCE homepage">
-      	   <p style="display: block; margin-left: auto; margin-right: auto; color:white; text-align: center; font-family:Roboto" >Test distillation column</p>
-	   </a>
-      </div>
-      <div class="box system_id_container" id="system_id_container">
+      	<a href="http://visualchemeng.com" title="Go to VCE homepage" id="logo">
+          <img class="vce_logo" src="https://cdn.rawgit.com/adm78/visualchemeng_js/1c922dff376fc85a047e359b620f129c3c6b1ee3/lib/images/vcelogo.png" />
+      	</a>
+      	<a href="http://visualchemeng.com"
+      	   style="text-decoration:none" title="Go to VCE homepage" id="app_name">
+      	   <p style="display: block; margin-left: auto; margin-right: auto; color:white; text-align: center; font-family:Roboto" >Binary Distillation</p>
+      	   </a>
       </div>
       <div class="box button_container">
-        <button class="button" id="run" style="width:96%" >Pause</button><br/>
-	<button class="button" id="restart" style="width:96%">Reset</button><br/>
-	<button class="button" id="fullscreen" style="width:96%">Fullscreen</button>
-	<button class="button" id="bounds" style="width:96%">Hide Bounds</button><br/>
+        <button class="button" id="run" style="width:96%; height: 50px" >Pause</button>
+	<button class="button" id="restart" style="width:96%; height: 50px" >Reset</button>
+	<button class="button" id="fullscreen" style="width:96%; height: 50px">Fullscreen</button>
+	<!-- <button class="button" id="bounds" style="width:96%">Hide Bounds</button><br/> -->
       </div>
-      <div class="box slider_container"></div>
     </div>
     <!-- scripts required for simulations -->
-    <script src="https://rawcdn.githack.com/adm78/visualchemeng-js/8482f90f188f805c85a2bfab47fc42ec8fa54014/lib/js/third-party/jquery-3.2.1.min.js"></script>
-    <script src="https://rawcdn.githack.com/adm78/visualchemeng-js/8482f90f188f805c85a2bfab47fc42ec8fa54014/lib/js/third-party/jquery-ui.js"></script>
-    <script src="https://rawcdn.githack.com/adm78/visualchemeng-js/8482f90f188f805c85a2bfab47fc42ec8fa54014/lib/js/third-party/jquery.nice-select.min.js"></script>
-    <script src="https://rawcdn.githack.com/adm78/visualchemeng-js/8482f90f188f805c85a2bfab47fc42ec8fa54014/lib/js/third-party/p5.min.js"></script>
-    <script src="https://rawcdn.githack.com/adm78/visualchemeng-js/8482f90f188f805c85a2bfab47fc42ec8fa54014/lib/js/third-party/matter.min.js"></script>
-    <script src="https://rawcdn.githack.com/adm78/visualchemeng-js/8482f90f188f805c85a2bfab47fc42ec8fa54014/lib/js/third-party/screenfull.js"></script>
-    <script src="https://rawcdn.githack.com/adm78/visualchemeng-js/8482f90f188f805c85a2bfab47fc42ec8fa54014/lib/js/third-party/plotly-latest.min.js"></script>
-    <script src="https://rawcdn.githack.com/adm78/visualchemeng-js/8482f90f188f805c85a2bfab47fc42ec8fa54014/lib/js/vce/vce_utils.js"></script>
-    <script src="https://rawcdn.githack.com/adm78/visualchemeng-js/8482f90f188f805c85a2bfab47fc42ec8fa54014/lib/js/vce/vce_matter_particle.js"></script>
-    <script src="https://rawcdn.githack.com/adm78/visualchemeng-js/8482f90f188f805c85a2bfab47fc42ec8fa54014/lib/js/vce/vce_multibody.js"></script>
-    <script src="https://rawcdn.githack.com/adm78/visualchemeng-js/8482f90f188f805c85a2bfab47fc42ec8fa54014/lib/js/vce/vce_particle_factory.js"></script>
-    <script src="https://rawcdn.githack.com/adm78/visualchemeng-js/8482f90f188f805c85a2bfab47fc42ec8fa54014/lib/js/vce/vce_particle_feed.js"></script>
-    <script src="https://rawcdn.githack.com/adm78/visualchemeng-js/8482f90f188f805c85a2bfab47fc42ec8fa54014/lib/js/vce/vce_ensemble.js"></script>
-    <script src="https://rawcdn.githack.com/adm78/visualchemeng-js/8482f90f188f805c85a2bfab47fc42ec8fa54014/lib/js/vce/vce_constraint.js"></script>
-    <script src="https://rawcdn.githack.com/adm78/visualchemeng-js/8482f90f188f805c85a2bfab47fc42ec8fa54014/lib/js/vce/vce_boundary.js"></script>
-    <script src="https://rawcdn.githack.com/adm78/visualchemeng-js/8482f90f188f805c85a2bfab47fc42ec8fa54014/lib/js/vce/vce_valve.js"></script>
-    <script src="https://rawcdn.githack.com/adm78/visualchemeng-js/8482f90f188f805c85a2bfab47fc42ec8fa54014/lib/js/vce/vce_distillation.js"></script>
-    <script src="https://rawcdn.githack.com/adm78/visualchemeng-js/8482f90f188f805c85a2bfab47fc42ec8fa54014/apps/distillation/simple/scripts/distillation_test_backend.js"></script>
-    <script src="https://rawcdn.githack.com/adm78/visualchemeng-js/8482f90f188f805c85a2bfab47fc42ec8fa54014/apps/distillation/simple/scripts/settings.js"></script>
-    <script src="https://rawcdn.githack.com/adm78/visualchemeng-js/8482f90f188f805c85a2bfab47fc42ec8fa54014/apps/distillation/simple/scripts/distillation_graphics.js"></script>
-    <script src="https://rawcdn.githack.com/adm78/visualchemeng-js/8482f90f188f805c85a2bfab47fc42ec8fa54014/apps/distillation/simple/scripts/distillation_frontend.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/1c922dff376fc85a047e359b620f129c3c6b1ee3/lib/js/third-party/jquery-3.2.1.min.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/1c922dff376fc85a047e359b620f129c3c6b1ee3/lib/js/third-party/jquery-ui.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/1c922dff376fc85a047e359b620f129c3c6b1ee3/lib/js/third-party/jquery.nice-select.min.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/1c922dff376fc85a047e359b620f129c3c6b1ee3/lib/js/third-party/p5.min.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/1c922dff376fc85a047e359b620f129c3c6b1ee3/lib/js/third-party/matter.min.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/1c922dff376fc85a047e359b620f129c3c6b1ee3/lib/js/third-party/screenfull.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/1c922dff376fc85a047e359b620f129c3c6b1ee3/lib/js/third-party/plotly-latest.min.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/1c922dff376fc85a047e359b620f129c3c6b1ee3/lib/js/vce/vce_utils.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/1c922dff376fc85a047e359b620f129c3c6b1ee3/lib/js/vce/vce_math.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/1c922dff376fc85a047e359b620f129c3c6b1ee3/lib/js/vce/vce_canvas.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/1c922dff376fc85a047e359b620f129c3c6b1ee3/lib/js/vce/vce_matter_particle.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/1c922dff376fc85a047e359b620f129c3c6b1ee3/lib/js/vce/vce_multibody.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/1c922dff376fc85a047e359b620f129c3c6b1ee3/lib/js/vce/vce_particle_factory.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/1c922dff376fc85a047e359b620f129c3c6b1ee3/lib/js/vce/vce_particle_source.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/1c922dff376fc85a047e359b620f129c3c6b1ee3/lib/js/vce/vce_ensemble.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/1c922dff376fc85a047e359b620f129c3c6b1ee3/lib/js/vce/vce_constraint.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/1c922dff376fc85a047e359b620f129c3c6b1ee3/lib/js/vce/vce_boundary.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/1c922dff376fc85a047e359b620f129c3c6b1ee3/lib/js/vce/vce_valve.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/1c922dff376fc85a047e359b620f129c3c6b1ee3/lib/js/vce/vce_distillation.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/1c922dff376fc85a047e359b620f129c3c6b1ee3/apps/distillation/simple/scripts/settings.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/1c922dff376fc85a047e359b620f129c3c6b1ee3/apps/distillation/simple/scripts/data.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/1c922dff376fc85a047e359b620f129c3c6b1ee3/apps/distillation/simple/scripts/distillation_test_backend.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/1c922dff376fc85a047e359b620f129c3c6b1ee3/apps/distillation/simple/../mccabe_thiele_diagram_test/scripts/mccabe_thiele_plot.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/1c922dff376fc85a047e359b620f129c3c6b1ee3/apps/distillation/simple/scripts/distillation_graphics.js"></script>
+    <script src="https://cdn.rawgit.com/adm78/visualchemeng_js/1c922dff376fc85a047e359b620f129c3c6b1ee3/apps/distillation/simple/scripts/distillation_frontend.js"></script>
   </body>
 </html>
