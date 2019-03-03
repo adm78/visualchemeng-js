@@ -37,7 +37,7 @@ function setup() {
     /* This function is called upon entry to create the simulation
        canvas which we draw onto and run a very simple flash unit test
     */
-    canvas = new vceCanvas();
+    canvas = new vceCanvas(id="#sim_container");
     initialise_flash();
     initialise_graphics();
     plot_stream_compositions(flash, graphics);

@@ -14,23 +14,20 @@
       <div class="box" id="mccabe_thiele_container"></div>
       <div class="box sim_container" id="sim_container"></div>
       <div class="box vce_info">
-	<a href="http://visualchemeng.com" title="Go to VCE homepage">
+      	<a href="http://visualchemeng.com" title="Go to VCE homepage" id="logo">
           <img class="vce_logo" src="../../../../../lib/images/vcelogo.png" />
-	</a>
-	<a href="http://visualchemeng.com"
-	   style="text-decoration:none" title="Go to VCE homepage">
+      	</a>
+      	<a href="http://visualchemeng.com"
+      	   style="text-decoration:none" title="Go to VCE homepage" id="app_name">
       	   <p style="display: block; margin-left: auto; margin-right: auto; color:white; text-align: center; font-family:Roboto" >Binary Distillation</p>
-	   </a>
-      </div>
-      <div class="box system_id_container" id="system_id_container">
+      	   </a>
       </div>
       <div class="box button_container">
-        <button class="button" id="run" style="width:96%" >Pause</button><br/>
-	<button class="button" id="restart" style="width:96%">Reset</button><br/>
-	<button class="button" id="fullscreen" style="width:96%">Fullscreen</button>
-	<button class="button" id="bounds" style="width:96%">Hide Bounds</button><br/>
+        <button class="button" id="run" style="width:96%; height: 50px" >Pause</button>
+	<button class="button" id="restart" style="width:96%; height: 50px" >Reset</button>
+	<button class="button" id="fullscreen" style="width:96%; height: 50px">Fullscreen</button>
+	<!-- <button class="button" id="bounds" style="width:96%">Hide Bounds</button><br/> -->
       </div>
-      <div class="box slider_container"></div>
     </div>
     <!-- scripts required for simulations -->
     <script src="../../../../../lib/js/third-party/jquery-3.2.1.min.js"></script>
@@ -42,6 +39,7 @@
     <script src="../../../../../lib/js/third-party/plotly-latest.min.js"></script>
     <script src="../../../../../lib/js/vce/vce_utils.js"></script>
     <script src="../../../../../lib/js/vce/vce_math.js"></script>
+    <script src="../../../../../lib/js/vce/vce_canvas.js"></script>
     <script src="../../../../../lib/js/vce/vce_matter_particle.js"></script>
     <script src="../../../../../lib/js/vce/vce_multibody.js"></script>
     <script src="../../../../../lib/js/vce/vce_particle_factory.js"></script>
@@ -51,9 +49,10 @@
     <script src="../../../../../lib/js/vce/vce_boundary.js"></script>
     <script src="../../../../../lib/js/vce/vce_valve.js"></script>
     <script src="../../../../../lib/js/vce/vce_distillation.js"></script>
-    <script src="../../scripts/distillation_test_backend.js"></script>
-    <script src="../../scripts/mccabe_thiele_plot.js"></script>
     <script src="../../scripts/settings.js"></script>
+    <script src="../../scripts/data.js"></script>
+    <script src="../../scripts/distillation_test_backend.js"></script>
+    <script src="../../../mccabe_thiele_diagram_test/scripts/mccabe_thiele_plot.js"></script>
     <script src="../../scripts/distillation_graphics.js"></script>
     <script src="../../scripts/distillation_frontend.js"></script>
   </body>

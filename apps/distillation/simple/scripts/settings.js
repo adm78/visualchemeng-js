@@ -7,30 +7,19 @@ var settings = {
     // componentns
     components : [
 	{
-	    name : 'EtOH',
+	    name : 'Acetone',
 	    colour : '#cc6600',
 	    h : 100.0,
 	    h_unit : 'J/mol'
 	},
 	{
-	    name : 'H20',
+	    name : 'Ethanol',
 	    colour : '#006699',
 	    h : 200.0,
 	    h_unit : 'J/mol'
 	},
     ],
-
-    // equilibrium data (based on EtOH)
-    // source: http://www.ddbst.com/en/EED/VLE/VLE%20Ethanol%3BWater.php
-    equilibrium_data : {
-	x : [0.0, 0.0035, 0.0045, 0.0175, 0.0585, 0.068, 0.0935, 0.165, 0.2125,
-	     0.241, 0.3615, 0.474, 0.4985, 0.5815, 0.646, 0.654, 0.723,
-	     0.79, 0.837, 0.8731, 0.883, 0.888, 0.8973, 0.9489, 0.9707, 0.9825, 1.0],
-	y : [0.0, 0.0205, 0.0275, 0.1315, 0.305, 0.3615, 0.411, 0.52, 0.5455, 0.5675,
-	     0.606, 0.6505, 0.6555, 0.697, 0.729, 0.731, 0.776, 0.82, 0.852,
-	     0.8817, 0.8885, 0.893, 0.9012, 0.9502, 0.9715, 0.9835, 1.0]
-    },
-    
+  
 
     // particle sources
     particle_sources : {
@@ -61,7 +50,6 @@ var settings = {
     particles : [
 	{
 	    type: 'single-body',
-	    shape : {type:'polygon', sides:6},
 	    radius : 3,
 	    colour : '#cc6600',
 	    matter_options : {
@@ -71,7 +59,6 @@ var settings = {
 	},
 	{
 	    type: 'single-body',
-	    shape : {type:'polygon', sides:6},
 	    radius : 3,
 	    colour : '#006699',
 	    matter_options : {

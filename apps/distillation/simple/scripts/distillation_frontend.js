@@ -8,7 +8,7 @@
 // - p5.js or p5.min.js
 // - vce_utils.js
 //
-// Andrew D. McGuire 2018
+// Andrew D. McGuire 2019
 // a.mcguire227@gmail.com
 //
 // To do:
@@ -21,7 +21,7 @@
 var paused_log = false;
 var debug = true;
 var isDragging = false;
-var Graphics,
+var Graphics, column, 
     images = {};
 
 // --------------------------------------------------
@@ -46,38 +46,35 @@ function setup(first_time=true) {
        simulation canvas which we draw onto.  */
 
     // Create the canvas
-    var dimensions = utils.getSimBoxDimensions();
-    var canvas= createCanvas(dimensions.xmax, screen.height*0.95);
-    canvas.parent("sim_container");
+    canvas = new vceCanvas(id="#sim_container", xmax=null, ymax=window.innerHeight*0.75);
 
-    // Initialise the backend column properties THIS IS A TEST
-    options = {};
-    column = new DistTestBackend(options);
-    column.n_stages = 20;
-    column.feed_pos = 10;
-    for (var i=0; i < column.n_stages; i++) {
-	var stage = new Stage();
-	stage.x = i/column.n_stages;
-	stage.y = 1.0 - stage.x;
-	column.stages.push(stage);
+    // Initialise the backend column properties
+    var options = {
+	xf : 0.5,
+	xd : 0.95,
+	xb : 0.05,
+	P : 101.3e3, // Pa
+	q : 7.0/6.0,
+	R : 6.692,
+	x_eq_data : data.equilibrium_data.x,
+	y_eq_data : data.equilibrium_data.y,
+	F : 100.0,
+	F_max : 200.0
     };
-    column.F = 100.0;
-    column.Fmax = 200.0;
-    column.R = 0.5;
-    console.log(column);
+    column = new DistMcCabeTheile(options);
+    column.solve();
     
     // Initialise the graphical column representation
-    Graphics = new DistillationGraphics(canvas, column, images, debug);
-    console.log(Graphics);
+    init_graphics();
 
     // Initialise the McCabe-Thiele plot
-    plot_mccabe_thiele_diagram('mccabe_thiele_container');
-
+    plot_mccabe_thiele_diagram(column, 'mccabe_thiele_container');
+    
     // Update any labels based on the initialised state
     update_labels();
-
     
 }
+
 
 function draw() {
 
@@ -94,6 +91,10 @@ function draw() {
     // render graphics
     Graphics.show()
     
+};
+
+function init_graphics() {
+    Graphics = new DistillationGraphics(canvas, column, images, debug);
 };
 
 // --------------------------------------------------
@@ -136,6 +137,13 @@ $('#run').click(async function(){
 });
 
 
+// restart/reset button
+$('#restart').click(async function(){
+    console.log("You just clicked reset!");
+    setup();
+});
+
+
 // show boundaries button
 $('#bounds').click(async function(){
 
@@ -156,16 +164,37 @@ $('#fullscreen').on('click', () => {
 });
 
 
+// resize elements on window resize
+window.onresize = function() {
+    if (screenfull.isFullscreen) {
+	canvas.stretch();
+    } else {
+	canvas.reset();
+    };
+    init_graphics();
+    utils.resizePlotlyHeight('mccabe_thiele_container');
+};
+
+
 function mouseDragged() {
     if (isDragging) {
 	for (var key in Graphics.valves) {
 	    var valve = Graphics.valves[key];
 	    if (valve.active) {
 		valve.drag_handle(mouseX, mouseY);
+		if (key == 'reflux') {
+		    column.R = Graphics.valves.reflux.position/(1.0 - Graphics.valves.reflux.position)
+			       + column.R_min()*Graphics.alpha_R_min;
+		    column.solve();
+		    Graphics.reflux_update();
+		} else if (key == 'feed') {
+		    column.F = Graphics.valves.feed.position*settings.Fmax;
+		    column.solve();
+		    Graphics.feed_flow_update();
+		};
 	    };
 	};
-	Graphics.update_backend();
-	Graphics.update_particle_source_rates();
+	plot_mccabe_thiele_diagram(column, 'mccabe_thiele_container');
     };
 };
 
