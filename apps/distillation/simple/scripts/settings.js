@@ -13,7 +13,7 @@ var settings = {
 	    h_unit : 'J/mol'
 	},
 	{
-	    name : 'EtOH',
+	    name : 'Ethanol',
 	    colour : '#006699',
 	    h : 200.0,
 	    h_unit : 'J/mol'

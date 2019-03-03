@@ -1,5 +1,6 @@
 var data = {
 
+    // source https://www.youtube.com/watch?v=Cv4KjY2BJTA
     equilibrium_data : {
 	x : [0.0,
 	     0.009081379836096803,

@@ -134,6 +134,13 @@ $('#run').click(async function(){
 });
 
 
+// restart/reset button
+$('#restart').click(async function(){
+    console.log("You just clicked reset!");
+    setup();
+});
+
+
 // show boundaries button
 $('#bounds').click(async function(){
 

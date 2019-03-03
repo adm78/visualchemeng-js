@@ -50,7 +50,8 @@ function DistillationGraphics(canvas, column, images, debug) {
 	this.Boundaries = [];
 	this.show_boundaries_log = false;
 	this.alpha_R_min = 1.1; // controls how close we can push to column towards Rmin (1.1 == with 10%)
-
+	this.key = null;
+	
 	// Initalise everything else
 	this._init_column_positions();
 	this._init_ensembles();
@@ -58,6 +59,7 @@ function DistillationGraphics(canvas, column, images, debug) {
 	this._init_boundaries();
 	this._init_valves();
 	this.realign_objects_with_feed();
+	this._init_key();
     };
 
 
@@ -148,6 +150,16 @@ function DistillationGraphics(canvas, column, images, debug) {
 	this.valves.reflux.set_position((this.column.R - this.alpha_R_min*this.column.R_min())/
 					(1 + this.column.R - this.alpha_R_min*this.column.R_min()));
 	this.valves.feed.set_position(this.column.F/settings.Fmax);
+    };
+
+
+    this._init_key = function() {
+	this.key = {};
+	var particle_sf = 3.0;
+	var p1_options = utils.merge_options(settings.particles[0], { radius : settings.particles[0].radius*particle_sf });
+	var p2_options = utils.merge_options(settings.particles[1], { radius : settings.particles[1].radius*particle_sf });
+	this.key.p1 = new MatterParticle(null, this.canvas.width*0.035, this.canvas.height*0.02 + 75, p1_options);
+	this.key.p2 = new MatterParticle(null, this.canvas.width*0.035, this.canvas.height*0.02 + 105, p2_options);
     };
 
 
@@ -260,6 +272,7 @@ function DistillationGraphics(canvas, column, images, debug) {
 	this.show_stages();
 	this.show_R();
 	this.show_n_stages();
+	this.show_key();
 	this.show_feed_stage_label();
 	this.show_feed();
 	this.show_boundaries();
@@ -369,6 +382,19 @@ function DistillationGraphics(canvas, column, images, debug) {
 	text(this.column.n_stages.toFixed(0) + ' stages', this.canvas.width*0.02, this.canvas.height*0.02 + 30);
 	pop()
     };
+
+    this.show_key = function() {
+	push();
+	this.key.p1.show();
+	this.key.p2.show();
+	textSize(24);
+	fill(255, 255, 255);
+	textAlign(LEFT, CENTER);
+	text(settings.components[0].name, this.key.p1.body.position.x + this.key.p1.radius*2.0, this.key.p1.body.position.y);
+	text(settings.components[1].name, this.key.p2.body.position.x + this.key.p2.radius*2.0, this.key.p2.body.position.y);
+	pop();
+    };
+
     
     this.show_fps = function() {
 	push();
@@ -376,6 +402,7 @@ function DistillationGraphics(canvas, column, images, debug) {
 	text(frameRate().toFixed(0) + 'fps', this.canvas.width*0.02, this.canvas.height*0.98);
 	pop();
     };
+
 
     // Now that everything is defined, we can initialise everything.
     this.__init__(canvas, column, images, debug);
