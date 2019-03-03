@@ -46,9 +46,7 @@ function setup(first_time=true) {
        simulation canvas which we draw onto.  */
 
     // Create the canvas
-    var dimensions = utils.getSimBoxDimensions();
-    var canvas= createCanvas(dimensions.xmax, window.innerHeight*0.75);
-    canvas.parent("sim_container");
+    canvas = new vceCanvas(id="#sim_container", xmax=null, ymax=window.innerHeight*0.75);
 
     // Initialise the backend column properties
     var options = {
@@ -67,7 +65,7 @@ function setup(first_time=true) {
     column.solve();
     
     // Initialise the graphical column representation
-    Graphics = new DistillationGraphics(canvas, column, images, debug);
+    init_graphics();
 
     // Initialise the McCabe-Thiele plot
     plot_mccabe_thiele_diagram(column, 'mccabe_thiele_container');
@@ -76,6 +74,7 @@ function setup(first_time=true) {
     update_labels();
     
 }
+
 
 function draw() {
 
@@ -92,6 +91,10 @@ function draw() {
     // render graphics
     Graphics.show()
     
+};
+
+function init_graphics() {
+    Graphics = new DistillationGraphics(canvas, column, images, debug);
 };
 
 // --------------------------------------------------
@@ -163,6 +166,12 @@ $('#fullscreen').on('click', () => {
 
 // resize elements on window resize
 window.onresize = function() {
+    if (screenfull.isFullscreen) {
+	canvas.stretch();
+    } else {
+	canvas.reset();
+    };
+    init_graphics();
     utils.resizePlotlyHeight('mccabe_thiele_container');
 };
 
