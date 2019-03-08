@@ -183,7 +183,7 @@ function mouseDragged() {
 	    if (valve.active) {
 		valve.drag_handle(mouseX, mouseY);
 		if (key == 'reflux') {
-		    column.R = Graphics.valves.reflux.position/(1.0 - Graphics.valves.reflux.position)
+		    column.R = Graphics.valves.reflux.position/(1.01 - Graphics.valves.reflux.position)
 			       + column.R_min()*Graphics.alpha_R_min;
 		    column.solve();
 		    Graphics.reflux_update();

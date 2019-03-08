@@ -1,6 +1,5 @@
 // VCE Project - Distillation McCabe Thiele test backend class
 //
-// This class is for testing purposes only.
 //
 // Requires:
 // vce_distillation.js
@@ -16,12 +15,11 @@ function DistMcCabeTheile(options) {
       
     // Overide base column methods
     this.D = function() {
-	// @TODO: add real computation in here
-    	return 0.5*this.F/(1+this.R);
+	return this.F - this.B();	
     };
     
     this.B = function() {
-    	return this.F - this.D();
+	return this.F*(this.xf - this.xd)/(this.xb - this.xd);
     };
 
 
@@ -77,7 +75,11 @@ function DistMcCabeTheile(options) {
 		y.push(this.rect_op(x[i]));
 	    };
 	} else {
-	    y = (this.R/(this.R+1))*x + (this.xd/(this.R+1));
+	    if (isFinite(this.R)) {
+		y = (this.R/(this.R+1))*x + (this.xd/(this.R+1));
+	    } else {
+		y = x;
+	    };
 	};
 	return y;
     };
@@ -112,8 +114,13 @@ function DistMcCabeTheile(options) {
 	
 	*/
 	var x, y;
-	var num = - (this.xf/(this.q-1)) - (this.xd/(this.R+1));
-	var den = (this.R/(this.R+1)) - (this.q/(this.q-1));
+	if (isFinite(this.R)) {
+	    var num = - (this.xf/(this.q-1)) - (this.xd/(this.R+1));
+	    var den = (this.R/(this.R+1)) - (this.q/(this.q-1));
+	} else {
+	    var num = - (this.xf/(this.q-1));
+	    var den = 1.0 - (this.q/(this.q-1));
+	};
 	x = num/den;
 	y = this.rect_op(x);
 	return	{x : x, y : y};

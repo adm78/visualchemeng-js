@@ -147,7 +147,7 @@ function DistillationGraphics(canvas, column, images, debug) {
 	    reflux : new Valve(reflux_valve_pos.x, reflux_valve_pos.y, valve_options),
 	    feed : new Valve(feed_valve_pos.x, feed_valve_pos.y, valve_options)
 	};
-	this.valves.reflux.set_position((this.column.R - this.alpha_R_min*this.column.R_min())/
+	this.valves.reflux.set_position(1.01*(this.column.R - this.alpha_R_min*this.column.R_min())/
 					(1 + this.column.R - this.alpha_R_min*this.column.R_min()));
 	this.valves.feed.set_position(this.column.F/settings.Fmax);
     };
