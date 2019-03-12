@@ -49,7 +49,8 @@ function DistillationGraphics(canvas, column, images, debug) {
 	this.valve_scaling_factor = 0.0005; // control size of valve relative to the column
 	this.Boundaries = [];
 	this.show_boundaries_log = false;
-	this.alpha_R_min = 1.1; // controls how close we can push to column towards Rmin (1.1 == with 10%)
+	this.R_max = settings.R_max; // maximum reflux ratio permitted by the valves
+	this.alpha_R_min = settings.alpha_R_min; // controls how close we can push to column towards Rmin (1.1 == within 10%)
 	this.key = null;
 	
 	// Initalise everything else
@@ -136,20 +137,25 @@ function DistillationGraphics(canvas, column, images, debug) {
 
     this._init_valves = function() {
 	this.valves = {};
-	var valve_options = { scaling : this.valve_scaling_factor*this.column_height}
+	var reflux_valve_options = { scaling : this.valve_scaling_factor*this.column_height, type : 'equal_percentage'}
 	var reflux_valve_pos = utils.get_abs_coords(this.xmax, this.ymax, this.sid.width,
 						    this.sid.height, settings.reflux_valve_position)
+	
 	var feed_valve_pos = {
 	    x: this.column_left - 0.27*this.images.feed.width*this.column_sf,
 	    y : this.feed_pipe_pos().y
 	}
+	var feed_valve_options = { scaling : this.valve_scaling_factor*this.column_height, type : 'linear'}
+	
 	this.valves = {
-	    reflux : new Valve(reflux_valve_pos.x, reflux_valve_pos.y, valve_options),
-	    feed : new Valve(feed_valve_pos.x, feed_valve_pos.y, valve_options)
+	    reflux : new Valve(reflux_valve_pos.x, reflux_valve_pos.y, reflux_valve_options),
+	    feed : new Valve(feed_valve_pos.x, feed_valve_pos.y, feed_valve_options)
 	};
-	this.valves.reflux.set_position(1.01*(this.column.R - this.alpha_R_min*this.column.R_min())/
-					(1 + this.column.R - this.alpha_R_min*this.column.R_min()));
-	this.valves.feed.set_position(this.column.F/settings.Fmax);
+	var reflux_flow_capacity = (this.column.R - this.alpha_R_min*this.column.R_min())/(this.R_max - this.alpha_R_min*this.column.R_min())
+	this.valves.reflux.set_position_from_flow_capacity(reflux_flow_capacity);
+
+	var feed_flow_capacity = this.column.F/settings.Fmax;
+	this.valves.feed.set_position_from_flow_capacity(feed_flow_capacity);
     };
 
 

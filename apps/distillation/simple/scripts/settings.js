@@ -81,5 +81,7 @@ var settings = {
     general_boundary_positions : [],
 
     // column limits
-    Fmax : 200.0
+    F_max : 200.0,
+    R_max : 500.0,
+    alpha_R_min : 1.1;  
 };
