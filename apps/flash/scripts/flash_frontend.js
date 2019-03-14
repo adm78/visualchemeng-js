@@ -99,7 +99,7 @@ function update_temp() {
 function update_F() {
     if (!resetting_log && !chem_sys_changing_log) {
 	var F_range = data.sys[sysid].range.F
-    	flash.F = F_range.min + graphics.valve.position*(F_range.max - F_range.min);
+    	flash.F = F_range.min + graphics.valve.position()*(F_range.max - F_range.min);
     	flash.solve_PTZF();
 	update_disabled_sliders(flash);
 	plot_stream_compositions(flash, graphics);
