@@ -137,7 +137,7 @@ function DistillationGraphics(canvas, column, images, debug) {
 
     this._init_valves = function() {
 	this.valves = {};
-	var reflux_valve_options = { scaling : this.valve_scaling_factor*this.column_height, type : 'equal_percentage'}
+	var reflux_valve_options = { scaling : this.valve_scaling_factor*this.column_height, type : 'linear'}
 	var reflux_valve_pos = utils.get_abs_coords(this.xmax, this.ymax, this.sid.width,
 						    this.sid.height, settings.reflux_valve_position)
 	
@@ -154,7 +154,7 @@ function DistillationGraphics(canvas, column, images, debug) {
 	var reflux_flow_capacity = (this.column.R - this.alpha_R_min*this.column.R_min())/(this.R_max - this.alpha_R_min*this.column.R_min())
 	this.valves.reflux.set_position_from_flow_capacity(reflux_flow_capacity);
 
-	var feed_flow_capacity = this.column.F/settings.Fmax;
+	var feed_flow_capacity = this.column.F/settings.F_max;
 	this.valves.feed.set_position_from_flow_capacity(feed_flow_capacity);
     };
 

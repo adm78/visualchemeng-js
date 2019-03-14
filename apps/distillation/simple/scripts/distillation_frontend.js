@@ -59,7 +59,7 @@ function setup(first_time=true) {
 	x_eq_data : data.equilibrium_data.x,
 	y_eq_data : data.equilibrium_data.y,
 	F : 100.0,
-	F_max : settings.F_max;
+	F_max : settings.F_max,
     };
     column = new DistMcCabeTheile(options);
     column.solve();
@@ -116,8 +116,6 @@ function update_bounds_button_label() {
 	$("#bounds").text('Hide Bounds');
     }    
 };
-
-
 
 // --------------------------------------------------
 //                 UI event listners

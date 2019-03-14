@@ -82,6 +82,6 @@ var settings = {
 
     // column limits
     F_max : 200.0,
-    R_max : 500.0,
-    alpha_R_min : 1.1;  
+    R_max : 30.0,
+    alpha_R_min : 1.1,  
 };
