@@ -59,7 +59,7 @@ function setup(first_time=true) {
 	x_eq_data : data.equilibrium_data.x,
 	y_eq_data : data.equilibrium_data.y,
 	F : 100.0,
-	F_max : 200.0
+	F_max : settings.F_max,
     };
     column = new DistMcCabeTheile(options);
     column.solve();
@@ -116,8 +116,6 @@ function update_bounds_button_label() {
 	$("#bounds").text('Hide Bounds');
     }    
 };
-
-
 
 // --------------------------------------------------
 //                 UI event listners
@@ -183,12 +181,12 @@ function mouseDragged() {
 	    if (valve.active) {
 		valve.drag_handle(mouseX, mouseY);
 		if (key == 'reflux') {
-		    column.R = Graphics.valves.reflux.position/(1.0 - Graphics.valves.reflux.position)
-			       + column.R_min()*Graphics.alpha_R_min;
+		    var effective_R_min = column.R_min()*Graphics.alpha_R_min;
+		    column.R = Graphics.valves.reflux.flow_capacity()*(Graphics.R_max - effective_R_min) + effective_R_min;
 		    column.solve();
 		    Graphics.reflux_update();
 		} else if (key == 'feed') {
-		    column.F = Graphics.valves.feed.position*settings.Fmax;
+		    column.F = Graphics.valves.feed.position()*settings.F_max;
 		    column.solve();
 		    Graphics.feed_flow_update();
 		};
