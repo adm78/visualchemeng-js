@@ -13,8 +13,8 @@ The vce project aims to deliver chemical engineering principles in a way that st
 ## 🎬Live interactive demos (click the images!) 
 <div>
   <img src="http://visualchemeng.com/wp-content/uploads/2019/03/distillation-1.png" width="100%" margin="auto" display="block">
-  <img src="http://visualchemeng.com/wp-content/uploads/2018/07/2018-07-10-4.png" width="47.5%" margin="auto" display="inline-block">
-  <img src="http://visualchemeng.com/wp-content/uploads/2019/03/flash-4.png" width="52.5%" margin="auto" display="inline-block">
+  <img src="http://visualchemeng.com/wp-content/uploads/2018/07/2018-07-10-4.png" width="47%" margin="auto" display="inline-block">
+  <img src="http://visualchemeng.com/wp-content/uploads/2019/03/flash-4.png" width="51.5%" margin="auto" display="inline-block">
 </div>
 
 ## 🔨🔧Contributing 
