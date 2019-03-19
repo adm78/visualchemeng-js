@@ -1,7 +1,7 @@
 # visualchemeng-js
 
 <p align="center">
-<img src="http://visualchemeng.com/wp-content/uploads/2018/01/stack.png" width="50%" margin="auto" display="block">
+<img src="http://visualchemeng.com/wp-content/uploads/2017/09/vcelogo_round.png" width="20%" margin="auto" display="block">
 </p>
 
 ## This repository 
@@ -11,9 +11,11 @@ JavaScript, HTML and CSS code for the simulation modules of the [Visual Chemical
 The vce project aims to deliver chemical engineering principles in a way that sticks. We place you in control of common unit operations with dynamic, graphics-driven feedback. Under the bonnet, vce is powered by years of chemical engineering knowledge, brought to you through the power of [p5.js](https://p5js.org/), [Plotly](https://plot.ly/) and more.
 
 ## 🎬Live interactive demos (click the images!) 
-[![VCE about screenshot](http://visualchemeng.com/wp-content/uploads/2018/07/2018-07-10-4.png)](https://rawcdn.githack.com/adm78/visualchemeng-js/5de1d5a991a01064f73a4f449ab08f63f369202d/pages/simple_reac.html)
-
-[![VCE about screenshot](http://visualchemeng.com/wp-content/uploads/2018/02/vce_flash_biodiesel.png)](https://cdn.rawgit.com/adm78/visualchemeng_js/13eee3e6db99109bf0f01f8a113b6e72efec3bbf/pages/flash_grid.html)
+<div>
+  <img src="http://visualchemeng.com/wp-content/uploads/2019/03/distillation-1.png" width="100%" margin="auto" display="block">
+  <img src="http://visualchemeng.com/wp-content/uploads/2018/07/2018-07-10-4.png" width="47.5%" margin="auto" display="inline-block">
+  <img src="http://visualchemeng.com/wp-content/uploads/2019/03/flash-4.png" width="52.5%" margin="auto" display="inline-block">
+</div>
 
 ## 🔨🔧Contributing 
 We welcome contributions big and small. If you'd like to contribute or help with a simulation module, please get in touch at [amcguire227@gmail.com](mailto:amcguire227@gmail.com). If you think you've found a bug please check the exisiting [Issues](https://github.com/issues) first and add a new Issue if its not there already. We accept [Pull Requests](https://github.com/pulls)!
