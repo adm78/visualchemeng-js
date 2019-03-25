@@ -22,26 +22,7 @@ function DistMcCabeTheile(options) {
 	return this.F*(this.xf - this.xd)/(this.xb - this.xd);
     };
 
-
-    this.R_min = function() {
-
-	// step 1: determine where the feed op crosses the equi-line
-	var soln = vce_math.solver.newtonsMethod(this._f_rmin,0.5);
-	if (soln[0]) {
-	    var x_intersect = soln[1];
-	    var y_intersect = this.feed_op(x_intersect);
-	} else {
-	    throw new Error("Could not find intersection between op-line and equilibrium line!");
-	};
-
-	// step 2: compute the gradient of the rectifying line with this.
-	var m_rect = (this.xd - y_intersect)/(this.xd - x_intersect);
-	var R = m_rect/(1.0 - m_rect);
-	return R;
-	
-    };
-
-
+    
     // solve the column
     this.solve = function() {
 	this.stage_data = this.get_stage_data();
@@ -131,40 +112,51 @@ function DistMcCabeTheile(options) {
 	/* Generate the stage data for the column. x-value, y-values
 	   and number of stages required.
 
-	   @TODO: make robust again R <= R_min
 	   @TODO: just make the stages, set the stage number etc, directly in this routine.
 	*/
-	var x_step = [this.xd];
-	var y_step = [this.xd];
-	var n_stages = 0;
-	var feed_pos = null;
-	var i = 0;
-	// x_step[x_step.length-1] > this.xb
-	while (x_step[x_step.length-1] > this.xb) {
 
-	    n_stages++;
+	// make sure we have a finite number of stages
+	if (!this._n_stages_is_finite()) {
 	    
-	    // 1. side step to the equilibrium line
-	    var x1 = this.x_eq(y_step[i]);
-	    var y1 = y_step[i];
+	    var x_step = [];
+	    var y_step = [];
+	    var n_stages = null;
+	    var feed_pos = null;
 	    
-	    // 2. down step to the lowest operating line
-	    var x2 = x1;
-	    if (this.stripping_op(x2) > this.rect_op(x2)) {
-		var y2 = this.rect_op(x2);
-	    } else {
-		var y2 = this.stripping_op(x2);
-		if (feed_pos == null) {
-		    // we just jumped over the op line intersection, this is the feed position.
-		    feed_pos = n_stages;
+	} else {
+	    
+	    var x_step = [this.xd];
+	    var y_step = [this.xd];
+	    var n_stages = 0;
+	    var feed_pos = null;
+	    var i = 0;
+	    // x_step[x_step.length-1] > this.xb
+	    while (x_step[x_step.length-1] > this.xb) {
+
+		n_stages++;
+		
+		// 1. side step to the equilibrium line
+		var x1 = this.x_eq(y_step[i]);
+		var y1 = y_step[i];
+		
+		// 2. down step to the lowest operating line
+		var x2 = x1;
+		if (this.stripping_op(x2) > this.rect_op(x2)) {
+		    var y2 = this.rect_op(x2);
+		} else {
+		    var y2 = this.stripping_op(x2);
+		    if (feed_pos == null) {
+			// we just jumped over the op line intersection, this is the feed position.
+			feed_pos = n_stages;
+		    };
 		};
+
+		// add the new points to the step data array
+		x_step.push(x1, x2);
+		y_step.push(y1, y2);
+		i = i + 2;
+
 	    };
-
-	    // add the new points to the step data array
-	    x_step.push(x1, x2);
-	    y_step.push(y1, y2);
-	    i = i + 2;
-
 	};
 	return { x : x_step, y : y_step, n_stages : n_stages, feed_pos : feed_pos};
     };
@@ -179,11 +171,14 @@ function DistMcCabeTheile(options) {
 	return stages;
     };
 
+    this._n_stages_is_finite = function() {
+	var intersect = this.op_line_intersect();
+	if (intersect.y < this.y_eq(intersect.x)) {
+	    return true;
+	};
+	return false;
+    };
 
-
-    this._f_rmin = (function(x) {
-	return this.feed_op(x) - this.y_eq(x);
-    }).bind(this);
 };
 
 	
