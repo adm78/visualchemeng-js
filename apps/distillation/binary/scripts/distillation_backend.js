@@ -26,6 +26,7 @@ function DistMcCabeTheile(options) {
     // solve the column
     this.solve = function() {
 	this.stage_data = this.get_stage_data();
+	this.feasible = this.stage_data.feasible;
 	this.n_stages = this.stage_data.n_stages;
 	this.feed_pos = this.stage_data.feed_pos;
 	this.stages = this._get_filtered_stage_data(this.stage_data);
@@ -117,18 +118,21 @@ function DistMcCabeTheile(options) {
 
 	// make sure we have a finite number of stages
 	if (!this._n_stages_is_finite()) {
-	    
+
+	    var feasible = false;
 	    var x_step = [];
 	    var y_step = [];
 	    var n_stages = null;
 	    var feed_pos = null;
 	    
 	} else {
-	    
+
+	    var feasible = true;
 	    var x_step = [this.xd];
 	    var y_step = [this.xd];
 	    var n_stages = 0;
 	    var feed_pos = null;
+	    
 	    var i = 0;
 	    // x_step[x_step.length-1] > this.xb
 	    while (x_step[x_step.length-1] > this.xb) {
@@ -158,7 +162,7 @@ function DistMcCabeTheile(options) {
 
 	    };
 	};
-	return { x : x_step, y : y_step, n_stages : n_stages, feed_pos : feed_pos};
+	return { x : x_step, y : y_step, n_stages : n_stages, feed_pos : feed_pos, feasible : feasible};
     };
 
     

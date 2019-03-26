@@ -186,7 +186,7 @@ function DistillationGraphics(canvas, column, images, debug) {
 
     this.feed_pipe_pos = function() {
 	// central position of the feed pipe
-	if (this.column.feed_pos !== null) {
+	if (this.column.feasible) {
 	    var feed_stage_pos = this.stage_pos(column.feed_pos);
 	} else {
 	    var feed_stage_pos = {
@@ -221,9 +221,18 @@ function DistillationGraphics(canvas, column, images, debug) {
     this._update_particle_source_rates = function() {
 	// adjust the particle generation rates at each source to
 	// match the backend flowrates
-	this.Ensembles.feed.sources[0].set_rate(this.column.F*this.pm); 
-	this.Ensembles.bottoms.sources[0].set_rate(this.column.B()*this.pm); 
-	this.Ensembles.tops.sources[0].set_rate(this.column.D()*this.pm); 
+	if (this.column.feasible) {
+	    var new_feed_rate = this.column.F*this.pm;
+	    var new_bottoms_rate = this.column.B()*this.pm;
+	    var new_tops_rate = this.column.D()*this.pm;
+	} else {
+	    var new_feed_rate = 0;
+	    var new_bottoms_rate = 0;
+	    var new_tops_rate = 0;
+	};
+	this.Ensembles.feed.sources[0].set_rate(new_feed_rate); 
+	this.Ensembles.bottoms.sources[0].set_rate(new_bottoms_rate); 
+	this.Ensembles.tops.sources[0].set_rate(new_tops_rate);
     };
 
 
@@ -276,12 +285,14 @@ function DistillationGraphics(canvas, column, images, debug) {
 
     this.reflux_update = function() {
 	// Update graphics based on a change in the reflux valve position
+	this._update_particle_source_rates();
 	this.realign_objects_with_feed();
     };
 
 
     this.q_update = function() {
 	// Update graphics based on a change in the feed thermal state
+	this._update_particle_source_rates();
 	this.realign_objects_with_feed();
     };
 
@@ -324,7 +335,7 @@ function DistillationGraphics(canvas, column, images, debug) {
     this.show_stages = function() {
 	push();
 	rectMode(CORNER);
-	if (this.column.n_stages !== null) {
+	if (this.column.feasible) {
 	    var c1 = color(settings.components[0].colour);
 	    var c2 = color(settings.components[1].colour);
 	    for (var i=0; i < this.column.n_stages; i++) {
@@ -373,7 +384,7 @@ function DistillationGraphics(canvas, column, images, debug) {
 	var y = this.feed_pipe_pos().y;
 	fill(255);
 	textAlign(CENTER, CENTER);
-	if (this.column.feed_pos !== null) {
+	if (this.column.feasible) {
 	    text(this.column.feed_pos.toFixed(0), x, y);
 	} else {
 	    text('!', x, y);
@@ -428,7 +439,7 @@ function DistillationGraphics(canvas, column, images, debug) {
 	textSize(24);
 	fill(255, 255, 255);
 	textAlign(LEFT, TOP);
-	if (this.column.n_stages === null) {
+	if (!this.column.feasible) {
 	    text('Distillation infeasible', this.canvas.width*0.02, this.canvas.height*0.02 + 60);
 	} else {
 	    text(this.column.n_stages.toFixed(0) + ' stages', this.canvas.width*0.02, this.canvas.height*0.02 + 60);
