@@ -148,7 +148,7 @@ function DistMcCabeTheile(options) {
 		if (this.stripping_op(x2) > this.rect_op(x2)) {
 		    var y2 = this.rect_op(x2);
 		} else {
-		    var y2 = this.stripping_op(x2);
+		    var y2 = Math.max(this.stripping_op(x2), x2);
 		    if (feed_pos == null) {
 			// we just jumped over the op line intersection, this is the feed position.
 			feed_pos = n_stages;
