@@ -318,6 +318,7 @@ function DistillationGraphics(canvas, column, images, debug) {
 	this.show_boundaries();
 	this.show_ensembles();
 	this.show_valves();
+	this.show_preheater_mask();
 	if (this.debug) {
 	    this.show_fps();
 	};
@@ -466,6 +467,27 @@ function DistillationGraphics(canvas, column, images, debug) {
 	text(frameRate().toFixed(0) + 'fps', this.canvas.width*0.02, this.canvas.height*0.98);
 	pop();
     };
+
+
+    this.show_preheater_mask = function() {
+	push();
+	var feed_pipe_pos = this.feed_pipe_pos();
+	var w = 0.36*this.images.feed.width*this.column_sf;
+	var h = 0.0508*this.images.feed.height*this.column_sf;
+	var r = h/2.0;
+	var opacity = 100;
+	var cold = color(0, 0, 255, opacity);
+	var hot = color(255, 0, 0, opacity);
+	var mask_color = lerpColor(cold, hot, this.valves.preheater.position());
+	console.log(mask_color);
+	fill(mask_color);
+	noStroke();
+	var dx = - 0.35*this.images.feed.width*this.column_sf;
+	var dy = -0.05*this.images.feed.width*this.column_sf;
+	rect(feed_pipe_pos.x + dx, feed_pipe_pos.y + dy,
+	     w, h, r, r, r, r);
+	pop();
+    }
 
 
     // Now that everything is defined, we can initialise everything.
