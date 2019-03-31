@@ -49,7 +49,6 @@ function DistillationGraphics(canvas, column, images, debug) {
 	this.valve_scaling_factor = 0.0005; // control size of valve relative to the column
 	this.Boundaries = [];
 	this.show_boundaries_log = false;
-	this.R_max = settings.R_max; // maximum reflux ratio permitted by the valves
 	this.alpha_R_min = settings.alpha_R_min; // controls how close we can push to column towards Rmin (1.1 == within 10%)
 	this.key = null;
 	
@@ -142,20 +141,31 @@ function DistillationGraphics(canvas, column, images, debug) {
 						    this.sid.height, settings.reflux_valve_position)
 	
 	var feed_valve_pos = {
-	    x: this.column_left - 0.27*this.images.feed.width*this.column_sf,
+	    x : this.column_left - 0.27*this.images.feed.width*this.column_sf,
 	    y : this.feed_pipe_pos().y
 	}
 	var feed_valve_options = { scaling : this.valve_scaling_factor*this.column_height, type : 'linear'}
+
+
+	var preheater_valve_pos = {
+	    x : this.column_left - 0.56*this.images.feed.width*this.column_sf,
+	    y : 0.8*this.ymax
+	};
+	var preheater_valve_options = { scaling : this.valve_scaling_factor*this.column_height, type : 'linear', body_angle : PI/2}
 	
 	this.valves = {
 	    reflux : new Valve(reflux_valve_pos.x, reflux_valve_pos.y, reflux_valve_options),
-	    feed : new Valve(feed_valve_pos.x, feed_valve_pos.y, feed_valve_options)
+	    feed : new Valve(feed_valve_pos.x, feed_valve_pos.y, feed_valve_options),
+	    preheater : new Valve(preheater_valve_pos.x, preheater_valve_pos.y, preheater_valve_options)
 	};
-	var reflux_flow_capacity = (this.column.R - this.alpha_R_min*this.column.R_min())/(this.R_max - this.alpha_R_min*this.column.R_min())
+	var reflux_flow_capacity = (this.column.R - settings.R_min)/(settings.R_max - settings.R_min)
 	this.valves.reflux.set_position_from_flow_capacity(reflux_flow_capacity);
 
 	var feed_flow_capacity = this.column.F/settings.F_max;
 	this.valves.feed.set_position_from_flow_capacity(feed_flow_capacity);
+
+	var preheater_flow_capacity = (this.column.q - settings.q_min)/(settings.q_max - settings.q_min);
+	this.valves.preheater.set_position_from_flow_capacity(preheater_flow_capacity);
     };
 
 
@@ -164,8 +174,8 @@ function DistillationGraphics(canvas, column, images, debug) {
 	var particle_sf = 3.0;
 	var p1_options = utils.merge_options(settings.particles[0], { radius : settings.particles[0].radius*particle_sf });
 	var p2_options = utils.merge_options(settings.particles[1], { radius : settings.particles[1].radius*particle_sf });
-	this.key.p1 = new MatterParticle(null, this.canvas.width*0.035, this.canvas.height*0.02 + 75, p1_options);
-	this.key.p2 = new MatterParticle(null, this.canvas.width*0.035, this.canvas.height*0.02 + 105, p2_options);
+	this.key.p1 = new MatterParticle(null, this.canvas.width*0.035, this.canvas.height*0.02 + 105, p1_options);
+	this.key.p2 = new MatterParticle(null, this.canvas.width*0.035, this.canvas.height*0.02 + 135, p2_options);
     };
 
 
@@ -176,7 +186,14 @@ function DistillationGraphics(canvas, column, images, debug) {
 
     this.feed_pipe_pos = function() {
 	// central position of the feed pipe
-	var feed_stage_pos = this.stage_pos(column.feed_pos);
+	if (this.column.feasible) {
+	    var feed_stage_pos = this.stage_pos(column.feed_pos);
+	} else {
+	    var feed_stage_pos = {
+		x : this.column_left + 0.5*this.column_width,
+		y : this.column_top + 0.5*this.column_height
+	    };
+	};
 	return {
 	    x : feed_stage_pos.x
 		- 0.5*this.column_width
@@ -204,9 +221,18 @@ function DistillationGraphics(canvas, column, images, debug) {
     this._update_particle_source_rates = function() {
 	// adjust the particle generation rates at each source to
 	// match the backend flowrates
-	this.Ensembles.feed.sources[0].set_rate(this.column.F*this.pm); 
-	this.Ensembles.bottoms.sources[0].set_rate(this.column.B()*this.pm); 
-	this.Ensembles.tops.sources[0].set_rate(this.column.D()*this.pm); 
+	if (this.column.feasible) {
+	    var new_feed_rate = this.column.F*this.pm;
+	    var new_bottoms_rate = this.column.B()*this.pm;
+	    var new_tops_rate = this.column.D()*this.pm;
+	} else {
+	    var new_feed_rate = 0;
+	    var new_bottoms_rate = 0;
+	    var new_tops_rate = 0;
+	};
+	this.Ensembles.feed.sources[0].set_rate(new_feed_rate); 
+	this.Ensembles.bottoms.sources[0].set_rate(new_bottoms_rate); 
+	this.Ensembles.tops.sources[0].set_rate(new_tops_rate);
     };
 
 
@@ -259,8 +285,15 @@ function DistillationGraphics(canvas, column, images, debug) {
 
     this.reflux_update = function() {
 	// Update graphics based on a change in the reflux valve position
-	this.realign_objects_with_feed();
 	this._update_particle_source_rates();
+	this.realign_objects_with_feed();
+    };
+
+
+    this.q_update = function() {
+	// Update graphics based on a change in the feed thermal state
+	this._update_particle_source_rates();
+	this.realign_objects_with_feed();
     };
 
 
@@ -277,6 +310,7 @@ function DistillationGraphics(canvas, column, images, debug) {
 	this.show_column();
 	this.show_stages();
 	this.show_R();
+	this.show_q();
 	this.show_n_stages();
 	this.show_key();
 	this.show_feed_stage_label();
@@ -284,6 +318,7 @@ function DistillationGraphics(canvas, column, images, debug) {
 	this.show_boundaries();
 	this.show_ensembles();
 	this.show_valves();
+	this.show_preheater_mask();
 	if (this.debug) {
 	    this.show_fps();
 	};
@@ -301,13 +336,19 @@ function DistillationGraphics(canvas, column, images, debug) {
     this.show_stages = function() {
 	push();
 	rectMode(CORNER);
-	var c1 = color(settings.components[0].colour);
-	var c2 = color(settings.components[1].colour);
-	for (var i=0; i < this.column.n_stages; i++) {
-	    var c = lerpColor(c1, c2, this.column.stages[i].y);
+	if (this.column.feasible) {
+	    var c1 = color(settings.components[0].colour);
+	    var c2 = color(settings.components[1].colour);
+	    for (var i=0; i < this.column.n_stages; i++) {
+		var c = lerpColor(c1, c2, this.column.stages[i].y);
+		fill(c);
+		var stage_top = this.column_bottom - (i+1)*this.stage_height();
+		rect(this.column_left, stage_top, this.column_width, this.stage_height());
+	    };
+	} else {
+	    var c = [190, 0.0, 0.0];
 	    fill(c);
-	    var stage_top = this.column_bottom - (i+1)*this.stage_height();
-	    rect(this.column_left, stage_top, this.column_width, this.stage_height());
+	    rect(this.column_left, this.column_top, this.column_width, this.column_height);
 	};
 	pop();
     };
@@ -321,8 +362,9 @@ function DistillationGraphics(canvas, column, images, debug) {
 
 
     this.show_valves = function() {
-	this.valves.feed.show();
-	this.valves.reflux.show();
+	for (var key in this.valves) {
+	    this.valves[key].show();
+	};
     };
 
 
@@ -343,7 +385,11 @@ function DistillationGraphics(canvas, column, images, debug) {
 	var y = this.feed_pipe_pos().y;
 	fill(255);
 	textAlign(CENTER, CENTER);
-	text(this.column.feed_pos.toFixed(0), x, y);
+	if (this.column.feasible) {
+	    text(this.column.feed_pos.toFixed(0), x, y);
+	} else {
+	    text('!', x, y);
+	};
 	pop();
     };
 
@@ -380,12 +426,25 @@ function DistillationGraphics(canvas, column, images, debug) {
 	pop();
     };
 
+    this.show_q = function() {
+	push();
+	textSize(24);
+	fill(255, 255, 255);
+	textAlign(LEFT, TOP);
+	text('q = '+ this.column.q.toFixed(2), this.canvas.width*0.02, this.canvas.height*0.02 + 30);
+	pop();
+    };
+
     this.show_n_stages = function() {
 	push();
 	textSize(24);
 	fill(255, 255, 255);
 	textAlign(LEFT, TOP);
-	text(this.column.n_stages.toFixed(0) + ' stages', this.canvas.width*0.02, this.canvas.height*0.02 + 30);
+	if (!this.column.feasible) {
+	    text('Distillation infeasible', this.canvas.width*0.02, this.canvas.height*0.02 + 60);
+	} else {
+	    text(this.column.n_stages.toFixed(0) + ' stages', this.canvas.width*0.02, this.canvas.height*0.02 + 60);
+	};
 	pop()
     };
 
@@ -408,6 +467,27 @@ function DistillationGraphics(canvas, column, images, debug) {
 	text(frameRate().toFixed(0) + 'fps', this.canvas.width*0.02, this.canvas.height*0.98);
 	pop();
     };
+
+
+    this.show_preheater_mask = function() {
+	push();
+	var feed_pipe_pos = this.feed_pipe_pos();
+	var w = 0.36*this.images.feed.width*this.column_sf;
+	var h = 0.0508*this.images.feed.height*this.column_sf;
+	var r = h/2.0;
+	var opacity = 100;
+	var cold = color(0, 0, 255, opacity);
+	var hot = color(255, 0, 0, opacity);
+	var mask_color = lerpColor(cold, hot, this.valves.preheater.position());
+	console.log(mask_color);
+	fill(mask_color);
+	noStroke();
+	var dx = - 0.35*this.images.feed.width*this.column_sf;
+	var dy = -0.05*this.images.feed.width*this.column_sf;
+	rect(feed_pipe_pos.x + dx, feed_pipe_pos.y + dy,
+	     w, h, r, r, r, r);
+	pop();
+    }
 
 
     // Now that everything is defined, we can initialise everything.
