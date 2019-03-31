@@ -148,10 +148,10 @@ function DistillationGraphics(canvas, column, images, debug) {
 
 
 	var preheater_valve_pos = {
-	    x : 0.7*feed_valve_pos.x,
-	    y : 1.3*feed_valve_pos.y
+	    x : this.column_left - 0.56*this.images.feed.width*this.column_sf,
+	    y : 0.8*this.ymax
 	};
-	var preheater_valve_options = { scaling : this.valve_scaling_factor*this.column_height, type : 'linear'}
+	var preheater_valve_options = { scaling : this.valve_scaling_factor*this.column_height, type : 'linear', body_angle : PI/2}
 	
 	this.valves = {
 	    reflux : new Valve(reflux_valve_pos.x, reflux_valve_pos.y, reflux_valve_options),

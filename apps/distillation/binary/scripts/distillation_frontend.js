@@ -29,9 +29,9 @@ var Graphics, column,
 // --------------------------------------------------
 function preload() {
     // load the canvas images
-    if (vce_online) {
+    if (!vce_online) {
 	var column_img_URL = "../../images/distillation_grey.svg";
-	var feed_img_URL = "../../images/feed_pipe.svg";
+	var feed_img_URL = "../../images/feed_pipe_with_hex.svg";
     } else {
 	var column_img_URL = "http://visualchemeng.com/wp-content/uploads/2018/10/distillation_grey.svg";
 	var feed_img_URL = "http://visualchemeng.com/wp-content/uploads/2018/10/feed_pipe.svg";
