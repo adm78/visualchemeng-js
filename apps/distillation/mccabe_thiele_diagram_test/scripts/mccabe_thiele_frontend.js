@@ -15,13 +15,13 @@ var options = {
     xb : 0.05,
     P : 101.3e3, // Pa
     q : 7.0/6.0,
-    R : 1.5155, //1.8,//6.692,
+    R : 2.0, //1.8,//6.692,
     x_eq_data : data.equilibrium_data.x,
     y_eq_data : data.equilibrium_data.y,
     F : 100.0,
 };
 var column = new DistMcCabeTheile(options);
-column.F_max = 200.0; //@TODO: clean this up!
+column.solve();
 plot_mccabe_thiele_diagram(column, 'mccabe_thiele_container');
 console.log("R_min = ", column.R_min());
 

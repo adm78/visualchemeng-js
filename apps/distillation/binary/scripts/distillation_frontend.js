@@ -29,12 +29,12 @@ var Graphics, column,
 // --------------------------------------------------
 function preload() {
     // load the canvas images
-    if (vce_online) {
+    if (!vce_online) {
 	var column_img_URL = "../../images/distillation_grey.svg";
-	var feed_img_URL = "../../images/feed_pipe.svg";
+	var feed_img_URL = "../../images/feed_pipe_with_hex.svg";
     } else {
 	var column_img_URL = "http://visualchemeng.com/wp-content/uploads/2018/10/distillation_grey.svg";
-	var feed_img_URL = "http://visualchemeng.com/wp-content/uploads/2018/10/feed_pipe.svg";
+	var feed_img_URL = "http://visualchemeng.com/wp-content/uploads/2019/03/feed_pipe_with_hex.svg";
     };
     images.column = loadImage(column_img_URL, pic => print(pic), utils.loadImgErrFix);
     images.feed = loadImage(feed_img_URL, pic => print(pic), utils.loadImgErrFix);
@@ -54,7 +54,7 @@ function setup(first_time=true) {
 	xd : 0.95,
 	xb : 0.05,
 	P : 101.3e3, // Pa
-	q : 7.0/6.0,
+	q : 0.5, //7.0/6.0,
 	R : 6.692,
 	x_eq_data : data.equilibrium_data.x,
 	y_eq_data : data.equilibrium_data.y,
@@ -72,7 +72,9 @@ function setup(first_time=true) {
     
     // Update any labels based on the initialised state
     update_labels();
-    
+
+    console.log(column);
+    console.log(Graphics);
 }
 
 
@@ -181,15 +183,19 @@ function mouseDragged() {
 	    if (valve.active) {
 		valve.drag_handle(mouseX, mouseY);
 		if (key == 'reflux') {
-		    var effective_R_min = column.R_min()*Graphics.alpha_R_min;
-		    column.R = Graphics.valves.reflux.flow_capacity()*(Graphics.R_max - effective_R_min) + effective_R_min;
+		    column.R = Graphics.valves.reflux.flow_capacity()*(settings.R_max - settings.R_min) + settings.R_min;
 		    column.solve();
 		    Graphics.reflux_update();
 		} else if (key == 'feed') {
 		    column.F = Graphics.valves.feed.position()*settings.F_max;
 		    column.solve();
 		    Graphics.feed_flow_update();
+		} else if (key == 'preheater') {
+		    column.q = Graphics.valves.preheater.position()*(settings.q_max - settings.q_min) + settings.q_min;
+		    column.solve();
+		    Graphics.q_update();
 		};
+		
 	    };
 	};
 	plot_mccabe_thiele_diagram(column, 'mccabe_thiele_container');

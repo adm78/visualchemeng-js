@@ -38,7 +38,7 @@ function _get_mccabe_thiele_traces(column) {
     };
     traces.push(center_line);
     var equilib_line = {
-	name: 'VLE',
+	name: 'Vapour-Liquid equilibrium',
 	type: "scatter",
 	mode: "lines",
 	x: data.equilibrium_data.x,
@@ -125,9 +125,11 @@ function _get_mccabe_thiele_layout() {
 	    size: 16,
 	},
 	title : 'McCabe-Thiele Diagram',
-	showlegend: false,
+	showlegend: true,
 	legend: {
-	    font: {color: 'white'}
+	    font: {color: 'white'},
+	    x: 0,
+	    y: 1
 	},
 	hoverlabel: {bordercolor:'#333438'},
 	plot_bgcolor: '#333438',
