@@ -34,7 +34,7 @@ function preload() {
 	var feed_img_URL = "../../images/feed_pipe_with_hex.svg";
     } else {
 	var column_img_URL = "http://visualchemeng.com/wp-content/uploads/2018/10/distillation_grey.svg";
-	var feed_img_URL = "http://visualchemeng.com/wp-content/uploads/2018/10/feed_pipe.svg";
+	var feed_img_URL = "http://visualchemeng.com/wp-content/uploads/2019/03/feed_pipe_with_hex.svg";
     };
     images.column = loadImage(column_img_URL, pic => print(pic), utils.loadImgErrFix);
     images.feed = loadImage(feed_img_URL, pic => print(pic), utils.loadImgErrFix);
