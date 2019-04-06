@@ -72,9 +72,6 @@ function setup(first_time=true) {
     
     // Update any labels based on the initialised state
     update_labels();
-
-    console.log(column);
-    console.log(Graphics);
 }
 
 
@@ -106,6 +103,7 @@ function update_labels() {
     // Update the UI labels so that they are conistant wit the
     // application state.
     update_bounds_button_label();
+    update_info_button_label();
 };
 
 
@@ -117,6 +115,16 @@ function update_bounds_button_label() {
     else {
 	$("#bounds").text('Hide Bounds');
     }    
+};
+
+function update_info_button_label() {
+    // update info button label
+    if (!Graphics.info_mode) {
+	$("#info").text('Show Info');
+    }
+    else {
+	$("#info").text('Hide Info');
+    } 
 };
 
 // --------------------------------------------------
@@ -139,7 +147,6 @@ $('#run').click(async function(){
 
 // restart/reset button
 $('#restart').click(async function(){
-    console.log("You just clicked reset!");
     setup();
 });
 
@@ -148,9 +155,16 @@ $('#restart').click(async function(){
 $('#bounds').click(async function(){
 
     // boundary show hide
-    console.log("You just clicked show boundaries!");
     Graphics.show_boundaries_log = !(Graphics.show_boundaries_log);
     update_bounds_button_label();
+});
+
+// info button
+$('#info').click(async function(){
+
+    // boundary show hide
+    Graphics.info_mode = !(Graphics.info_mode);
+    update_info_button_label();
 });
 
 

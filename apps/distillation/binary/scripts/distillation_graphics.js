@@ -51,6 +51,7 @@ function DistillationGraphics(canvas, column, images, debug) {
 	this.show_boundaries_log = false;
 	this.alpha_R_min = settings.alpha_R_min; // controls how close we can push to column towards Rmin (1.1 == within 10%)
 	this.key = null;
+	this.info_mode = false;
 	
 	// Initalise everything else
 	this._init_column_positions();
@@ -319,6 +320,9 @@ function DistillationGraphics(canvas, column, images, debug) {
 	this.show_ensembles();
 	this.show_valves();
 	this.show_preheater_mask();
+	if (this.info_mode) {
+	    this.show_info();
+	};
 	if (this.debug) {
 	    this.show_fps();
 	};
@@ -487,7 +491,20 @@ function DistillationGraphics(canvas, column, images, debug) {
 	rect(feed_pipe_pos.x + dx, feed_pipe_pos.y + dy,
 	     w, h, r, r, r, r);
 	pop();
-    }
+    };
+   
+
+    this.show_info = function() {
+	// Just a test for now
+	push();
+	rectMode(CENTER);
+	rect(0.5*this.xmax, 0.5*this.ymax, 0.4*this.xmax, 0.15*this.ymax);
+	textAlign(CENTER, CENTER);
+	textSize(24);
+	fill(255, 255, 255);
+	text('Info mode is active', 0.5*this.xmax, 0.5*this.ymax);
+	pop();
+    };
 
 
     // Now that everything is defined, we can initialise everything.
