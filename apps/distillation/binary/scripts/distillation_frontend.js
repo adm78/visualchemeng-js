@@ -47,6 +47,7 @@ function setup(first_time=true) {
 
     // Create the canvas
     canvas = new vceCanvas(id="#sim_container", xmax=null, ymax=window.innerHeight*0.75);
+    console.log(canvas);
 
     // Initialise the backend column properties
     var options = {
@@ -119,12 +120,26 @@ function update_bounds_button_label() {
 
 function update_info_button_label() {
     // update info button label
-    if (!Graphics.info_mode) {
-	$("#info").text('Show Info');
+    if (Graphics.hide) {
+	$("#info").text('Hide Info');
     }
     else {
-	$("#info").text('Hide Info');
+	$("#info").text('Show Info');
     } 
+};
+
+function update_pause_button_label() {
+    // update the pause button label
+    if (paused_log) {
+	$("#run").text('Run');
+	$('#run').prop('title', 'Un-pause the simulation');
+	noLoop();
+    }
+    else {
+	$("#run").text('Pause');
+	$('#run').prop('title', 'Pause the simulation');
+	loop();
+    }
 };
 
 // --------------------------------------------------
@@ -134,14 +149,7 @@ function update_info_button_label() {
 $('#run').click(async function(){
     console.log("You just clicked stream/pause!");
     paused_log = !(paused_log);
-    if (paused_log) {
-	$("#run").text('Run');
-	$('#run').prop('title', 'Un-pause the reaction');
-    }
-    else {
-	$("#run").text('Pause');
-	$('#run').prop('title', 'Pause the reaction');
-    }
+    update_pause_button_label();
 });
 
 
@@ -162,9 +170,19 @@ $('#bounds').click(async function(){
 // info button
 $('#info').click(async function(){
 
-    // boundary show hide
-    Graphics.info_mode = !(Graphics.info_mode);
+    // toggle information mode
+    paused_log = !paused_log;
+    Graphics.hide = !(Graphics.hide);
     update_info_button_label();
+//    sim_container = select('#sim_container');
+    if (Graphics.hide) {
+	noLoop(); // stop the draw loop
+	canvas.hide();
+    } else {
+	loop(); // start te draw loop
+	canvas.show();
+    };
+
 });
 
 

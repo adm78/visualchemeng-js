@@ -51,7 +51,7 @@ function DistillationGraphics(canvas, column, images, debug) {
 	this.show_boundaries_log = false;
 	this.alpha_R_min = settings.alpha_R_min; // controls how close we can push to column towards Rmin (1.1 == within 10%)
 	this.key = null;
-	this.info_mode = false;
+	this.hide = false;
 	
 	// Initalise everything else
 	this._init_column_positions();
@@ -306,25 +306,25 @@ function DistillationGraphics(canvas, column, images, debug) {
     
     this.show = function() {
 	// render all the neccessary pieces to the canvas
-	background(51);
-	this.show_walls();
-	this.show_column();
-	this.show_stages();
-	this.show_R();
-	this.show_q();
-	this.show_n_stages();
-	this.show_key();
-	this.show_feed_stage_label();
-	this.show_feed();
-	this.show_boundaries();
-	this.show_ensembles();
-	this.show_valves();
-	this.show_preheater_mask();
-	if (this.info_mode) {
-	    this.show_info();
-	};
-	if (this.debug) {
-	    this.show_fps();
+	if (!this.hide) {
+	    background(51);
+	    this.show_walls();
+	    this.show_column();
+	    this.show_stages();
+	    this.show_R();
+	    this.show_q();
+	    this.show_n_stages();
+	    this.show_key();
+	    this.show_feed_stage_label();
+	    this.show_feed();
+	    this.show_boundaries();
+	    this.show_ensembles();
+	    this.show_labels();
+	    this.show_valves();
+	    this.show_preheater_mask();
+	    if (this.debug) {
+		this.show_fps();
+	    };
 	};
     };
 
@@ -464,6 +464,20 @@ function DistillationGraphics(canvas, column, images, debug) {
 	pop();
     };
 
+
+    this.show_labels = function() {
+	// Displays stream labels etc.
+	push();
+	textAlign(CENTER, CENTER);
+	textSize(18);
+	fill(255, 255, 255);
+	text('Feed flowrate', this.valves.feed.x, this.valves.feed.y - 0.2*this.column_height);
+	text('Pre-heater steam flow', this.valves.preheater.x + 0.35*this.images.feed.width*this.column_sf,
+	     this.valves.preheater.y + 0.25*this.column_height);
+	text('Reflux', this.valves.reflux.x, this.valves.reflux.y - 0.1*this.column_height);
+	pop();
+    };
+
     
     this.show_fps = function() {
 	push();
@@ -483,7 +497,6 @@ function DistillationGraphics(canvas, column, images, debug) {
 	var cold = color(0, 0, 255, opacity);
 	var hot = color(255, 0, 0, opacity);
 	var mask_color = lerpColor(cold, hot, this.valves.preheater.position());
-	console.log(mask_color);
 	fill(mask_color);
 	noStroke();
 	var dx = - 0.35*this.images.feed.width*this.column_sf;
@@ -498,7 +511,11 @@ function DistillationGraphics(canvas, column, images, debug) {
 	// Just a test for now
 	push();
 	rectMode(CENTER);
-	rect(0.5*this.xmax, 0.5*this.ymax, 0.4*this.xmax, 0.15*this.ymax);
+	fill(51);
+	noStroke();
+	rect(0.5*this.xmax, 0.5*this.ymax, this.xmax, this.ymax);
+	pop();
+	push();
 	textAlign(CENTER, CENTER);
 	textSize(24);
 	fill(255, 255, 255);
@@ -507,6 +524,6 @@ function DistillationGraphics(canvas, column, images, debug) {
     };
 
 
-    // Now that everything is defined, we can initialise everything.
+    // Now that everything is defined, we can initialise.
     this.__init__(canvas, column, images, debug);
 };
