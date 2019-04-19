@@ -82,14 +82,10 @@ function draw() {
        This function is continuously called for the
        lifetime of the scripts executions after setup()
        has completed. Effectively advances time. */
-
-    if (!(paused_log)) {
-	// step the system forward in time
-	Graphics.update();
+    if (!paused_log) {
+	Graphics.update(); // step the system forward in time
     };
-
-    // render graphics
-    Graphics.show()
+    Graphics.show(); // render graphics
     
 };
 
@@ -174,13 +170,20 @@ $('#info').click(async function(){
     paused_log = !paused_log;
     Graphics.hide = !(Graphics.hide);
     update_info_button_label();
-//    sim_container = select('#sim_container');
     if (Graphics.hide) {
 	noLoop(); // stop the draw loop
 	canvas.hide();
+	// load in the info content
+	var sim_container = select('#sim_container');
+	var info_div = createDiv('Welcome to information mode. [INSERT SCIENCE HERE]')
+	info_div.id('info_div');
+	info_div.parent(sim_container);
+	info_div.style('width', canvas.width.toString());
+	info_div.style('height', canvas.height.toString());
     } else {
 	loop(); // start te draw loop
 	canvas.show();
+	select('#info_div').remove()
     };
 
 });
