@@ -130,12 +130,10 @@ function update_pause_button_label() {
     if (paused_log) {
 	$("#run").text('Run');
 	$('#run').prop('title', 'Un-pause the simulation');
-	noLoop();
     }
     else {
 	$("#run").text('Pause');
 	$('#run').prop('title', 'Pause the simulation');
-	loop();
     }
 };
 
@@ -202,8 +200,10 @@ $('#fullscreen').on('click', () => {
 window.onresize = function() {
     if (screenfull.isFullscreen) {
 	canvas.stretch();
+	utils.stretch('#theory_container');
     } else {
 	canvas.reset();
+	utils.stretch('#theory_container');
     };
     init_graphics();
     utils.resizePlotlyHeight('mccabe_thiele_container');

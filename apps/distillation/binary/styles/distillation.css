@@ -17,6 +17,13 @@
     grid-row: 1;
 }
 
+#theory_container {
+    float:left;
+    width:100px;
+    overflow-y: auto;
+    height: 100px;
+}
+
 
 #mccabe_thiele_container {
     grid-column: 1 / 4;
