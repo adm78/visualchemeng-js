@@ -38,6 +38,7 @@ function preload() {
     };
     images.column = loadImage(column_img_URL, pic => print(pic), utils.loadImgErrFix);
     images.feed = loadImage(feed_img_URL, pic => print(pic), utils.loadImgErrFix);
+    MathJax.Hub.Queue(["Typeset",MathJax.Hub]); // MathJax rendering
 };
 
 function setup(first_time=true) {
@@ -100,7 +101,7 @@ function update_labels() {
     // Update the UI labels so that they are conistant wit the
     // application state.
     update_bounds_button_label();
-    update_info_button_label();
+    update_theory_button_label();
 };
 
 
@@ -114,13 +115,13 @@ function update_bounds_button_label() {
     }    
 };
 
-function update_info_button_label() {
-    // update info button label
+function update_theory_button_label() {
+    // update theory button label
     if (Graphics.hide) {
-	$("#info").text('Hide Info');
+	$("#theory").text('Hide Theory');
     }
     else {
-	$("#info").text('Show Info');
+	$("#theory").text('Show Theory');
     } 
 };
 
@@ -163,27 +164,25 @@ $('#bounds').click(async function(){
     update_bounds_button_label();
 });
 
-// info button
-$('#info').click(async function(){
+// theory button
+$('#theory').click(async function(){
 
-    // toggle information mode
+    // toggle theory mode
     paused_log = !paused_log;
     Graphics.hide = !(Graphics.hide);
-    update_info_button_label();
+    update_theory_button_label();
     if (Graphics.hide) {
 	noLoop(); // stop the draw loop
 	canvas.hide();
-	// load in the info content
-	var sim_container = select('#sim_container');
-	var info_div = createDiv('Welcome to information mode. [INSERT SCIENCE HERE]')
-	info_div.id('info_div');
-	info_div.parent(sim_container);
-	info_div.style('width', canvas.width.toString());
-	info_div.style('height', canvas.height.toString());
+	// Show the theory container
+	var theory_container = select('#theory_container');
+	theory_container.show();
+	theory_container.style('width', canvas.width.toString());
+	theory_container.style('height', canvas.height.toString());
     } else {
-	loop(); // start te draw loop
+	select('#theory_container').hide()
+	loop(); // start te draw loop)
 	canvas.show();
-	select('#info_div').remove()
     };
 
 });

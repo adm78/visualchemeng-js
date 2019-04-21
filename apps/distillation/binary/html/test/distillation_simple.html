@@ -1,6 +1,7 @@
 <html>
   <head>
     <script>var vce_online = false;</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML" async></script>
     <link rel="stylesheet" type="text/css" href="../../../../../lib/styles/jquery-ui.css">
     <link rel="stylesheet" type="text/css" href="../../../../../lib/styles/nice-select.css">
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto">
@@ -12,21 +13,23 @@
   <body style="background-color:white;">
     <div class="wrapper" id="target">
       <div class="box" id="mccabe_thiele_container"></div>
-      <div class="box sim_container" id="sim_container"></div>
+      <div class="box sim_container" id="sim_container">
+	<div id="theory_container" style="display: none">This is a test $$a^2 + b^2 = c^2$$</div>
+      </div>
       <div class="box vce_info">
       	<a href="http://visualchemeng.com" title="Go to VCE homepage" id="logo">
           <img class="vce_logo" src="../../../../../lib/images/vcelogo.png" />
       	</a>
       	<a href="http://visualchemeng.com"
       	   style="text-decoration:none" title="Go to VCE homepage" id="app_name">
-      	   <p style="display: block; margin-left: auto; margin-right: auto; color:white; text-align: center; font-family:Roboto" >Binary Distillation</p>
+      	  <p style="display: block; margin-left: auto; margin-right: auto; color:white; text-align: center; font-family:Roboto" >Binary Distillation</p>
       	   </a>
       </div>
       <div class="box button_container">
         <button class="button" id="run" style="width:96%; height: 50px" >Pause</button>
 	<button class="button" id="restart" style="width:96%; height: 50px" >Reset</button>
 	<button class="button" id="fullscreen" style="width:96%; height: 50px">Fullscreen</button>
-	<button class="button" id="info" style="width:96%">Show Info</button><br/>
+	<button class="button" id="theory" style="width:96%">Show Theory</button><br/>
       </div>
     </div>
     <!-- scripts required for simulations -->
