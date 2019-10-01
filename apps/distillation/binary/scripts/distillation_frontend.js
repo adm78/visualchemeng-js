@@ -38,6 +38,7 @@ function preload() {
     };
     images.column = loadImage(column_img_URL, pic => print(pic), utils.loadImgErrFix);
     images.feed = loadImage(feed_img_URL, pic => print(pic), utils.loadImgErrFix);
+    MathJax.Hub.Queue(["Typeset",MathJax.Hub]); // MathJax rendering
 };
 
 function setup(first_time=true) {
@@ -47,6 +48,7 @@ function setup(first_time=true) {
 
     // Create the canvas
     canvas = new vceCanvas(id="#sim_container", xmax=null, ymax=window.innerHeight*0.75);
+    console.log(canvas);
 
     // Initialise the backend column properties
     var options = {
@@ -72,9 +74,6 @@ function setup(first_time=true) {
     
     // Update any labels based on the initialised state
     update_labels();
-
-    console.log(column);
-    console.log(Graphics);
 }
 
 
@@ -84,14 +83,10 @@ function draw() {
        This function is continuously called for the
        lifetime of the scripts executions after setup()
        has completed. Effectively advances time. */
-
-    if (!(paused_log)) {
-	// step the system forward in time
-	Graphics.update();
+    if (!paused_log) {
+	Graphics.update(); // step the system forward in time
     };
-
-    // render graphics
-    Graphics.show()
+    Graphics.show(); // render graphics
     
 };
 
@@ -106,6 +101,7 @@ function update_labels() {
     // Update the UI labels so that they are conistant wit the
     // application state.
     update_bounds_button_label();
+    update_theory_button_label();
 };
 
 
@@ -119,6 +115,28 @@ function update_bounds_button_label() {
     }    
 };
 
+function update_theory_button_label() {
+    // update theory button label
+    if (Graphics.hide) {
+	$("#theory").text('Hide Theory');
+    }
+    else {
+	$("#theory").text('Show Theory');
+    } 
+};
+
+function update_pause_button_label() {
+    // update the pause button label
+    if (paused_log) {
+	$("#run").text('Run');
+	$('#run').prop('title', 'Un-pause the simulation');
+    }
+    else {
+	$("#run").text('Pause');
+	$('#run').prop('title', 'Pause the simulation');
+    }
+};
+
 // --------------------------------------------------
 //                 UI event listners
 // --------------------------------------------------
@@ -126,20 +144,12 @@ function update_bounds_button_label() {
 $('#run').click(async function(){
     console.log("You just clicked stream/pause!");
     paused_log = !(paused_log);
-    if (paused_log) {
-	$("#run").text('Run');
-	$('#run').prop('title', 'Un-pause the reaction');
-    }
-    else {
-	$("#run").text('Pause');
-	$('#run').prop('title', 'Pause the reaction');
-    }
+    update_pause_button_label();
 });
 
 
 // restart/reset button
 $('#restart').click(async function(){
-    console.log("You just clicked reset!");
     setup();
 });
 
@@ -148,9 +158,31 @@ $('#restart').click(async function(){
 $('#bounds').click(async function(){
 
     // boundary show hide
-    console.log("You just clicked show boundaries!");
     Graphics.show_boundaries_log = !(Graphics.show_boundaries_log);
     update_bounds_button_label();
+});
+
+// theory button
+$('#theory').click(async function(){
+
+    // toggle theory mode
+    paused_log = !paused_log;
+    Graphics.hide = !(Graphics.hide);
+    update_theory_button_label();
+    if (Graphics.hide) {
+	noLoop(); // stop the draw loop
+	canvas.hide();
+	// Show the theory container
+	var theory_container = select('#theory_container');
+	theory_container.show();
+	theory_container.style('width', canvas.width.toString());
+	theory_container.style('height', canvas.height.toString());
+    } else {
+	select('#theory_container').hide()
+	loop(); // start te draw loop)
+	canvas.show();
+    };
+
 });
 
 
@@ -168,8 +200,10 @@ $('#fullscreen').on('click', () => {
 window.onresize = function() {
     if (screenfull.isFullscreen) {
 	canvas.stretch();
+	utils.stretch('#theory_container');
     } else {
 	canvas.reset();
+	utils.stretch('#theory_container');
     };
     init_graphics();
     utils.resizePlotlyHeight('mccabe_thiele_container');

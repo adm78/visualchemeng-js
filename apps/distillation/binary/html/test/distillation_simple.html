@@ -12,28 +12,76 @@
   <body style="background-color:white;">
     <div class="wrapper" id="target">
       <div class="box" id="mccabe_thiele_container"></div>
-      <div class="box sim_container" id="sim_container"></div>
+      <div class="box sim_container" id="sim_container">
+	<div id="theory_container" style="display: none">
+	  <h1>Binary distillation theory</h1>
+	  <h2>Assumptions</h2><cite>https://neutrium.net/unit-operations/distillation/mccabe-thiele-plot/</cite>
+	  <p>
+	    <ul type="circle">
+	      <li>The mixture has only two components</li>
+	      <li>Both components have an equal heat of vaporisation</li>
+	      <li>100% tray efficiency. Each tray represents an equilibrium stage.</li>
+	    </ul>
+	  </p><br>
+	  <h2>Reflux ratio</h2>
+	  <p>
+	    The reflux ratio is defined as
+	    $$R = \frac{L}{D}$$
+	    where $L$ is the flowrate of liquid that flows from the
+	    condenser, back to the column and $D$ is the distillate
+	    collected from the column. Higher reflux ratio allow more liquid-vapour contact.
+	  </p><br>
+	  <h2>q-value</h2>
+	  <p>
+	    Content to be added
+	  </p><br>
+	  <h2>Feed operating line</h2>
+	  <p>
+	    Content to be added
+	  </p><br>
+	  <h2>Stripping operating line</h2>
+	  <p>
+	    Content to be added
+	  </p><br>
+	  <h2>Rectiyfing operating line</h2>
+	  <p>
+	    Content to be added.
+	  </p><br>
+	  <h2>Number of stages</h2>
+	  <p>
+	    Content to be added.
+	  </p><br>
+	  <h2>References</h2>
+	  <p>
+	    <ul>
+	      <li>https://neutrium.net/unit-operations/distillation/mccabe-thiele-plot/</li>
+	    </ul>
+	  </p>
+	</div>
+      </div>
       <div class="box vce_info">
       	<a href="http://visualchemeng.com" title="Go to VCE homepage" id="logo">
           <img class="vce_logo" src="../../../../../lib/images/vcelogo.png" />
       	</a>
       	<a href="http://visualchemeng.com"
       	   style="text-decoration:none" title="Go to VCE homepage" id="app_name">
-      	   <p style="display: block; margin-left: auto; margin-right: auto; color:white; text-align: center; font-family:Roboto" >Binary Distillation</p>
+      	  <p style="display: block; margin-left: auto; margin-right: auto; color:white; text-align: center; font-family:Roboto" >Binary Distillation</p>
       	   </a>
       </div>
       <div class="box button_container">
         <button class="button" id="run" style="width:96%; height: 50px" >Pause</button>
 	<button class="button" id="restart" style="width:96%; height: 50px" >Reset</button>
 	<button class="button" id="fullscreen" style="width:96%; height: 50px">Fullscreen</button>
-	<!-- <button class="button" id="bounds" style="width:96%">Hide Bounds</button><br/> -->
+	<button class="button" id="theory" style="width:96%">Show Theory</button><br/>
       </div>
     </div>
     <!-- scripts required for simulations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML" async></script>
     <script src="../../../../../lib/js/third-party/jquery-3.2.1.min.js"></script>
     <script src="../../../../../lib/js/third-party/jquery-ui.js"></script>
     <script src="../../../../../lib/js/third-party/jquery.nice-select.min.js"></script>
     <script src="../../../../../lib/js/third-party/p5.min.js"></script>
+    <script src="../../../../../lib/js/third-party/p5.dom.min.js"></script>
     <script src="../../../../../lib/js/third-party/matter.min.js"></script>
     <script src="../../../../../lib/js/third-party/screenfull.js"></script>
     <script src="../../../../../lib/js/third-party/plotly-latest.min.js"></script>

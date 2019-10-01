@@ -1,11 +1,11 @@
 * {
     margin : 0;
-    padding : 0
+    padding : 0;
 }
 
 .wrapper {
     display: grid;
-    grid-gap: 10px;
+    grid-gap: 5px;
     grid-template-columns: 1fr 1fr 1fr 1fr 2fr 2fr;
     background-color: #fff;
     color: #444;
@@ -14,6 +14,13 @@
 .sim_container {
     grid-column: 4 / 7;
     grid-row: 1;
+}
+
+#theory_container {
+    float:left;
+    width:100px;
+    overflow-y: auto;
+    height: 100px;
 }
 
 
@@ -33,7 +40,7 @@
     grid-column: 4 / 6;
     grid-row: 2;
     display: grid;
-    grid-gap: 10px;
+    //grid-gap: 10px;
     grid-template-columns: 1fr 1fr 1fr;
 }
 
@@ -49,9 +56,9 @@
     grid-row: 1;
     grid-column: 3;
 }
-#bounds {
-    grid-row: 1;
-    grid-column: 4;
+#info {
+    grid-row: 2;
+    grid-column: 2;
 }
 
 .vce_logo {
@@ -66,4 +73,3 @@
 .modebar {
     display: none !important;
 }
-
