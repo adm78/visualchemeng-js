@@ -8,12 +8,12 @@
 JavaScript, HTML and CSS code for the simulation modules of the [Visual Chemical Engineering Project](http://visualchemeng.com).
 
 ## About the VCE project 
-The vce project aims to deliver chemical engineering principles in a way that sticks. We place you in control of common unit operations with dynamic, graphics-driven feedback. Under the bonnet, vce is powered by years of chemical engineering knowledge, brought to you through the power of [p5.js](https://p5js.org/), [Plotly](https://plot.ly/) and more.
+The vce project aims to deliver chemical engineering principles in a way that sticks. We place you in control of common unit operations with dynamic, graphics-driven feedback, all within the comfort of your browser. No installation required 🚀. Under the bonnet, vce is powered by years of chemical engineering knowledge, brought to you through the power of [p5.js](https://p5js.org/), [Plotly](https://plot.ly/) and more.  
 
-## 🎬Live interactive demos (click the images!) 
+## 🎬Interactive demos (click the images!) 
 <div>
-  <a href="https://rawcdn.githack.com/adm78/visualchemeng-js/c06c01b1707970deac356d2a01a826fd885bafe4/apps/distillation/simple/html/production/distillation_simple.html">
-    <img src="http://visualchemeng.com/wp-content/uploads/2019/03/distillation-1.png" width="100%" margin="auto" display="block"> 
+  <a href="https://rawcdn.githack.com/adm78/visualchemeng-js/139f45925316384b484b1bfa192eeca754f45de7/apps/distillation/binary/html/production/distillation_simple.html">
+    <img src="http://visualchemeng.com/wp-content/uploads/2019/04/binary_distillation.gif" width="100%" margin="auto" display="block"> 
   </a>
   <a href="https://rawcdn.githack.com/adm78/visualchemeng-js/00ee25f9116c7e3035d3fb7214ef6e8cc169b393/apps/reactor/simple/html/production/simple_reac.html">
     <img src="http://visualchemeng.com/wp-content/uploads/2018/07/2018-07-10-4.png" width="47%" margin="auto" display="inline-block">
