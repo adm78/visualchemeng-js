@@ -96,3 +96,8 @@ body {
 select {
   display: none;
 }
+
+li {
+    display: list-item;
+    margin-left : 20px;
+}
