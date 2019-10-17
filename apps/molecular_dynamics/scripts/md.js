@@ -33,8 +33,6 @@ function setup() {
     var dimensions = getSimBoxDimensions();
     xmax = dimensions.xmax;
     ymax = dimensions.ymax;
-    console.log("xmax=",xmax);
-    console.log("ymax=",ymax);
     var canvas= createCanvas(xmax, ymax);
     canvas.parent("sim_container")
     restartParticles();
