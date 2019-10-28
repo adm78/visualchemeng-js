@@ -1,102 +1,67 @@
-function EDMDGraphics(simulation) {
+function EDMDGraphics(simulation, canvas) {
 
-    this.simulation = simulation;
-
+    this._simulation = simulation;
+    this._canvas = canvas;
+    this.sime_dt_per_frame = 1000.0;
 
     this.update = function() {
-
+	this._simulation.step(this.sim_dt_per_frame);
     };
 
 
-    this.draw = function() {
-	
+    this.show = function() {
+	this._show_background();
+	this._show_particles();
+	this._highlight_first_event();
+	this._show_time();
+	this._show_fps();
     };
 
-    this.add_particle = function() {
-	// Add a new Particle object to the particles array
-	// at the position of the mouse. If this overlaps with
-	// another particle, then try another position until we
-	// find a overlap free position or deem the ensemble
-	// to be full.
-	var particle_options = { radius : getRadius() }; 
-	var new_part = new Particle(mouseX, mouseY, particle_options);
-	var attempts = 0;
-	var success = false;
-	var max_attempts = 1000;
-	
-	if (!this.simulation.ensemble_full) {
-	    while (!success && attempts < max_attempts) {
-		success = this.simulation.add_particles(new_part);
-		if (!success) {
-		    // try another insertion position
-		    new_part = this._random_move(part);
-		};
-		attempts = attempts + 1;
-	    };
-	    if (!success) {
-		console.log("add_particle: max attempts exceeded.");
-	    };
-	    
-	} else {
-	    console.log("md.js: ensemble full!");
+    this._show_background = function() {
+	push();
+	background(51);
+	stroke(255);
+	strokeWeight(1);
+	pop();
+    };
+
+
+    this._show_particles = function() {
+	for (var i=0; i < this._simulation.particles.length; i++) {
+	    this._simulation.particles[i].show();
 	};
     };
 
-    this._random_move = function(part) {
-    
-	// translate a particle by a small random amount, ensuring the
-	// resulting position lies within the sim box.
-
-	// TODO: we should use the particle perturb method here. 
-
-	while (true) {
-	    var old_x = part.pos.x;
-	    var old_y = part.pos.y;
-            part.pos.x = part.pos.x + part.radius*(Math.random()*2.0-1.0);
-            part.pos.y = part.pos.y + part.radius*(Math.random()*2.0-1.0);
-            // reject if we're outwith the sim box
-            if (!particleInSimBox(part)) {
-		part.pos.x = old_x;
-		part.pos.y = old_y;
-            }
-	    else { break;};
-	}
-	return part;
-}
-
-
-    this._draw_particles = function() {
-
-
-    };
-
-    this._draw_time = function() {
-
-
+    this._show_time = function() {
+	push();
+	textSize(32);
+	fill(255, 255, 255);
+	textAlign(LEFT, TOP);
+	text(this._simulation.time.toFixed(1)+'s', this._canvas.width*0.02, this._canvas.height*0.02);
+	pop();
     };
 
 
-    this._draw_fps = function() {
-
+    this._show_fps = function() {
+	push()
+	textAlign(LEFT,BOTTOM);
+	text(frameRate().toFixed(0) + 'fps', this._canvas.width*0.02, this._canvas.height*0.98);
+	pop()
     };
 
 
     
-    this._highlight_event_particles = function(event) {
-
-	/* Highlight the particle(s) involved in
-	   an event
-
-	   args:
-	   event - a valid Event object
-	*/
-
-	var p1 = particles[event.p1_index];
-	p1.highlight();
-	if (event.p2_index) {
-            var p2 = particles[event.p2_index];
-            p2.highlight();
-	}
+    this._highlight_first_event = function() {
+	/* Highlight the particle(s) involved in first event (if any exists) */
+	var event = this._simulation.first_event();
+	if (event != null) {
+	    var p1 = this.particles[event.p1_index];
+	    p1.highlight();
+	    if (event.p2_index) {
+		var p2 = this.particles[event.p2_index];
+		p2.highlight();
+	    };
+	};
     };
     
 }

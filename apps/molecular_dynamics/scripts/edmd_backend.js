@@ -13,37 +13,47 @@
 //----------------------------------------------------------
 function EDMDSimulation(canvas) {
 
-    this.particles = [];    // particle array (to be filled with instances of the Particle class)
-    this.time = 0.0;
-    this.ensemble_full = false; // ensemble full bool
-    
-    this._canvas = canvas; // A canvas object
-    this._collision_list = []; // An array of Event objects
-        
-    // config parameters
-    this.r = null;          // particle radius to use (null = random in range)
-    this.r_upper = 20;      // maximum radius
-    this.r_lower = 5;       // minimum radius
+    this.__init__ = function(canvas) {
 
+	// config parameters
+	this.config = {
+	    r_upper : 20,      // maximum radius
+	    r_lower : 5,       // minimum radius
+	    rho_0 : 0.001,     // intial particles/pixel
+	};
+	
+
+	// public attributes
+	this.particles = [];    // particle array (to be filled with instances of the Particle class)
+	this.time = 0.0;
+
+	// private attributes
+	this._canvas = canvas; // A canvas object
+	this._xmax = this._canvas.xmax;
+	this._ymax = this._canvas.ymax;
+	this._collision_list = []; // An array of Event objects
+	
+	// initialisation
+	this._initialise_particles();
+	
+    };
 
     // class public methods
-    this.initialise_particles(n,r,xmax, ymax) {
-
-	/* Intialise n particles with radius r in box with
-	   dimensions (xmax,ymax)
-	   such that there are no overlapping particles	*/
-
+    this._initialise_particles = function() {
+	/* Intialise n particles with radius r in box with dimensions
+	   (xmax,ymax) such that there are no overlapping particles */
 	this.particles = [];
-	var dx = initialSpacing(n, xmax, ymax);
-	var n_init = 0 ;
+	var dx = this._get_initial_spacing();
+	var n_init = 0;
 	var n_try = 0;
-	for (i = 0; i < Math.round(xmax/dx); i++) {
-	    for (j = 0; j < Math.round(ymax/dx); j++) {
-		if (n_try < n) {
-		    var particle_options =  { radius : getRadius() };
+	var n_try_max = 10;
+	for (i = 0; i < Math.round(this._canvas.width/dx); i++) {
+	    for (j = 0; j < Math.round(this._canvas.height/dx); j++) {
+		if (n_try < n_try_max) {
+		    var particle_options =  { radius : this._get_particle_radius() };
 		    potential_part = new Particle(dx*(i+0.5),dx*(j+0.5),particle_options);
 		    // On small screens, there may be some overlap with the wall
-		    if (particleInSimBox(potential_part)) {
+		    if (this._particle_in_sim_box(potential_part)) {
     			this.particles[n_init] = potential_part;
 			n_init = n_init + 1;
 		    };
@@ -56,12 +66,10 @@ function EDMDSimulation(canvas) {
 
     
     this.step = function(dt) {
-
-	/* Advances the particle ensemble over the
-	   time interval dt, or to the next collision time,
-	   whichever comes first.
-	   If a collision is detected within (time,time+dt)
-	   then it's carried out and the sim time is updated.
+	/* Advances the particle ensemble over the time interval dt,
+	   or to the next collision time, whichever comes first.  If a
+	   collision is detected within (time,time+dt) then it's
+	   carried out and the sim time is updated.
 
 	   args:
 	   dt - time to try and advance simulation by
@@ -93,24 +101,60 @@ function EDMDSimulation(canvas) {
     };
 
     this.add_particle = function(particle) {
-	// return bool indication success/fail of particle addition
-	if (!this._overlap_exists(particle)) {
-	    this.particles.push(particle);
-	    return true;
+	var attempts = 0;
+	var success = false;
+	var max_attempts = 1000;
+	
+	while (attempts < max_attempts) {
+	    attempts = attempts + 1;
+	    if (!this._overlap_exists) {
+		this.particles.push(particle);
+		return;
+	    } else {
+		// try another insertion position
+		new_part = this._random_move(part);
+	    };
+	    
 	};
-	return false;
+	console.log("add_particle: max attempts exceeded.");
     };
 
+
+    this.add_random_particle = function(x, y) {
+	// Add a randomly sized particle at a given position
+	var particle = new Particle(x, y, {radius: this._get_particle_radius()});
+	return this.add_particle(particle);
+    };
+
+
+
+    this._random_move = function(part) {
+	
+	// translate a particle by a small random amount, ensuring the
+	// resulting position lies within the sim box.
+	while (true) {
+	    var old_x = part.pos.x;
+	    var old_y = part.pos.y;
+	    part.perturb(part.radius, part.radius);
+            // reject if we're outwith the sim box
+            if (!particleInSimBox(part)) {
+		part.pos.x = old_x;
+		part.pos.y = old_y;
+            }
+	    else { break;};
+	};
+	return part;
+    };
+    
 
     this.first_event = function() {
 	return this._collision_list[0];
     };
 
-    this._get_new_collision_list() {
+    this._get_new_collision_list = function() {
 
-	/* Returns an array of collision Event objects,
-	   ordered by their time attribute
-	   (smallest to largest, NaNs at the end)
+	/* Returns an array of collision Event objects, ordered by
+	   their time attribute (smallest to largest, NaNs at the end)
 
 	   args:
 	   particles - an array of Particle objects */
@@ -150,9 +194,8 @@ function EDMDSimulation(canvas) {
     }
     
     this._get_wall_collision_event = function(part_index) {
-
-	/* Compute the first collision time with between
-	   particle with index part_index and any wall */
+	/* Compute the first collision time with between particle with
+	   index part_index and any wall */
 
 	// locals vars
 	var t_side // side wall collision time
@@ -163,7 +206,7 @@ function EDMDSimulation(canvas) {
 	
 	// side walls
 	if (part.vel.x > 0) {
-	    t_side = (xmax - part.pos.x - part.radius)/part.vel.x;
+	    t_side = (this._xmax - part.pos.x - part.radius)/part.vel.x;
 	    w_side = 'r';
 	} else if (part.vel.x < 0) {
 	    t_side = (0 - part.pos.x + part.radius)/part.vel.x;
@@ -176,7 +219,7 @@ function EDMDSimulation(canvas) {
 
 	// top and bottom
 	if (part.vel.y > 0) {
-	    t_ud = (ymax - part.pos.y - part.radius)/part.vel.y;
+	    t_ud = (this._ymax - part.pos.y - part.radius)/part.vel.y;
 	    w_ud = 'd';
 	} else if (part.vel.y < 0) {
 	    t_ud = (0 - part.pos.y + part.radius)/part.vel.y;
@@ -289,12 +332,15 @@ function EDMDSimulation(canvas) {
     };
 
 
-    this._get_initial_spacing = function(n, x, y) {
+    this._get_initial_spacing = function() {
 
 	/* Returns the intialise spacing
 	   between particles to put n particles
 	   on a uniform grid with limits x, y */
 
+	var n = this.config.rho_0*this._xmax*this._ymax;
+	var x = this._xmax;
+	var y = this._ymax;
 	var num1 = -(x+y);
 	var num2sqred = Math.pow(x+y,2.0) + 4.0*x*y*(n-1);
 	var num2 = Math.pow(num2sqred, 0.5);
@@ -321,7 +367,7 @@ function EDMDSimulation(canvas) {
 
     this._overlap_exists_particle = function(p1, p2) {
 	// Check if particles p1 and p2 overlap	
-	if (distParticles(p1,p2) < p1.radius + p2.radius) {
+	if (this._dist(p1,p2) < p1.radius + p2.radius) {
 	    return true;
 	};
 	return false;
@@ -334,65 +380,53 @@ function EDMDSimulation(canvas) {
 	return Math.pow(dx2 + dy2, 0.5);
     };
 
-    
-};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-function randomMove(part) {
-    
-    // translate a particle by a small random amount, ensuring the
-    // resulting position lies within the sim box.
-
-    while (true) {
-	var old_x = part.pos.x;
-	var old_y = part.pos.y;
-        part.pos.x = part.pos.x + part.radius*(Math.random()*2.0-1.0);
-        part.pos.y = part.pos.y + part.radius*(Math.random()*2.0-1.0);
-        // reject if we're outwith the sim box
-        if (!particleInSimBox(part)) {
-	    part.pos.x = old_x;
-	    part.pos.y = old_y;
-        }
-	else { break;};
-    }
-    return part;
-}
-
-function particleInSimBox(part) {
-    
-    // check if the part lies completely within the sim box
-    
-    if (0 < part.pos.x - part.radius
-	&& part.pos.x + part.radius < xmax
-	&& 0 < part.pos.y - part.radius
-	&& part.pos.y+ part.radius < ymax) {
-	return true
+    this.particle_in_sim_box = function(part) {
+	// check if the part lies completely within the sim box
+	if (0 < part.pos.x - part.radius
+	    && part.pos.x + part.radius < this._xmax
+	    && 0 < part.pos.y - part.radius
+	    && part.pos.y+ part.radius < this._ymax) {
+	    return true
+	};
+	return false;
     };
-    return false;
+
+    this._get_particle_radius = function() {
+	return Math.random()*(this.config.r_upper - this.config.r_lower) + this.config.r_lower;
+    };
+
+
+    // class auto-initialisation
+    this.__init__(canvas);
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
