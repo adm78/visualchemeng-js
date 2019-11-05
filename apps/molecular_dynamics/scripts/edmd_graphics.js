@@ -2,10 +2,10 @@ function EDMDGraphics(simulation, canvas) {
 
     this._simulation = simulation;
     this._canvas = canvas;
-    this.sime_dt_per_frame = 1000.0;
+    this._sim_dt_per_frame = 1000.0;
 
     this.update = function() {
-	this._simulation.step(this.sim_dt_per_frame);
+	this._simulation.step(this._sim_dt_per_frame);
     };
 
 
@@ -55,10 +55,10 @@ function EDMDGraphics(simulation, canvas) {
 	/* Highlight the particle(s) involved in first event (if any exists) */
 	var event = this._simulation.first_event();
 	if (event != null) {
-	    var p1 = this.particles[event.p1_index];
+	    var p1 = this._simulation.particles[event.p1_index];
 	    p1.highlight();
 	    if (event.p2_index) {
-		var p2 = this.particles[event.p2_index];
+		var p2 = this._simulation.particles[event.p2_index];
 		p2.highlight();
 	    };
 	};

@@ -19,7 +19,7 @@ function EDMDSimulation(canvas) {
 	this.config = {
 	    r_upper : 20,      // maximum radius
 	    r_lower : 5,       // minimum radius
-	    rho_0 : 0.001,     // intial particles/pixel
+	    rho_0 : 0.0005,     // intial particles/pixel
 	};
 	
 
@@ -29,8 +29,8 @@ function EDMDSimulation(canvas) {
 
 	// private attributes
 	this._canvas = canvas; // A canvas object
-	this._xmax = this._canvas.xmax;
-	this._ymax = this._canvas.ymax;
+	this._xmax = this._canvas.width;
+	this._ymax = this._canvas.height;
 	this._collision_list = []; // An array of Event objects
 	
 	// initialisation
@@ -47,8 +47,8 @@ function EDMDSimulation(canvas) {
 	var n_init = 0;
 	var n_try = 0;
 	var n_try_max = 10;
-	for (i = 0; i < Math.round(this._canvas.width/dx); i++) {
-	    for (j = 0; j < Math.round(this._canvas.height/dx); j++) {
+	for (var i = 0; i < Math.round(this._canvas.width/dx); i++) {
+	    for (var j = 0; j < Math.round(this._canvas.height/dx); j++) {
 		if (n_try < n_try_max) {
 		    var particle_options =  { radius : this._get_particle_radius() };
 		    potential_part = new Particle(dx*(i+0.5),dx*(j+0.5),particle_options);
@@ -58,7 +58,6 @@ function EDMDSimulation(canvas) {
 			n_init = n_init + 1;
 		    };
 		    n_try = n_try + 1;
-		
     		};
             };
 	};
@@ -167,7 +166,7 @@ function EDMDSimulation(canvas) {
 	// loop through the particle array
 	for (i = 0; i < this.particles.length; i++) {
 
-	    var wall_collision_event = this.get_wall_collision_event(this.particles[i]);
+	    var wall_collision_event = this._get_wall_collision_event(part_index=i);
 	    first_event = wall_collision_event; 
 
 	    for (j = i+1; j < this.particles.length; j++) {
@@ -194,8 +193,8 @@ function EDMDSimulation(canvas) {
     }
     
     this._get_wall_collision_event = function(part_index) {
-	/* Compute the first collision time with between particle with
-	   index part_index and any wall */
+	/* Compute the first collision time with between particle and
+	   any wall */
 
 	// locals vars
 	var t_side // side wall collision time
@@ -241,7 +240,7 @@ function EDMDSimulation(canvas) {
 	    t = t_ud;
 	    wall = w_ud;
 	}
-	return new Event('w', t, i, null, wall);
+	return new Event('w', t, part_index, null, wall);
     };
 
 
@@ -322,7 +321,7 @@ function EDMDSimulation(canvas) {
 	var dv = createVector(part_2.vel.x - part_1.vel.x,
 			      part_2.vel.y - part_1.vel.y);
 	var sigma = part_1.radius + part_2.radius;
-	var hmm = 2*part_1.mass*part_2.mass/(part_1h.mass + part_2.mass);
+	var hmm = 2*part_1.mass*part_2.mass/(part_1.mass + part_2.mass);
 	var J = p5.Vector.dot(dv,dr)*hmm/sigma;
 	return {
 	    x: J*dr.x/sigma,
@@ -380,7 +379,7 @@ function EDMDSimulation(canvas) {
 	return Math.pow(dx2 + dy2, 0.5);
     };
 
-    this.particle_in_sim_box = function(part) {
+    this._particle_in_sim_box = function(part) {
 	// check if the part lies completely within the sim box
 	if (0 < part.pos.x - part.radius
 	    && part.pos.x + part.radius < this._xmax

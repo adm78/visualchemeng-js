@@ -6,6 +6,9 @@
 // - p5.js or p5.min.js
 // - TBC
 //
+// TODO: Fix paricle initialisation (too few particle being created, single row)
+// TODO: Fix restart functionality
+//
 // Andre D. McGuire 2019
 // a.mcguire227@gmail.com
 //----------------------------------------------------------
@@ -84,7 +87,7 @@ $('#restart').click(async function(){
 
     // restart button functionality
     console.log("You just clicked restart!");
-    restartParticles();
+    simulation = new EDMDSimulation(canvas);
     if (paused_log) {
 	$("#run").text('Run');
     }
