@@ -6,8 +6,6 @@
 // - p5.js or p5.min.js
 // - TBC
 //
-// TODO: Fix paricle initialisation (too few particle being created, single row)
-// TODO: Fix restart functionality
 // TODO: Resize canvas on restart (may need to fix max particle numbed for performance reasons)
 //
 // Andre D. McGuire 2019
@@ -104,6 +102,6 @@ const target = $('#target')[0]; // Get DOM element from jQuery collection
 $('#fullscreen').on('click', () => {
     console.log("fullscreen requested");
     if (screenfull.enabled) {
-	screenfull.request(target);
+	screenfull.toggle(target);
     }
 });

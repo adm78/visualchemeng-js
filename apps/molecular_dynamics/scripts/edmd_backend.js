@@ -19,7 +19,7 @@ function EDMDSimulation(canvas) {
 	this.config = {
 	    r_upper : 20,      // maximum radius
 	    r_lower : 5,       // minimum radius
-	    rho_0 : 0.0005,     // intial particles/pixel
+	    rho_0 : 0.00015,     // intial particles/pixel
 	};
 	
 
@@ -45,9 +45,9 @@ function EDMDSimulation(canvas) {
 	this.particles = [];
 	var dx = this._get_initial_spacing();
 	var n_init = 0;
-	var n_try = 0;
 	var n_try_max = 10;
 	for (var i = 0; i < Math.round(this._canvas.width/dx); i++) {
+	    var n_try = 0;
 	    for (var j = 0; j < Math.round(this._canvas.height/dx); j++) {
 		if (n_try < n_try_max) {
 		    var particle_options =  { radius : this._get_particle_radius() };
