@@ -7,6 +7,9 @@
 // - TBC
 //
 // TODO: Resize canvas on restart (may need to fix max particle numbed for performance reasons)
+// TODO: Add collision frequency plot
+// TODO: Add kinetic energy distribution plot + any other userful stats we can think off
+// TODO: fix particle addition on click
 //
 // Andre D. McGuire 2019
 // a.mcguire227@gmail.com
@@ -40,7 +43,7 @@ function draw() {
 //--------------------------------------------------------------------
 
 function mouse_in_sim_box() {
-    if (0 < mouseX && mouseX < canvas.xmax && 0 < mouseY && mouseY < canvas.ymax) {
+    if (0 < mouseX && mouseX < canvas.width && 0 < mouseY && mouseY < canvas.height) {
 	return true;
     };
     return false;

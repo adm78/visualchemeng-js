@@ -53,7 +53,7 @@ function EDMDSimulation(canvas) {
 		    var particle_options =  { radius : this._get_particle_radius() };
 		    potential_part = new Particle(dx*(i+0.5),dx*(j+0.5),particle_options);
 		    // On small screens, there may be some overlap with the wall
-		    if (this._particle_in_sim_box(potential_part)) {
+		    if (this._particle_in_sim_box(potential_part) && !this._overlap_exists(potential_part)) {
     			this.particles[n_init] = potential_part;
 			n_init = n_init + 1;
 		    };
@@ -106,12 +106,12 @@ function EDMDSimulation(canvas) {
 	
 	while (attempts < max_attempts) {
 	    attempts = attempts + 1;
-	    if (!this._overlap_exists) {
+	    if (!this._overlap_exists(particle)) {
 		this.particles.push(particle);
 		return;
 	    } else {
 		// try another insertion position
-		new_part = this._random_move(part);
+		new_part = this._random_move(particle);
 	    };
 	    
 	};
@@ -136,7 +136,7 @@ function EDMDSimulation(canvas) {
 	    var old_y = part.pos.y;
 	    part.perturb(part.radius, part.radius);
             // reject if we're outwith the sim box
-            if (!particleInSimBox(part)) {
+            if (!this._particle_in_sim_box(part)) {
 		part.pos.x = old_x;
 		part.pos.y = old_y;
             }
