@@ -8,6 +8,7 @@
 //
 // TODO: Fix paricle initialisation (too few particle being created, single row)
 // TODO: Fix restart functionality
+// TODO: Resize canvas on restart (may need to fix max particle numbed for performance reasons)
 //
 // Andre D. McGuire 2019
 // a.mcguire227@gmail.com
@@ -87,7 +88,9 @@ $('#restart').click(async function(){
 
     // restart button functionality
     console.log("You just clicked restart!");
-    simulation = new EDMDSimulation(canvas);
+    simulation = new EDMDSimulation(canvas=canvas);
+    graphics = new EDMDGraphics(simulation, canvas);
+    paused_log = true;
     if (paused_log) {
 	$("#run").text('Run');
     }
