@@ -26,6 +26,7 @@ function EDMDSimulation(canvas) {
 	// public attributes
 	this.particles = [];    // particle array (to be filled with instances of the Particle class)
 	this.time = 0.0;
+	this.event_log = new EventLog(t_start=0.0);
 
 	// private attributes
 	this._canvas = canvas; // A canvas object
@@ -95,8 +96,13 @@ function EDMDSimulation(canvas) {
 	    // involved.
 	    this._advance_particles(dt_col);
 	    this._collide(this.first_event());
-            this.time = this.time + dt_col
+	    this.event_log.add_event(this.first_event());
+            this.time = this.time + dt_col;
 	}
+
+	// Update the event log
+	this.event_log.update_current_time(this.time);
+	
     };
 
     this.add_particle = function(particle) {
@@ -177,7 +183,7 @@ function EDMDSimulation(canvas) {
 		    // first_event.time
 	            if (isNaN(col_time) != true) {
 			if (col_time < first_event.t) {
-			    first_event = new Event('p',col_time,i,j,null);
+			    first_event = new Event('p', col_time, this.particles[i], this.particles[j], null);
 			}
 		    }
 		}
@@ -240,7 +246,7 @@ function EDMDSimulation(canvas) {
 	    t = t_ud;
 	    wall = w_ud;
 	}
-	return new Event('w', t, part_index, null, wall);
+	return new Event('w', t, part, null, wall);
     };
 
 
@@ -265,19 +271,18 @@ function EDMDSimulation(canvas) {
 	if (event.wc_log) {
 	    // Perform wall collision
 	    if (event.wall === 'r' || event.wall === 'l') {
-		this.particles[event.p1_index].reflect_side();
+		event.part_1.reflect_side();
 	    } else if (event.wall === 'u' || event.wall === 'd') {
-		this.particles[event.p1_index].reflect_top();
+		event.part_1.reflect_top();
 	    } else {
 		console.log("Error: collide: invalid event");
 		console.log(event);
 	    }
 	} else {
 	    // Perform binary particle collision
-	    var J = this._get_impulse(this.particles[event.p1_index],
-				      this.particles[event.p2_index]);
-	    this.particles[event.p1_index].apply_impulse(J.x,J.y);
-	    this.particles[event.p2_index].apply_impulse(-J.x,-J.y);
+	    var J = this._get_impulse(event.part_1, event.part_2);
+	    event.part_1.apply_impulse(J.x,J.y);
+	    event.part_2.apply_impulse(-J.x,-J.y);
 	}
     };
 
@@ -395,8 +400,61 @@ function EDMDSimulation(canvas) {
     };
 
 
+    this.event_rate = function() {
+	
+    };
+
+
     // class auto-initialisation
     this.__init__(canvas);
+};
+
+
+function EventLog() {
+    // A data storage/analysis class for historical events
+    //
+    // For performance reasons, we assume that events go in in
+    // chronological order.
+
+    this.__init__ = function(t_start) {
+	this._t_start = t_start
+	this._t_current = t_start
+	this._events = [];
+	this._max_stored_events = 2000; //TODO: move to config
+    };
+	
+    this.reset = function(t_start) {
+	this.__init__(t_start);
+    };
+
+    this.add_event = function(event) {
+	if (this.n_events > this.max_stored_events) {
+	    this._events.shift();
+	    this._t_start = this._events[0].t;
+	};
+	this._events.push(event);
+    };
+
+    this.update_current_time = function(time) {
+	this._t_current = time;
+    };
+
+    this.n_events = function() {
+	return this._events.length
+    };
+
+
+    this.average_collision_rate = function() {
+	if (this._events.length < 1) {
+	    return 0;
+	} else {
+	    var dt =  this.t_current - this.t_start;
+	    return this.n_events/dt;
+	};
+    };
+
+    this.__init__(t_start);
+    
 };
 
 

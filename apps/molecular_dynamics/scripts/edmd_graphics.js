@@ -55,11 +55,9 @@ function EDMDGraphics(simulation, canvas) {
 	/* Highlight the particle(s) involved in first event (if any exists) */
 	var event = this._simulation.first_event();
 	if (event != null) {
-	    var p1 = this._simulation.particles[event.p1_index];
-	    p1.highlight();
-	    if (event.p2_index) {
-		var p2 = this._simulation.particles[event.p2_index];
-		p2.highlight();
+	    event.part_1.highlight();
+	    if (event.part_2) {
+		event.part_2.highlight();
 	    };
 	};
     };
