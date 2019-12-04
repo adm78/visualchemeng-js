@@ -7,9 +7,9 @@
 // - TBC
 //
 // TODO: Resize canvas on restart (may need to fix max particle numbed for performance reasons)
-// TODO: Add collision frequency plot
-// TODO: Add kinetic energy distribution plot + any other userful stats we can think off
-// TODO: Make a plotly wrapper class with layout generators, data grabbers and trace extenders
+// TODO: Add kinetic energy distribution plot, collision kernel,
+// pressure + any other userful stats we can think off
+// TODO: create a settings.js and more all special vars in there
 // 
 //
 // Andrew D. McGuire 2019

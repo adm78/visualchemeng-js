@@ -135,6 +135,7 @@ function EDMDSimulation(canvas) {
 
 
     this.kinetic_energy = function() {
+	// TODO: add this method to vceEnsemble when we make the switch
 	var total = 0;
 	for (var i =0; i < this.particles.length; i++) {
 	    total = total + this.particles[i].kinetic_energy();
