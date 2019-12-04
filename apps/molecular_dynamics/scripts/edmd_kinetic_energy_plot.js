@@ -1,14 +1,14 @@
-// VCE Project - reactor_conc_plot.js
+// VCE Project - edmd_kinetic_energy_plot.js
 //
-// Collison rate plotter class (plotly wrapper class).
 //
 // Requires:
 // - plotly.js
 //
-// Andrew D. McGuire 2018
+//
+// Andrew D. McGuire 2019
 // a.mcguire227@gmail.com
 //----------------------------------------------------------
-function CollisionRatePlot(container_id) {
+function KineticEnergyPlot(container_id) {
 
     this.__init__ = function() {
 	this._container_id = container_id;
@@ -58,7 +58,7 @@ function CollisionRatePlot(container_id) {
 		tickfont: {color:'white'}
 	    },
 	    yaxis: {
-		title: 'collisions/s',
+		title: 'kinetic energy/J',
 		showgrid: true,
 		gridcolor: '#44474c',
 		autorange: true,
@@ -74,13 +74,15 @@ function CollisionRatePlot(container_id) {
 
 
     this._initialise_traces = function() {
+
+	//var data = this.unpack_kinetic_energy_data(simulation)
 	var trace = {
 	    type: "scatter",
 	    mode: "lines",
 	    name: 'kinectic energy',
-	    x: [], 
-	    y: [],
-	    line: {color: 'red'},
+	    x: [], //data.x[0],
+	    y: [], //data.y[0],
+	    line: {color: 'blue'},
 	    maxdisplayed: 20000,
 	    fill : 'tozeroy'
 	};
@@ -90,8 +92,8 @@ function CollisionRatePlot(container_id) {
 
     this._get_extension_info = function(simulation) {
 	// unpacks data to extend plotly graph
-	var x = [[simulation.event_log.t()]];
-	var y = [[simulation.event_log.average_collision_rate()]];
+	var x = [[simulation.time]];
+	var y = [[simulation.kinetic_energy()]];
 	return { data: { x : x, y : y },
 		 indices: [0]};
     }

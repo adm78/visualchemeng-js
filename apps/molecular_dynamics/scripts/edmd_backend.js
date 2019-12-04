@@ -8,6 +8,8 @@
 // - vce_particle.js
 // - event.js
 //
+// TODO: Should use vceEnsemble instead of particle array
+//
 // Andrew D. McGuire 2019
 // a.mcguire227@gmail.com
 //----------------------------------------------------------
@@ -132,6 +134,14 @@ function EDMDSimulation(canvas) {
     };
 
 
+    this.kinetic_energy = function() {
+	var total = 0;
+	for (var i =0; i < this.particles.length; i++) {
+	    total = total + this.particles[i].kinetic_energy();
+	};
+	return total;
+    };
+    
 
     this._random_move = function(part) {
 	

@@ -15,7 +15,7 @@ function Event(ct, t, part_1=null, part_2=null,wall=null) {
        ct       - collision type ("w" is wall collision, anything else is binary particle)
        t        - time of collision: float
        part_1   - first particle involved in the event: Union[Particle, MatterParticle]
-       part_2   - seconds particle involved in the event:  Union[Particle, MatterParticle]
+       part_2   - second particle involved in the event:  Union[Particle, MatterParticle, null]
        wall     - name of wall involved in collision: str
     */
     

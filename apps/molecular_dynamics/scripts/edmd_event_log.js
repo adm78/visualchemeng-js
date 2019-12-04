@@ -45,6 +45,5 @@ function EventLog() {
 	};
     };
 
-    this.__init__(t_start);
-    
+    this.__init__(t_start);    
 };

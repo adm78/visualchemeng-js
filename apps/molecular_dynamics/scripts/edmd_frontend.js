@@ -19,15 +19,18 @@ var canvas;
 var simulation;
 var graphics;
 var paused_log = true;
+var draw_count = 0
+var ke_plot_container = "ke_plot_container";
+var ke_plot;
+var coll_rate_plot_container = 'collision_rate_container';
+var coll_rate_plot;
 
 function setup() {
 
     canvas = new vceCanvas(id="#sim_container");
     simulation = new EDMDSimulation(canvas=canvas);
     graphics = new EDMDGraphics(simulation, canvas);
-    Plotly.newPlot('collision_rate_container', get_collision_rate_traces(simulation.event_log),
-		   plotly_collision_rate_plot_layout());
-    
+    create_plots();    
 }
 
 function draw() {
@@ -35,8 +38,9 @@ function draw() {
     // progress box.
     if (!(paused_log)) {
 	graphics.update();
-	Plotly.extendTraces('collision_rate_container',
-			    unpack_collision_rate_data(simulation.event_log), [0]);
+	if (draw_count % 10 == 0) {
+	    update_plots();
+	};
     }
     graphics.show();
 }
@@ -71,6 +75,18 @@ function touchStarted() {
     };
 }
 
+//--------------------------------------------------------------------
+//                  Plotting functionality
+//--------------------------------------------------------------------
+function create_plots() {
+    ke_plot = new KineticEnergyPlot(ke_plot_container);
+    coll_rate_plot = new CollisionRatePlot(coll_rate_plot_container);
+};
+
+function update_plots() {
+    ke_plot.update(simulation);
+    coll_rate_plot.update(simulation);
+};
 
 //--------------------------------------------------------------------
 //                  UI event listners
@@ -96,6 +112,7 @@ $('#restart').click(async function(){
     console.log("You just clicked restart!");
     simulation = new EDMDSimulation(canvas=canvas);
     graphics = new EDMDGraphics(simulation, canvas);
+    create_plots();
     paused_log = true;
     if (paused_log) {
 	$("#run").text('Run');
