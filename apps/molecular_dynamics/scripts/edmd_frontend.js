@@ -9,9 +9,10 @@
 // TODO: Resize canvas on restart (may need to fix max particle numbed for performance reasons)
 // TODO: Add collision frequency plot
 // TODO: Add kinetic energy distribution plot + any other userful stats we can think off
-// TODO: fix particle addition on click
+// TODO: Make a plotly wrapper class with layout generators, data grabbers and trace extenders
+// 
 //
-// Andre D. McGuire 2019
+// Andrew D. McGuire 2019
 // a.mcguire227@gmail.com
 //----------------------------------------------------------
 var canvas;
@@ -24,14 +25,18 @@ function setup() {
     canvas = new vceCanvas(id="#sim_container");
     simulation = new EDMDSimulation(canvas=canvas);
     graphics = new EDMDGraphics(simulation, canvas);
+    Plotly.newPlot('collision_rate_container', get_collision_rate_traces(simulation.event_log),
+		   plotly_collision_rate_plot_layout());
     
 }
 
 function draw() {
-    // Step through time unless sim is paused,
-    // reporting status in progress box.
+    // Step through time unless sim is paused, reporting status in
+    // progress box.
     if (!(paused_log)) {
 	graphics.update();
+	Plotly.extendTraces('collision_rate_container',
+			    unpack_collision_rate_data(simulation.event_log), [0]);
     }
     graphics.show();
 }
