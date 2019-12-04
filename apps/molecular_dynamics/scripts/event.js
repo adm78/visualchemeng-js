@@ -3,6 +3,8 @@
 // A simple collision event class that can store information about the
 // type, time and particles involved in a collision event.
 //
+// TODO: clean this up (collision type should not be str etc.) 
+//
 // Andrew D. McGuire 2019
 // a.mcguire227@gmail.com
 //----------------------------------------------------------
