@@ -6,8 +6,9 @@
 // - p5.js or p5.min.js
 // - TBC
 //
-// TODO: Resize canvas on restart (may need to fix max particle numbed for performance reasons)
-// TODO: Add kinetic energy distribution plot, collision kernel,
+// TODO: Resize canvas on fullscreen (may need to fix max particle numbed for performance reasons)
+// TODo: Resize plots on fullscreen
+// TODO: Add collision kernel,
 // pressure + any other userful stats we can think off
 // TODO: create a settings.js and more all special vars in there
 // 
@@ -24,6 +25,8 @@ var ke_plot_container = "ke_plot_container";
 var ke_plot;
 var coll_rate_plot_container = 'collision_rate_container';
 var coll_rate_plot;
+var kernel_plot_container = 'collision_kernel_container'
+var kernel_plot;
 
 function setup() {
 
@@ -81,11 +84,13 @@ function touchStarted() {
 function create_plots() {
     ke_plot = new KineticEnergyPlot(ke_plot_container);
     coll_rate_plot = new CollisionRatePlot(coll_rate_plot_container);
+    kernel_plot = new CollisionKernelPlot(kernel_plot_container);
 };
 
 function update_plots() {
     ke_plot.update(simulation);
     coll_rate_plot.update(simulation);
+    kernel_plot.update(simulation);
 };
 
 //--------------------------------------------------------------------

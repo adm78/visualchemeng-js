@@ -1,3 +1,14 @@
+// VCE Project - edmd_event_log.js
+//
+//
+// Requires:
+// - plotly.js
+//
+// TODO: Add ability to compute collision kernel data
+//
+// Andrew D. McGuire 2019
+// a.mcguire227@gmail.com
+//----------------------------------------------------------
 function EventLog() {
     // A data storage/analysis class for historical events
     //

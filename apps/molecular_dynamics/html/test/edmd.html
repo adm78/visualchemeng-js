@@ -4,7 +4,7 @@
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto">
     <link rel="stylesheet" type="text/css" href="../../../../lib/styles/buttons.css">
     <link rel="stylesheet" type="text/css" href="../../../../lib/styles/slider.css">
-    <link rel="stylesheet" type="text/css" href="../../styles/md.css">
+    <link rel="stylesheet" type="text/css" href="../../styles/edmd.css">
   </head>
   <body style="background-color:white;">
     <div class="wrapper" id="target">
@@ -22,7 +22,8 @@
 	<button class="button" id="fullscreen" style="width:96%">Fullscreen</button>
       </div>
       <div id="collision_rate_container" class="box collision_rate_container"></div>
-      <div id="ke_plot_container" class="box ke_plot_container"></div>	   
+      <div id="ke_plot_container" class="box ke_plot_container"></div>
+      <div id="collision_kernel_container" class="box collision_kernel_container"></div>
     </div>
     <!-- scripts required for simulations -->
     <script src="../../../../lib/js/third-party/jquery-3.2.1.min.js"></script>
@@ -34,12 +35,13 @@
     <script src="../../../../lib/js/vce/vce_utils.js"></script>
     <script src="../../../../lib/js/vce/vce_canvas.js"></script>
     <script src="../../../../lib/js/vce/vce_particle.js"></script>
-    <script src="../../scripts/event.js"></script>
+    <script src="../../scripts/edmd_event.js"></script>
     <script src="../../scripts/edmd_event_log.js"></script>
     <script src="../../scripts/edmd_backend.js"></script>
     <script src="../../scripts/edmd_graphics.js"></script>
     <script src="../../scripts/edmd_collision_rate_plot.js"></script>
     <script src="../../scripts/edmd_kinetic_energy_plot.js"></script>
+    <script src="../../scripts/edmd_collision_kernel_plot.js"></script>
     <script src="../../scripts/edmd_frontend.js"></script>
   </body>
 </html>

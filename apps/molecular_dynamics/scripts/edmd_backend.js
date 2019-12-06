@@ -1,7 +1,7 @@
 // VCE Project - Event-Driven Molecular Dynamics Backend
 //
 // This library contains the various routines required to run a simple
-// event-driven molecular dynamics simulation.
+// event-driven molecular dynamics simulation with hard spheres.
 //
 // Requires:
 // - p5.js or p5.min.js
@@ -9,6 +9,7 @@
 // - event.js
 //
 // TODO: Should use vceEnsemble instead of particle array
+// TODO: Support discrete energy potentials (big task)
 //
 // Andrew D. McGuire 2019
 // a.mcguire227@gmail.com
