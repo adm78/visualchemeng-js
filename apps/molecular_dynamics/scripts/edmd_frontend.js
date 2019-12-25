@@ -20,7 +20,7 @@ var canvas;
 var simulation;
 var graphics;
 var paused_log = true;
-var draw_count = 0
+var draw_count; 
 var ke_plot_container = "ke_plot_container";
 var ke_plot;
 var coll_rate_plot_container = 'collision_rate_container';
@@ -31,9 +31,12 @@ var kernel_plot;
 function setup() {
 
     canvas = new vceCanvas(id="#sim_container");
+    draw_count = new Counter();
     simulation = new EDMDSimulation(canvas=canvas);
     graphics = new EDMDGraphics(simulation, canvas);
-    create_plots();    
+    ke_plot = new KineticEnergyPlot(ke_plot_container);
+    coll_rate_plot = new CollisionRatePlot(coll_rate_plot_container);
+    kernel_plot = new CollisionKernelPlot(kernel_plot_container);
 }
 
 function draw() {
@@ -41,18 +44,38 @@ function draw() {
     // progress box.
     if (!(paused_log)) {
 	graphics.update();
-	if (draw_count % 10 == 0) {
-	    update_plots();
+	if (draw_count.value % 2 == 0) {
+	    ke_plot.update(simulation);
+	    coll_rate_plot.update(simulation);
+	}
+	if (draw_count.value % 20 == 0) {
+	    kernel_plot.update(simulation);
 	};
-    }
+    };
     graphics.show();
+    draw_count.increment();
 }
-
 
 
 //--------------------------------------------------------------------
 //                  Visualisation functionality
 //--------------------------------------------------------------------
+function Counter() {
+    this.value = 0;
+    this._max = 10000;
+
+    this.increment = function() {
+	if (this.value > this.max) {
+	    this.reset();
+	} else {
+	    this.value = this.value + 1;
+	};
+    };
+
+    this.reset = function() {
+	this.value = 0;
+    };
+};
 
 function mouse_in_sim_box() {
     if (0 < mouseX && mouseX < canvas.width && 0 < mouseY && mouseY < canvas.height) {
@@ -81,17 +104,7 @@ function touchStarted() {
 //--------------------------------------------------------------------
 //                  Plotting functionality
 //--------------------------------------------------------------------
-function create_plots() {
-    ke_plot = new KineticEnergyPlot(ke_plot_container);
-    coll_rate_plot = new CollisionRatePlot(coll_rate_plot_container);
-    kernel_plot = new CollisionKernelPlot(kernel_plot_container);
-};
 
-function update_plots() {
-    ke_plot.update(simulation);
-    coll_rate_plot.update(simulation);
-    kernel_plot.update(simulation);
-};
 
 //--------------------------------------------------------------------
 //                  UI event listners
@@ -115,9 +128,7 @@ $('#restart').click(async function(){
 
     // restart button functionality
     console.log("You just clicked restart!");
-    simulation = new EDMDSimulation(canvas=canvas);
-    graphics = new EDMDGraphics(simulation, canvas);
-    create_plots();
+    setup();
     paused_log = true;
     if (paused_log) {
 	$("#run").text('Run');
