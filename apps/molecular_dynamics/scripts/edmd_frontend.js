@@ -21,22 +21,19 @@ var simulation;
 var graphics;
 var paused_log = true;
 var draw_count; 
-var ke_plot_container = "ke_plot_container";
 var ke_plot;
-var coll_rate_plot_container = 'collision_rate_container';
 var coll_rate_plot;
-var kernel_plot_container = 'collision_kernel_container'
 var kernel_plot;
 
 function setup() {
 
-    canvas = new vceCanvas(id="#sim_container");
-    draw_count = new Counter();
-    simulation = new EDMDSimulation(canvas=canvas);
+    canvas = new vceCanvas(id=settings.frontend.sim_container_id);
+    draw_count = new utils.Counter();
+    simulation = new EDMDSimulation(canvas, settings.backend);
     graphics = new EDMDGraphics(simulation, canvas);
-    ke_plot = new KineticEnergyPlot(ke_plot_container);
-    coll_rate_plot = new CollisionRatePlot(coll_rate_plot_container);
-    kernel_plot = new CollisionKernelPlot(kernel_plot_container);
+    ke_plot = new KineticEnergyPlot(settings.frontend.ke_plot_container);
+    coll_rate_plot = new CollisionRatePlot(settings.frontend.coll_rate_plot_container);
+    kernel_plot = new CollisionKernelPlot(settings.frontend.kernel_plot_container);
 }
 
 function draw() {
@@ -44,11 +41,11 @@ function draw() {
     // progress box.
     if (!(paused_log)) {
 	graphics.update();
-	if (draw_count.value % 2 == 0) {
+	if (draw_count.value % settings.frontend.plot_update_interval == 0) {
 	    ke_plot.update(simulation);
 	    coll_rate_plot.update(simulation);
 	}
-	if (draw_count.value % 20 == 0) {
+	if (draw_count.value % settings.frontend.kernel_update_interval == 0) {
 	    kernel_plot.update(simulation);
 	};
     };
@@ -60,23 +57,6 @@ function draw() {
 //--------------------------------------------------------------------
 //                  Visualisation functionality
 //--------------------------------------------------------------------
-function Counter() {
-    this.value = 0;
-    this._max = 10000;
-
-    this.increment = function() {
-	if (this.value > this.max) {
-	    this.reset();
-	} else {
-	    this.value = this.value + 1;
-	};
-    };
-
-    this.reset = function() {
-	this.value = 0;
-    };
-};
-
 function mouse_in_sim_box() {
     if (0 < mouseX && mouseX < canvas.width && 0 < mouseY && mouseY < canvas.height) {
 	return true;

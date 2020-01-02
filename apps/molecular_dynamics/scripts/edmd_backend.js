@@ -14,17 +14,12 @@
 // Andrew D. McGuire 2019
 // a.mcguire227@gmail.com
 //----------------------------------------------------------
-function EDMDSimulation(canvas) {
+function EDMDSimulation(canvas, config) {
 
-    this.__init__ = function(canvas) {
+    this.__init__ = function(canvas, config) {
 
 	// config parameters
-	this.config = {
-	    r_upper : 20,      // maximum radius
-	    r_lower : 5,       // minimum radius
-	    rho_0 : 0.00015,     // intial particles/pixel
-	};
-	
+	this.config = config;	
 
 	// public attributes
 	this.particles = [];    // particle array (to be filled with instances of the Particle class)
@@ -49,11 +44,10 @@ function EDMDSimulation(canvas) {
 	this.particles = [];
 	var dx = this._get_initial_spacing();
 	var n_init = 0;
-	var n_try_max = 10;
 	for (var i = 0; i < Math.round(this._canvas.width/dx); i++) {
 	    var n_try = 0;
 	    for (var j = 0; j < Math.round(this._canvas.height/dx); j++) {
-		if (n_try < n_try_max) {
+		if (n_try < this.config.n_init_try_max) {
 		    var particle_options =  { radius : this._get_particle_radius() };
 		    potential_part = new Particle(dx*(i+0.5),dx*(j+0.5),particle_options);
 		    // On small screens, there may be some overlap with the wall
@@ -111,9 +105,8 @@ function EDMDSimulation(canvas) {
     this.add_particle = function(particle) {
 	var attempts = 0;
 	var success = false;
-	var max_attempts = 1000;
 	
-	while (attempts < max_attempts) {
+	while (attempts < this.config.n_add_try_max) {
 	    attempts = attempts + 1;
 	    if (!this._overlap_exists(particle)) {
 		this.particles.push(particle);
@@ -412,7 +405,7 @@ function EDMDSimulation(canvas) {
     };
 
     // class auto-initialisation
-    this.__init__(canvas);
+    this.__init__(canvas, config);
 };
 
 
