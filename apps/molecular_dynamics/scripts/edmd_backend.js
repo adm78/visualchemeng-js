@@ -188,7 +188,7 @@ function EDMDSimulation(canvas, config) {
 		    // first_event.time
 	            if (isNaN(col_time) != true) {
 			if (col_time < first_event.t) {
-			    first_event = new Event('p', col_time, this.particles[i], this.particles[j], null);
+			    first_event = new Event(col_time, this.particles[i], this.particles[j], null);
 			}
 		    }
 		}
@@ -217,10 +217,10 @@ function EDMDSimulation(canvas, config) {
 	// side walls
 	if (part.vel.x > 0) {
 	    t_side = (this._xmax - part.pos.x - part.radius)/part.vel.x;
-	    w_side = 'r';
+	    w_side = WallType.RIGHT;
 	} else if (part.vel.x < 0) {
 	    t_side = (0 - part.pos.x + part.radius)/part.vel.x;
-	    w_side = 'l';
+	    w_side = WallType.LEFT;
 	} else {
 	    // particle not moving in x direction
 	    t_side = NaN;
@@ -230,10 +230,10 @@ function EDMDSimulation(canvas, config) {
 	// top and bottom
 	if (part.vel.y > 0) {
 	    t_ud = (this._ymax - part.pos.y - part.radius)/part.vel.y;
-	    w_ud = 'd';
+	    w_ud = WallType.DOWN;
 	} else if (part.vel.y < 0) {
 	    t_ud = (0 - part.pos.y + part.radius)/part.vel.y;
-	    w_ud = 'u';
+	    w_ud = WallType.UP;
 	} else {
 	    // particle not moving in y direction
 	    t_ud = NaN;
@@ -251,7 +251,7 @@ function EDMDSimulation(canvas, config) {
 	    t = t_ud;
 	    wall = w_ud;
 	}
-	return new Event('w', t, part, null, wall);
+	return new Event(t, part, null, wall);
     };
 
 
@@ -273,11 +273,11 @@ function EDMDSimulation(canvas, config) {
 	   event - a valid Event object
 	*/
 
-	if (event.wc_log) {
+	if (event.is_wall_collision()) {
 	    // Perform wall collision
-	    if (event.wall === 'r' || event.wall === 'l') {
+	    if (event.wall === WallType.RIGHT || event.wall  === WallType.LEFT) {
 		event.part_1.reflect_side();
-	    } else if (event.wall === 'u' || event.wall === 'd') {
+	    } else if (event.wall === WallType.UP || event.wall === WallType.DOWN) {
 		event.part_1.reflect_top();
 	    } else {
 		console.log("Error: collide: invalid event");

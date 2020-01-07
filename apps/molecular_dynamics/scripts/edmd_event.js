@@ -8,35 +8,30 @@
 // Andrew D. McGuire 2019
 // a.mcguire227@gmail.com
 //----------------------------------------------------------
+const WallType = {
+    LEFT: "left",
+    RIGHT: "right",
+    UP: "up",
+    DOWN: "down"
+};
 
-function Event(ct, t, part_1=null, part_2=null,wall=null) {
 
-    /* Events are either with the wall or another particle
-    
-       args:
-       ct       - collision type ("w" is wall collision, anything else is binary particle)
-       t        - time of collision: float
-       part_1   - first particle involved in the event: Union[Particle, MatterParticle]
-       part_2   - second particle involved in the event:  Union[Particle, MatterParticle, null]
-       wall     - name of wall involved in collision: str
-    */
+function Event(t, part_1, part_2=null, wall=null) {
     
     // Event attributes
-    this.wc_log = false; // is it wall collision? (otherwise binary particle collision)
     this.t = t;
     this.part_1 = part_1;
     this.part_2 = part_2;
-    this.wall = wall;   
+    this.wall = wall;
+    
+    if (this.wall === null) {
+	if (this.part_2 === null) {
+	    throw new TypeError("Event: invalid second particle (null)");
+	};
+    };
 
-    // Set event attributes based on the collision type
-    if (ct==="w") {
-	this.wc_log = true;
-    }
-    else {
-	// Warn if a second particle not passed
-	if (part_2 === null) {
-	    throw new TyepError("Event: invalid second particle (null)");
-	}
+    this.is_wall_collision = function() {
+	return (this.wall != null);
     };
     
 } // end of Event class
