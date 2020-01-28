@@ -47,7 +47,7 @@ function setup(first_time=true) {
        simulation canvas which we draw onto.  */
 
     // Create the canvas
-    canvas = new vceCanvas(id="#sim_container", xmax=null, ymax=window.innerHeight*0.75);
+    canvas = new VceCanvas(id="#sim_container", xmax=null, ymax=window.innerHeight*0.75);
     console.log(canvas);
 
     // Initialise the backend column properties

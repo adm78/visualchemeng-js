@@ -10,24 +10,23 @@
 // TODo: Resize plots on fullscreen
 // TODO: Add collision kernel,
 // pressure + any other userful stats we can think off
-// TODO: create a settings.js and more all special vars in there
 // 
 //
 // Andrew D. McGuire 2019
 // a.mcguire227@gmail.com
 //----------------------------------------------------------
-var canvas;
-var simulation;
-var graphics;
-var paused_log = true;
-var draw_count; 
-var ke_plot;
-var coll_rate_plot;
-var kernel_plot;
+let canvas;
+let simulation;
+let graphics;
+let paused_log = true;
+let draw_count;
+let ke_plot;
+let coll_rate_plot;
+let kernel_plot;
 
 function setup() {
 
-    canvas = new vceCanvas(id=settings.frontend.sim_container_id);
+    canvas = new VceCanvas(id = settings.frontend.sim_container_id);
     draw_count = new utils.Counter();
     simulation = new EDMDSimulation(canvas, settings.backend);
     graphics = new EDMDGraphics(simulation, canvas);
@@ -40,15 +39,15 @@ function draw() {
     // Step through time unless sim is paused, reporting status in
     // progress box.
     if (!(paused_log)) {
-	graphics.update();
-	if (draw_count.value % settings.frontend.plot_update_interval == 0) {
-	    ke_plot.update(simulation);
-	    coll_rate_plot.update(simulation);
-	}
-	if (draw_count.value % settings.frontend.kernel_update_interval == 0) {
-	    kernel_plot.update(simulation);
-	};
-    };
+        graphics.update();
+        if (draw_count.value % settings.frontend.plot_update_interval === 0) {
+            ke_plot.update(simulation);
+            coll_rate_plot.update(simulation);
+        }
+        if (draw_count.value % settings.frontend.kernel_update_interval === 0) {
+            kernel_plot.update(simulation);
+        }
+    }
     graphics.show();
     draw_count.increment();
 }
@@ -58,27 +57,24 @@ function draw() {
 //                  Visualisation functionality
 //--------------------------------------------------------------------
 function mouse_in_sim_box() {
-    if (0 < mouseX && mouseX < canvas.width && 0 < mouseY && mouseY < canvas.height) {
-	return true;
-    };
-    return false;
+    return 0 < mouseX && mouseX < canvas.width && 0 < mouseY && mouseY < canvas.height;
 }
 
 function mousePressed() {
 
     // Act on left mouse press
     if (mouse_in_sim_box()) {
-	simulation.add_random_particle(mouseX, mouseY);
-	return false;
-    };
+        simulation.add_random_particle(mouseX, mouseY);
+        return false;
+    }
 }
 
 function touchStarted() {
     mousePressed();
     // stop the reclicking without diabling jquery button clicks
     if (mouse_in_sim_box()) {
-	return false;
-    };
+        return false;
+    }
 }
 
 //--------------------------------------------------------------------
@@ -90,39 +86,37 @@ function touchStarted() {
 //                  UI event listners
 //--------------------------------------------------------------------
 // run button
-$('#run').click(async function(){
+$('#run').click(async function () {
 
     // run/pause button functionality
     console.log("You just clicked stream/pause!");
     paused_log = !(paused_log);
     if (paused_log) {
-	$("#run").text('Run');
-    }
-    else {
-	$("#run").text('Pause');
+        $("#run").text('Run');
+    } else {
+        $("#run").text('Pause');
     }
 });
 
 // restart button
-$('#restart').click(async function(){
+$('#restart').click(async function () {
 
     // restart button functionality
     console.log("You just clicked restart!");
     setup();
     paused_log = true;
     if (paused_log) {
-	$("#run").text('Run');
+        $("#run").text('Run');
+    } else {
+        $("#run").text('Pause');
     }
-    else {
-	$("#run").text('Pause');
-    }
-})
+});
 
 // full screen button
 const target = $('#target')[0]; // Get DOM element from jQuery collection
 $('#fullscreen').on('click', () => {
     console.log("fullscreen requested");
     if (screenfull.enabled) {
-	screenfull.toggle(target);
+        screenfull.toggle(target);
     }
 });
