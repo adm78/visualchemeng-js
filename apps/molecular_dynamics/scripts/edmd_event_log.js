@@ -21,6 +21,10 @@ function EventLog() {
         this._max_stored_events = 2000; //TODO: move to config
     };
 
+    this.event = function(i) {
+        return this._events[i];
+    };
+
     this.t = function () {
         return this._t_current;
     };

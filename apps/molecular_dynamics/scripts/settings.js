@@ -7,7 +7,7 @@ let settings = {
         coll_rate_plot_container: 'collision_rate_container',
         kernel_plot_container: 'collision_kernel_container',
         plot_update_interval: 2,
-        kernel_update_interval: 20,
+        kernel_update_interval: 200,
 
     },
 

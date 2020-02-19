@@ -32,4 +32,24 @@ function Event(t, part_1, part_2 = null, wall = null) {
         return (this.wall != null);
     };
 
+    this.smallest_particle = function () {
+        if (this.is_wall_collision()) {
+            return this.part_1
+        }
+        if (this.part_1.radius <= this.part_2.radius) {
+            return this.part_1;
+        }
+        return this.part_2;
+    };
+
+    this.largest_particle = function () {
+        if (this.is_wall_collision()) {
+            return this.part_1
+        }
+        if (this.part_1.radius > this.part_2.radius) {
+            return this.part_1;
+        }
+        return this.part_2;
+    };
+
 } // end of Event class

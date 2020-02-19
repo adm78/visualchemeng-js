@@ -105,7 +105,7 @@ function EDMDSimulation(canvas, config) {
     this.add_particle = function (particle) {
         var attempts = 0;
         let new_part;
-        
+
         while (attempts < this.config.n_add_try_max) {
             attempts = attempts + 1;
             if (!this._overlap_exists(particle)) {
@@ -134,6 +134,10 @@ function EDMDSimulation(canvas, config) {
             total = total + this.particles[i].kinetic_energy();
         }
         return total;
+    };
+
+    this.volume = function () {
+        return this._xmax * this._ymax;
     };
 
 
