@@ -2,11 +2,6 @@
 #
 # This script can be used to create an app production html from a test html
 #
-# Requires:
-#  - p5.js or minified equivalent
-#  - p5.dom.js or minified equivalent
-#  - vce_utils.js
-#
 # Andrew D. McGuire 2020
 # amcguire227@gmail.com
 #
@@ -38,7 +33,6 @@ if args.vce_repo_path is None:
 
 
 class ProductionHTMLGenerator(object):
-    # TODO: add sensible defaults
 
     def __init__(self, test_html_path: str, commit_hash: str, production_html_path: str, vce_repo_path: str, cdn_path_root: str):
         super(ProductionHTMLGenerator, self).__init__()
@@ -47,7 +41,7 @@ class ProductionHTMLGenerator(object):
         self._production_html_path = os.path.abspath(production_html_path)
         self._vce_repo_path = os.path.abspath(vce_repo_path)
         self._cdn_path_root = cdn_path_root
-        self._commit_hash = commit_hash  # this is the hash of the commit we want to pull the various source files from
+        self._commit_hash = commit_hash
 
     def generate(self):
         with open(self._test_html_path, "r") as f:
