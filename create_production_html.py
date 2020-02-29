@@ -10,11 +10,31 @@
 # Andrew D. McGuire 2020
 # amcguire227@gmail.com
 #
-# TODO: add command line arg functionality
+# TODO: default production file should be ../production/test_filename (relative to test file), if not provided
 # ----------------------------------------------------------
+import argparse
 import os.path
 
+import git
 from bs4 import BeautifulSoup
+
+parser = argparse.ArgumentParser(description=('Create a production ready application html (i.e. one that uses only remote sources) ' +
+                                              'from a test hmtl application (i.e. one that uses a mixture of local and remote sources).'),
+                                 formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+parser.add_argument('-f', dest='test_html_path', type=str, help='path to the test .html file to be processed')
+parser.add_argument('-c', dest='commit_hash', type=str, help='the commit hash to be used for remote vce repository files (last local commit if not provided)',
+                    default=None)
+parser.add_argument('-o', dest='production_html_path', type=str, help='the path of the production .html file to be created')
+parser.add_argument('-g', dest='vce_repo_path', required=False,
+                    help='the path to the vce git repository that the test html lives in (auto-find is attempted if not provided)')
+parser.add_argument('--cdn', dest='cdn_path_root', default="https://rawcdn.githack.com/adm78/visualchemeng_js", required=False,
+                    help='the cdn path root to use for remote files')
+args = parser.parse_args()
+
+if args.commit_hash is None:
+    args.commit_hash = git.Repo(search_parent_directories=True).head.object.hexsha
+if args.vce_repo_path is None:
+    args.vce_repo_path = git.Repo(search_parent_directories=True).working_tree_dir
 
 
 class ProductionHTMLGenerator(object):
@@ -23,9 +43,9 @@ class ProductionHTMLGenerator(object):
     def __init__(self, test_html_path: str, commit_hash: str, production_html_path: str, vce_repo_path: str, cdn_path_root: str):
         super(ProductionHTMLGenerator, self).__init__()
 
-        self._test_html_path = test_html_path
-        self._production_html_path = production_html_path
-        self._vce_repo_path = vce_repo_path
+        self._test_html_path = os.path.abspath(test_html_path)
+        self._production_html_path = os.path.abspath(production_html_path)
+        self._vce_repo_path = os.path.abspath(vce_repo_path)
         self._cdn_path_root = cdn_path_root
         self._commit_hash = commit_hash  # this is the hash of the commit we want to pull the various source files from
 
@@ -54,6 +74,7 @@ class ProductionHTMLGenerator(object):
 
         with open(self._production_html_path, "w") as f:
             f.write(soup.prettify())
+            print("Production html output to {}".format(self._production_html_path))
 
     def _is_vce_path(self, src: str) -> bool:
         return not (src.startswith('https://') or src.startswith('http://'))
@@ -68,12 +89,6 @@ class ProductionHTMLGenerator(object):
 
 
 if __name__ == '__main__':
-    test_html_path = r"C:\Users\amcgu\Documents\visualchemeng-js\apps\molecular_dynamics\html\test\edmd.html"
-    production_html_path = r"C:\Users\amcgu\Documents\visualchemeng-js\apps\molecular_dynamics\html\production\edmd.html"
-    vce_repo_path = r"C:\Users\amcgu\Documents\visualchemeng-js"
-    cdn_path_root = "https://rawcdn.githack.com/adm78/visualchemeng_js"
-    commit_hash = "8d679b06cab316d2c15cb9070e9dc21d90020367"  #
-
-    generator = ProductionHTMLGenerator(test_html_path=test_html_path, commit_hash=commit_hash, production_html_path=production_html_path,
-                                        vce_repo_path=vce_repo_path, cdn_path_root=cdn_path_root)
+    generator = ProductionHTMLGenerator(test_html_path=args.test_html_path, commit_hash=args.commit_hash, production_html_path=args.production_html_path,
+                                        vce_repo_path=args.vce_repo_path, cdn_path_root=args.cdn_path_root)
     generator.generate()
