@@ -1,0 +1,80 @@
+<html>
+ <head>
+  <link href="https://rawcdn.githack.com/adm78/visualchemeng_js/c57e1f042b5c136f8c626569c0de7aeba3b1e17b/lib/styles/jquery-ui.css" rel="stylesheet" type="text/css"/>
+  <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css"/>
+  <link href="https://rawcdn.githack.com/adm78/visualchemeng_js/c57e1f042b5c136f8c626569c0de7aeba3b1e17b/lib/styles/buttons.css" rel="stylesheet" type="text/css"/>
+  <link href="https://rawcdn.githack.com/adm78/visualchemeng_js/c57e1f042b5c136f8c626569c0de7aeba3b1e17b/lib/styles/slider.css" rel="stylesheet" type="text/css"/>
+  <link href="https://rawcdn.githack.com/adm78/visualchemeng_js/c57e1f042b5c136f8c626569c0de7aeba3b1e17b/apps/molecular_dynamics/styles/edmd.css" rel="stylesheet" type="text/css"/>
+ </head>
+ <body style="background-color:white;">
+  <div class="wrapper" id="target">
+   <div class="box sim_container" id="sim_container">
+   </div>
+   <div class="box vce_info">
+    <a href="http://visualchemeng.com">
+     <img class="vce_logo" src="https://rawcdn.githack.com/adm78/visualchemeng_js/c57e1f042b5c136f8c626569c0de7aeba3b1e17b/lib/images/vcelogo.png"/>
+    </a>
+    <p style="display: block; margin-left: auto; margin-right: auto; color:white; text-align: center; font-family:Roboto">
+     Event Driven Molecular Dynamics
+    </p>
+   </div>
+   <div class="box button_container">
+    <button class="button" id="run" style="width:96%">
+     Run
+    </button>
+    <br/>
+    <button class="button" id="restart" style="width:96%">
+     Restart
+    </button>
+    <button class="button" id="fullscreen" style="width:96%">
+     Fullscreen
+    </button>
+   </div>
+   <div class="box collision_rate_container" id="collision_rate_container">
+   </div>
+   <div class="box ke_plot_container" id="ke_plot_container">
+   </div>
+   <div class="box collision_kernel_container" id="collision_kernel_container">
+   </div>
+  </div>
+  <!-- scripts required for simulations -->
+  <script src="https://rawcdn.githack.com/adm78/visualchemeng_js/c57e1f042b5c136f8c626569c0de7aeba3b1e17b/lib/js/third-party/jquery-3.2.1.min.js">
+  </script>
+  <script src="https://rawcdn.githack.com/adm78/visualchemeng_js/c57e1f042b5c136f8c626569c0de7aeba3b1e17b/lib/js/third-party/jquery-ui.js">
+  </script>
+  <script src="https://rawcdn.githack.com/adm78/visualchemeng_js/c57e1f042b5c136f8c626569c0de7aeba3b1e17b/lib/js/third-party/screenfull.js">
+  </script>
+  <script src="https://rawcdn.githack.com/adm78/visualchemeng_js/c57e1f042b5c136f8c626569c0de7aeba3b1e17b/lib/js/third-party/p5.min.js">
+  </script>
+  <script src="https://rawcdn.githack.com/adm78/visualchemeng_js/c57e1f042b5c136f8c626569c0de7aeba3b1e17b/lib/js/third-party/plotly-latest.min.js">
+  </script>
+  <script src="https://rawcdn.githack.com/adm78/visualchemeng_js/c57e1f042b5c136f8c626569c0de7aeba3b1e17b/lib/js/vce/vce_math.js">
+  </script>
+  <script src="https://rawcdn.githack.com/adm78/visualchemeng_js/c57e1f042b5c136f8c626569c0de7aeba3b1e17b/lib/js/vce/vce_utils.js">
+  </script>
+  <script src="https://rawcdn.githack.com/adm78/visualchemeng_js/c57e1f042b5c136f8c626569c0de7aeba3b1e17b/lib/js/vce/vce_canvas.js">
+  </script>
+  <script src="https://rawcdn.githack.com/adm78/visualchemeng_js/c57e1f042b5c136f8c626569c0de7aeba3b1e17b/lib/js/vce/vce_particle.js">
+  </script>
+  <script src="https://rawcdn.githack.com/adm78/visualchemeng_js/c57e1f042b5c136f8c626569c0de7aeba3b1e17b/apps/molecular_dynamics/scripts/settings.js">
+  </script>
+  <script src="https://rawcdn.githack.com/adm78/visualchemeng_js/c57e1f042b5c136f8c626569c0de7aeba3b1e17b/apps/molecular_dynamics/scripts/edmd_event.js">
+  </script>
+  <script src="https://rawcdn.githack.com/adm78/visualchemeng_js/c57e1f042b5c136f8c626569c0de7aeba3b1e17b/apps/molecular_dynamics/scripts/edmd_event_log.js">
+  </script>
+  <script src="https://rawcdn.githack.com/adm78/visualchemeng_js/c57e1f042b5c136f8c626569c0de7aeba3b1e17b/apps/molecular_dynamics/scripts/edmd_stats.js">
+  </script>
+  <script src="https://rawcdn.githack.com/adm78/visualchemeng_js/c57e1f042b5c136f8c626569c0de7aeba3b1e17b/apps/molecular_dynamics/scripts/edmd_backend.js">
+  </script>
+  <script src="https://rawcdn.githack.com/adm78/visualchemeng_js/c57e1f042b5c136f8c626569c0de7aeba3b1e17b/apps/molecular_dynamics/scripts/edmd_graphics.js">
+  </script>
+  <script src="https://rawcdn.githack.com/adm78/visualchemeng_js/c57e1f042b5c136f8c626569c0de7aeba3b1e17b/apps/molecular_dynamics/scripts/edmd_collision_rate_plot.js">
+  </script>
+  <script src="https://rawcdn.githack.com/adm78/visualchemeng_js/c57e1f042b5c136f8c626569c0de7aeba3b1e17b/apps/molecular_dynamics/scripts/edmd_kinetic_energy_plot.js">
+  </script>
+  <script src="https://rawcdn.githack.com/adm78/visualchemeng_js/c57e1f042b5c136f8c626569c0de7aeba3b1e17b/apps/molecular_dynamics/scripts/edmd_collision_kernel_plot.js">
+  </script>
+  <script src="https://rawcdn.githack.com/adm78/visualchemeng_js/c57e1f042b5c136f8c626569c0de7aeba3b1e17b/apps/molecular_dynamics/scripts/edmd_frontend.js">
+  </script>
+ </body>
+</html>
